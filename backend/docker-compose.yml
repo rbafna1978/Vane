@@ -1,0 +1,39 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: vane
+      POSTGRES_PASSWORD: vane
+      POSTGRES_DB: vane
+    ports: ["5432:5432"]
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vane"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  web:
+    build: .
+    # Migrations run on boot. With one engineer and one instance this is the right trade:
+    # a forgotten migration step is a likelier outage than two instances racing alembic.
+    command: sh -c "alembic upgrade head && uvicorn vane.main:app --host 0.0.0.0 --port 8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://vane:vane@postgres:5432/vane
+      REDIS_URL: redis://redis:6379/0
+    ports: ["8000:8000"]
+    depends_on:
+      postgres: {condition: service_healthy}
+      redis: {condition: service_healthy}
+
+volumes:
+  pgdata:

@@ -38,3 +38,26 @@ Append-only. Every ADR and design choice, one line of rationale.
   `SWIFT_APPROACHABLE_CONCURRENCY` and `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor`. Turning strict
   concurrency on after code exists means fixing it everywhere at once; on from empty means never
   writing the violation.
+
+## Phase 1 — backend skeleton
+
+- **`/v1/snapshot` replaces `/conditions` + `/forecast` + `/context` on the main screen.** Three
+  round trips on a cold cellular launch for one screen is the difference between feeling instant
+  and feeling like a website.
+- **One error envelope, including validation errors.** FastAPI's default 422 `{"detail": [...]}`
+  is a second shape the client would need a second code path for; a handler maps it to
+  `{"error": {code, message, retry_after}}` with a 400.
+- **Redis fails open.** Cache read/write errors log and fall through to the provider. Redis is an
+  optimisation, not a source of truth — an outage should cost speed, not uptime. Socket timeouts
+  set to 2s so a hung Redis cannot hold requests open.
+- **`cells` is the only table in phase 1.** Tables arrive with the code that uses them;
+  `observations` and `daily_normals` land in phase 2 with the backfill that fills them. The row
+  is real work, not scaffolding: it records which cells real users stand in, which is exactly
+  the demand queue phase 2 consumes.
+- **`context_state: "cold"` added to the contract.** ADR-0004 defined warm/warming only. Phase 1
+  has neither — no normals and no worker — and reporting "warming" when nothing is warming would
+  be a lie the client renders as a promise.
+- **Provider protocol carries only `snapshot` and `forecast`.** ADR-0003 sketched a third method,
+  `archive`; it lands in phase 2 with its caller rather than sitting unimplemented.
+- **Migrations run on web boot.** With one engineer and one instance, a forgotten migration step
+  is a likelier outage than two instances racing alembic. Revisit at more than one instance.
