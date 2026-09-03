@@ -53,6 +53,19 @@ Regenerate the code map at every phase boundary. One repo-wide graph covers Swif
 (tree-sitter-swift and tree_sitter_python both present). Consult the map before opening files.
 Reading >3 files to answer a structural question means the map is stale or unused.
 
+## Direction: A, The Barograph (locked)
+The chart, never the machine. Pale eau-de-nil stock, printed hairline grid, one aniline-violet pen trace.
+Signature: the trace never breaks — today is the right end of one roll that began at install; dragging
+left is the archive on the same paper. The 11-year normal runs behind it dashed.
+
+Palette (day / night): paper #DFE7DC / #12171A - grid #AFBFA9 / #263029 - ink #1B2021 / #DCE6DE
+trace #3A2E6B / #8B7BD4 - alert #B8442E / #E06A4F - wash computed from sun position.
+`trace` and `alert` are the entire saturated budget.
+
+Type: FF DIN Condensed (display, fallback Archivo Narrow) / SF Pro Text (body) / Berkeley Mono
+(data, fallback JetBrains Mono). Scale: Reading 148/132, Display L 40/44, Context 28/34, Body 17/24,
+Caption 13/18, Data 12/16. Body + Caption scale with Dynamic Type; Reading + Context on a clamped curve.
+
 ## Design hard constraints
 - No purple→blue gradients. No #F4F1EA cream + #D97757 terracotta. No glassmorphism-on-everything.
   No SaaS card kit (identical radii, same soft grey shadow).
