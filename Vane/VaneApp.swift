@@ -1,6 +1,6 @@
 //
-//  WeatherManApp.swift
-//  WeatherMan
+//  VaneApp.swift
+//  Vane
 //
 //  Created by Rishit Bafna on 9/3/26.
 //
@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct WeatherManApp: App {
+struct VaneApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()

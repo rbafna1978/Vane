@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  WeatherMan
+//  Vane
 //
 //  Created by Rishit Bafna on 9/3/26.
 //

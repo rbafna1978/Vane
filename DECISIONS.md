@@ -29,3 +29,12 @@ Append-only. Every ADR and design choice, one line of rationale.
   standard on European instrument faceplates, so the display face is the type that was on the machine.
   SF for body is deliberate: Dynamic Type and VoiceOver for free, and identity is carried elsewhere.
   Free fallbacks if licensing is declined: Archivo Narrow, JetBrains Mono.
+- **Renamed WeatherMan -> Vane.** Project, target, scheme, `VaneApp`, and bundle id
+  `com.rishitbafna.vane`. Done before the SPM packages exist, when it was still a `git mv` and a sed.
+- **iOS deployment target 18.0, not the Xcode 26.5 template default.** The brief specifies iOS 18 as
+  the floor; shipping at 26.5 would cut off most of the installed base for features we have not
+  chosen yet.
+- **Swift 6 language mode on from commit one.** `SWIFT_VERSION = 6.0` with
+  `SWIFT_APPROACHABLE_CONCURRENCY` and `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor`. Turning strict
+  concurrency on after code exists means fixing it everywhere at once; on from empty means never
+  writing the violation.

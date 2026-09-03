@@ -40,10 +40,10 @@ to a plain `.xcodeproj`, and a workspace adds a file to maintain for no benefit 
 - Enforced by: `VaneKit` importing SwiftUI is a review failure, not a lint rule. Cheaper to catch by
   eye than to configure.
 
-## Open question for Rishit
-The repo, project, and app target are named `WeatherMan`; the product is `Vane`. Renaming is cheapest
-now and gets more annoying after the packages exist. Rename, keep `WeatherMan` as the internal
-codename, or keep it and ship as WeatherMan?
+## Naming — resolved
+Renamed to `Vane` before any packages existed. Project, target, scheme, app struct, and bundle
+identifier (`com.rishitbafna.vane`) all moved. The parent directory on disk is still
+`Documents/WeatherMan`; that is cosmetic and does not appear in any build setting.
 
 ## Action Items
 1. [ ] `Packages/VaneKit`, `Packages/VaneUI` as local SPM packages
