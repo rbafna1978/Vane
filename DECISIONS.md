@@ -61,3 +61,7 @@ Append-only. Every ADR and design choice, one line of rationale.
   `archive`; it lands in phase 2 with its caller rather than sitting unimplemented.
 - **Migrations run on web boot.** With one engineer and one instance, a forgotten migration step
   is a likelier outage than two instances racing alembic. Revisit at more than one instance.
+- **`DATABASE_URL` scheme is normalised in config, not in deploy settings.** Railway, Heroku and
+  most managed Postgres inject `postgresql://`, which SQLAlchemy resolves to the sync psycopg
+  driver and fails at startup with an error that never mentions the scheme. Rewriting it on load
+  means the deploy cannot fail on a prefix nobody remembers.

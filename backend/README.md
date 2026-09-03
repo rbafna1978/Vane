@@ -36,7 +36,7 @@ uv run uvicorn vane.main:app --reload
 ## Check
 
 ```bash
-uv run pytest          # 42 tests, no network
+uv run pytest          # 46 tests, no network
 uv run ruff check .
 uv run mypy vane       # strict
 ```
@@ -59,6 +59,23 @@ vane/errors.py       one error envelope, {"error": {code, message, retry_after}}
 ```
 
 Decisions and their reasoning live in [../docs/adr](../docs/adr) and [../DECISIONS.md](../DECISIONS.md).
+
+## Deploy (Railway)
+
+```bash
+brew install railway          # already installed
+railway login                 # opens a browser
+railway init                  # from backend/
+```
+
+Then add Postgres and Redis from the Railway dashboard and `railway up`. `railway.json`
+builds the Dockerfile, runs `alembic upgrade head` on start, and health-checks `/healthz`.
+
+Railway injects `DATABASE_URL` as `postgresql://`; `vane/config.py` rewrites it to
+`postgresql+asyncpg://` on load, so no manual variable editing is needed.
+
+Before launch: take a Railway backup and **restore it once** (ADR-0005). An untested backup
+is not a backup.
 
 ## Not built yet
 
