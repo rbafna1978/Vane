@@ -65,3 +65,15 @@ Append-only. Every ADR and design choice, one line of rationale.
   most managed Postgres inject `postgresql://`, which SQLAlchemy resolves to the sync psycopg
   driver and fails at startup with an error that never mentions the scheme. Rewriting it on load
   means the deploy cannot fail on a prefix nobody remembers.
+
+## Deferrals (agreed 2026-09-03)
+
+- **Deployment deferred to phase 7.** Phase 1's definition said "deployed and reachable"; it is not,
+  deliberately. Nothing between here and the push loop needs a hosted backend — the simulator reaches
+  `localhost:8000`, and a physical device reaches the Mac's LAN IP. APNs and TestFlight are the first
+  things that genuinely cannot, and those are phase 7. Deploying now would bill for a database holding
+  four test cells. The prep is committed and idle: `railway.json`, Dockerfile, and the `DATABASE_URL`
+  scheme normalisation.
+- **ADR-0005's backup restore test deferred with it.** It cannot be done before infrastructure exists.
+  It remains a hard gate before real users, not a nice-to-have: the archive is the product and cannot
+  be re-derived from anywhere.
