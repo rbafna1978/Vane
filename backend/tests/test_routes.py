@@ -17,11 +17,11 @@ async def test_snapshot_returns_the_contract(client):
     assert body["current"]["temp_c"] == 21.9
     assert len(body["arc"]) == 48
     assert body["sun"]["sunrise"].startswith("2026-09-03T06:41")
-    # Phase 1 has no normals and no backfill worker. Saying so honestly beats an empty object
-    # that looks like a value.
+    # A first request for this cell queues its backfill and returns immediately with no
+    # context line, rather than making someone wait ~4s holding a phone (ADR-0004).
     assert body["context"] is None
-    assert body["context_state"] == "cold"
-    assert body["normal"] == []
+    assert body["context_state"] == "warming"
+    assert body["normal"] is None
 
 
 async def test_second_request_does_not_reach_the_provider(client, source):
@@ -132,3 +132,20 @@ async def test_redis_outage_degrades_to_the_provider(client, source, monkeypatch
     assert r.status_code == 200
     assert r.json()["current"]["temp_c"] == 21.9
     assert source.calls == 1
+
+
+async def test_a_cold_cell_queues_exactly_one_backfill(client, arq):
+    """Two devices standing in the same cell must not queue two 30-year fetches. arq
+    deduplicates on _job_id, so the id has to be derived from the cell."""
+    await client.get("/v1/snapshot", params=OAKLAND)
+    await client.get("/v1/snapshot", params={"lat": 37.70, "lon": -122.19})
+    assert [j[1] for j in arq.jobs] == ["37.75,-122.25", "37.75,-122.25"]
+    assert {j[2] for j in arq.jobs} == {"backfill:37.75,-122.25"}
+
+
+async def test_context_route_returns_only_context(client):
+    r = await client.get("/v1/context", params=OAKLAND)
+    assert r.status_code == 200
+    body = r.json()
+    assert set(body) == {"cell_id", "context", "context_state", "normal"}
+    assert "arc" not in body and "current" not in body

@@ -11,7 +11,11 @@ class Settings(BaseSettings):
     redis_url: str = "redis://localhost:6379/0"
     log_level: str = "INFO"
     open_meteo_base: str = "https://api.open-meteo.com/v1"
+    open_meteo_archive_base: str = "https://archive-api.open-meteo.com/v1"
+    # 30 years of daily record per cell. One request, ~364KB, ~3.5s — measured, not guessed.
+    backfill_years: int = 30
     http_timeout_s: float = 10.0
+    archive_timeout_s: float = 60.0
 
     @field_validator("database_url")
     @classmethod

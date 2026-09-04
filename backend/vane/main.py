@@ -3,6 +3,7 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 import httpx
+from arq.connections import RedisSettings, create_pool
 from fastapi import FastAPI
 from redis.asyncio import Redis
 
@@ -26,9 +27,11 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         socket_timeout=2.0,
         socket_connect_timeout=2.0,
     )
+    app.state.arq = await create_pool(RedisSettings.from_dsn(settings().redis_url))
     try:
         yield
     finally:
+        await app.state.arq.aclose()
         await app.state.http.aclose()
         await app.state.redis.aclose()
         await dispose()

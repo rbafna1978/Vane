@@ -1,6 +1,7 @@
 from typing import Annotated
 
 import httpx
+from arq.connections import ArqRedis as ArqPool
 from fastapi import Depends, Request
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -25,3 +26,11 @@ def get_source(request: Request) -> WeatherSource:
 RedisDep = Annotated[Redis, Depends(get_redis)]
 SourceDep = Annotated[WeatherSource, Depends(get_source)]
 SessionDep = Annotated[AsyncSession, Depends(get_session)]
+
+
+def get_arq(request: Request) -> ArqPool:
+    pool: ArqPool = request.app.state.arq
+    return pool
+
+
+ArqDep = Annotated[ArqPool, Depends(get_arq)]

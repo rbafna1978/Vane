@@ -23,7 +23,7 @@ from vane.schemas import (
     ForecastHour,
     Sun,
 )
-from vane.sources.base import SnapshotData, SourceError
+from vane.sources.base import DailyRecord, SnapshotData, SourceError
 
 _CURRENT = (
     "temperature_2m,apparent_temperature,relative_humidity_2m,surface_pressure,"
@@ -79,7 +79,7 @@ class OpenMeteoSource:
                 "longitude": cell.lon,
                 "current": _CURRENT,
                 "hourly": _HOURLY,
-                "daily": "sunrise,sunset",
+                "daily": "sunrise,sunset,temperature_2m_max,temperature_2m_min",
                 "timezone": "auto",
                 "wind_speed_unit": "kn",
                 "forecast_days": 1,
@@ -119,6 +119,8 @@ class OpenMeteoSource:
             ),
             arc=arc,
             sun=Sun(sunrise=_dt(daily["sunrise"][0], tz), sunset=_dt(daily["sunset"][0], tz)),
+            today_tmax_c=daily["temperature_2m_max"][0],
+            today_tmin_c=daily["temperature_2m_min"][0],
         )
 
     async def forecast(self, cell: Cell, days: int) -> Forecast:
@@ -178,3 +180,49 @@ class OpenMeteoSource:
                 )
             ],
         )
+
+    async def archive(self, cell: Cell, start: Date, end: Date) -> list[DailyRecord]:
+        """30 years of daily record in one request.
+
+        A separate host from the forecast API, and slow enough (~3.5s for 11k days) to need
+        its own timeout — the 10s forecast timeout would fail this on a bad day.
+        """
+        try:
+            response = await self._client.get(
+                f"{settings().open_meteo_archive_base}/archive",
+                params={
+                    "latitude": cell.lat,
+                    "longitude": cell.lon,
+                    "start_date": start.isoformat(),
+                    "end_date": end.isoformat(),
+                    "daily": "temperature_2m_max,temperature_2m_min,temperature_2m_mean,"
+                    "precipitation_sum",
+                    "timezone": "auto",
+                },
+                timeout=settings().archive_timeout_s,
+            )
+        except httpx.TimeoutException as exc:
+            raise SourceError("archive_timeout", "Open-Meteo archive timed out", 60) from exc
+        except httpx.HTTPError as exc:
+            raise SourceError("archive_unreachable", str(exc), 60) from exc
+
+        if response.status_code >= 400:
+            reason = "archive error"
+            with contextlib.suppress(ValueError):
+                reason = str(response.json().get("reason", reason))
+            raise SourceError("archive_rejected", reason)
+
+        daily = response.json()["daily"]
+        return [
+            DailyRecord(
+                d=Date.fromisoformat(d), tmax_c=tmax, tmin_c=tmin, tmean_c=tmean, precip_mm=precip
+            )
+            for d, tmax, tmin, tmean, precip in zip(
+                daily["time"],
+                daily["temperature_2m_max"],
+                daily["temperature_2m_min"],
+                daily["temperature_2m_mean"],
+                daily["precipitation_sum"],
+                strict=True,
+            )
+        ]

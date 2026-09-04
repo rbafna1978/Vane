@@ -77,3 +77,37 @@ Append-only. Every ADR and design choice, one line of rationale.
 - **ADR-0005's backup restore test deferred with it.** It cannot be done before infrastructure exists.
   It remains a hard gate before real users, not a nice-to-have: the archive is the product and cannot
   be re-derived from anywhere.
+
+## Phase 2 — context engine
+
+- **`normal` is a band, not an hourly curve.** Contract changed from `list[NormalPoint]` to
+  `NormalBand {tmax_c, tmin_c, years}`. We hold daily history, so an hourly normal would have to be
+  invented from a diurnal shape — a fabricated curve behind a real trace is the quiet dishonesty this
+  app exists against. Two dashed rules also read more like printed chart paper than a second wiggle.
+- **Normals keyed on (month, day), not day-of-year.** Day-of-year shifts by one after February 29th,
+  so day 247 is September 3rd in some years and September 4th in others. Keying on DOY would silently
+  average two different dates together.
+- **Rank today's forecast high, never the current reading.** Found by looking at real output, not by
+  a test: comparing the 12:15 temperature against 30 years of daily maxima produced "Coolest September
+  4th in 30 years" when today was in fact the fifth-coolest. It would have published a false
+  superlative every morning before the day warmed up. `SnapshotData` now carries `today_tmax_c`.
+- **Ties defeat superlatives.** If a past year matched today exactly, today is not uniquely warmest
+  and must not say it is. Rank counts `>=`, not `>`.
+- **Streaks break on gaps in the record.** Reanalysis has holes; counting across one would claim
+  consecutive days we have no record of.
+- **Streaks compare against each day's own normal, not a fixed threshold**, so the sentence means the
+  same thing in Reykjavik and Phoenix.
+- **Under 10 years of record, no superlative claims at all.** Short records still get dry-spell facts,
+  which need no baseline. A superlative from four years is a lie with a number in it.
+- **Returning no context is a feature.** London on an ordinary day gets no line. Filler restating the
+  temperature as a fact is precisely what this app exists to avoid.
+- **Insert chunked at 32,000/6 rows.** Postgres binds at most 32,767 parameters per statement; a
+  30-year backfill is ~67,000. ADR-0004 called for year batches and I overrode it because the *fetch*
+  is one request — the *insert* needs batching for an unrelated reason. One commit for the whole cell,
+  so the engine never ranks against a half-written record.
+- **Worker concurrency 1, measured not guessed.** Four parallel archive fetches trip Open-Meteo's
+  minutely limit and burn arq retries on a rate limit we inflicted on ourselves. A backfill runs once
+  per cell and nobody waits on it.
+- **A failed backfill resets the cell to cold.** Otherwise arq exhausts its retries, the cell stays
+  `warming` forever, and the differentiator is lost silently — the exact failure ADR-0004 exists to
+  prevent.

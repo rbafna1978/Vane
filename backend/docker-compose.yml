@@ -35,5 +35,15 @@ services:
       postgres: {condition: service_healthy}
       redis: {condition: service_healthy}
 
+  worker:
+    build: .
+    command: arq vane.worker.WorkerSettings
+    environment:
+      DATABASE_URL: postgresql+asyncpg://vane:vane@postgres:5432/vane
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      postgres: {condition: service_healthy}
+      redis: {condition: service_healthy}
+
 volumes:
   pgdata:

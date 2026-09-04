@@ -13,7 +13,7 @@ from sqlalchemy.ext.asyncio import create_async_engine  # noqa: E402
 
 from vane import db  # noqa: E402
 from vane.cells import Cell  # noqa: E402
-from vane.deps import get_source  # noqa: E402
+from vane.deps import get_arq, get_source  # noqa: E402
 from vane.main import create_app  # noqa: E402
 from vane.models import Base  # noqa: E402
 from vane.schemas import Forecast  # noqa: E402
@@ -78,6 +78,18 @@ async def _database() -> AsyncIterator[None]:
     await db.dispose()
 
 
+class FakeArq:
+    """Records enqueues instead of making them. Job ids are asserted on, because the
+    deduplication they provide is what stops two devices in one cell queueing two 30-year
+    fetches."""
+
+    def __init__(self) -> None:
+        self.jobs: list[tuple[str, str, str | None]] = []
+
+    async def enqueue_job(self, name: str, *args: str, _job_id: str | None = None) -> None:
+        self.jobs.append((name, args[0], _job_id))
+
+
 @pytest.fixture
 async def source() -> FakeSource:
     from vane.sources.openmeteo import OpenMeteoSource
@@ -96,9 +108,15 @@ async def source() -> FakeSource:
 
 
 @pytest.fixture
-async def client(_database: None, source: FakeSource) -> AsyncIterator[AsyncClient]:
+async def arq() -> FakeArq:
+    return FakeArq()
+
+
+@pytest.fixture
+async def client(_database: None, source: FakeSource, arq: FakeArq) -> AsyncIterator[AsyncClient]:
     app = create_app()
     app.dependency_overrides[get_source] = lambda: source
+    app.dependency_overrides[get_arq] = lambda: arq
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
     ) as ac, app.router.lifespan_context(app):

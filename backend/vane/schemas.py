@@ -6,7 +6,7 @@ from datetime import date as Date
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 ContextState = Literal["warm", "warming", "cold"]
 
@@ -30,11 +30,18 @@ class ArcPoint(BaseModel):
     code: int
 
 
-class NormalPoint(BaseModel):
-    """The dashed line behind the trace. Empty until the cell is warm."""
+class NormalBand(BaseModel):
+    """The dashed reference behind the trace: the average high and low for this calendar date.
 
-    t: datetime
-    temp_c: float
+    A band rather than an hourly curve. We hold daily history, so an hourly normal would have
+    to be invented from a diurnal shape — and a fabricated curve behind a real trace is
+    exactly the kind of quiet dishonesty this app is built against. Two dashed rules also read
+    more like printed chart paper than a second wiggle does.
+    """
+
+    tmax_c: float
+    tmin_c: float
+    years: int
 
 
 class Sun(BaseModel):
@@ -54,10 +61,20 @@ class Snapshot(BaseModel):
     observed_at: datetime
     current: Current
     arc: list[ArcPoint]
-    normal: list[NormalPoint] = Field(default_factory=list)
+    normal: NormalBand | None = None
     context: Context | None = None
     context_state: ContextState = "cold"
     sun: Sun
+
+
+class ContextResponse(BaseModel):
+    """`/v1/context` on its own. Smaller than a Snapshot on purpose: the morning push worker
+    wants the sentence, not the arc."""
+
+    cell_id: str
+    context: Context | None = None
+    context_state: ContextState = "cold"
+    normal: NormalBand | None = None
 
 
 class ForecastHour(BaseModel):
