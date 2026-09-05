@@ -27,7 +27,7 @@ from vane.sources.base import DailyRecord, SnapshotData, SourceError
 
 _CURRENT = (
     "temperature_2m,apparent_temperature,relative_humidity_2m,surface_pressure,"
-    "wind_speed_10m,wind_direction_10m,weather_code"
+    "wind_speed_10m,wind_direction_10m,weather_code,cloud_cover"
 )
 _HOURLY = "temperature_2m,precipitation,precipitation_probability,weather_code"
 _DAILY = "sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code"
@@ -112,6 +112,7 @@ class OpenMeteoSource:
             current=Current(
                 temp_c=cur["temperature_2m"],
                 feels_c=cur["apparent_temperature"],
+                cloud_cover=int(cur["cloud_cover"]),
                 wind_kt=cur["wind_speed_10m"],
                 wind_deg=int(cur["wind_direction_10m"]),
                 humidity=int(cur["relative_humidity_2m"]),

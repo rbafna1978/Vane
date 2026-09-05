@@ -179,6 +179,8 @@ struct ConditionLine: View {
     var body: some View {
         Text(parts.joined(separator: "   ·   "))
             .font(.vaneData).tracking(1.3)
+            .lineLimit(1)
+            .minimumScaleFactor(0.85)
             .foregroundStyle(palette.inkColor.opacity(0.72))
             .accessibilityLabel(voiceOver)
     }
@@ -192,7 +194,9 @@ struct ConditionLine: View {
         if abs(snapshot.current.feelsC - snapshot.current.tempC) >= 2 {
             parts.append("FEELS \(Int(snapshot.current.feelsC.rounded()))°")
         }
-        parts.append("\(snapshot.current.humidity)% RH")
+        // Humidity lives in the footer with the other measurements. Three items here wraps to
+        // two lines on a narrow phone, and a condition that needs two lines has stopped being
+        // a glance.
         return parts
     }
 
@@ -202,7 +206,7 @@ struct ConditionLine: View {
         if abs(snapshot.current.feelsC - snapshot.current.tempC) >= 2 {
             summary += ". Feels like \(Int(snapshot.current.feelsC.rounded())) degrees"
         }
-        return summary + ". Humidity \(snapshot.current.humidity) percent."
+        return summary + "."
     }
 }
 
@@ -223,6 +227,7 @@ struct Footer: View {
             Text("↓ \(time(snapshot.sun.sunset))")
             if !typeSize.isAccessibilitySize { Spacer() }
             Text("\(snapshot.current.windDeg)° \(Int(snapshot.current.windKt.rounded()))KT")
+            Text("\(snapshot.current.humidity)% RH")
         }
         .font(.vaneData).tracking(1.2)
         .lineLimit(1)
@@ -233,7 +238,8 @@ struct Footer: View {
             """
             Sunrise \(time(snapshot.sun.sunrise)). Sunset \(time(snapshot.sun.sunset)). \
             Wind \(Int(snapshot.current.windKt.rounded())) knots \
-            from \(snapshot.current.windDeg) degrees.
+            from \(snapshot.current.windDeg) degrees. \
+            Humidity \(snapshot.current.humidity) percent.
             """
         )
     }

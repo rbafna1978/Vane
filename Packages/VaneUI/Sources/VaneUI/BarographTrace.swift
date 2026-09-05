@@ -118,10 +118,11 @@ public struct BarographTrace: View {
         // 0.28 over near-black paper is imperceptible, and "where today leaves the ordinary
         // range" is the chart's whole argument. The band is scaled against the paper it sits on
         // rather than fixed, so it stays a whisper on light stock and stays visible on dark.
-        // The fill stays a wash — it is a region, not a line — but the dashed edges that define
-        // the band are held to 3:1 (WCAG 1.4.11), because they are the boundary the whole
-        // reading is made against.
-        let strength = palette.paper.luminance < 0.2 ? 0.85 : 0.32
+        // A whisper of a fill, and the dashed edges do the work. A solid block reads as a
+        // selection highlight — which is exactly how it was being read — rather than as a
+        // printed reference zone. The edges are held to 3:1 (WCAG 1.4.11) because they are the
+        // boundary the whole reading is made against.
+        let strength = palette.paper.luminance < 0.2 ? 0.22 : 0.16
         context.fill(
             Path(CGRect(x: plot.minX, y: top, width: plot.width, height: bottom - top)),
             with: .color(palette.gridColor.opacity(strength))
@@ -134,6 +135,13 @@ public struct BarographTrace: View {
                 style: StrokeStyle(lineWidth: 1, dash: [3, 3])
             )
         }
+
+        // And say what it is. An unlabelled shaded region is furniture; a labelled one is the
+        // thirty-year answer the whole app is built to give.
+        let caption = Text("30-YEAR NORMAL")
+            .font(.custom(VaneFont.mono, fixedSize: typeSize.isAccessibilitySize ? 11 : 9))
+            .foregroundStyle(palette.inkColor.opacity(0.5))
+        context.draw(caption, at: .init(x: plot.maxX - 4, y: top + 9), anchor: .topTrailing)
     }
 
     private func drawTrace(

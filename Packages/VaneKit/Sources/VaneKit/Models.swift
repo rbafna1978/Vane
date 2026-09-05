@@ -11,6 +11,8 @@ import Foundation
 public struct Current: Codable, Sendable, Hashable {
     public let tempC: Double
     public let feelsC: Double
+    /// Percent. Optional so a cache written before the field existed still decodes.
+    public let cloudCover: Int?
     public let windKt: Double
     public let windDeg: Int
     public let humidity: Int
@@ -19,7 +21,7 @@ public struct Current: Codable, Sendable, Hashable {
 
     enum CodingKeys: String, CodingKey {
         case tempC = "temp_c", feelsC = "feels_c", windKt = "wind_kt", windDeg = "wind_deg"
-        case humidity, pressureHpa = "pressure_hpa", code
+        case humidity, pressureHpa = "pressure_hpa", code, cloudCover = "cloud_cover"
     }
 }
 

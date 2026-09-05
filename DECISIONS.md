@@ -280,3 +280,23 @@ Feedback: the chart could not be read at a glance, and conditions were missing e
   nothing rather than guessing.
 - **Feels-like appears only when it differs from the reading by 2 degrees or more.** Printing
   "feels like 20" beside 20 is noise dressed as data.
+
+## Phase 4 follow-up — the band, and conditions reaching the palette
+
+- **The normal band read as a selection highlight.** A solid shaded rectangle is what text
+  selection looks like; unlabelled, it was furniture rather than information. The fill dropped to
+  a whisper (0.16 light / 0.22 dark), the dashed edges at 3:1 now carry it, and it says
+  "30-YEAR NORMAL" on itself. An unlabelled shaded region cannot be the answer the whole app is
+  built to give.
+- **Conditions never reached the palette.** The brief requires colour state driven by sun
+  position *and current conditions*; `cloudCover` was a `SkyState` parameter added in phase 3
+  that nothing ever passed, so every day rendered as though it were clear. The server now sends
+  measured `cloud_cover` — real cover rather than inferred from the weather code, because
+  "partly cloudy" spans 25-75% and the palette needs the number, not the bucket.
+- **Overcast flattens the paper toward neutral, not darker.** A grey day loses colour, not light.
+  Only the paper: draining chroma from the trace would make the reading hardest to find on
+  exactly the days it is greyest. Contrast is tested at every cloud level and hour.
+- **Backend tests were asserting memorised fixture values** (`temp_c == 21.9`, a hardcoded
+  sunrise). Re-recording the payload broke four tests for no reason. They now assert against the
+  fixture's own values — the thing under test is the mapping, not the weather in Oakland on one
+  afternoon.

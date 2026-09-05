@@ -14,6 +14,10 @@ ContextState = Literal["warm", "warming", "cold"]
 class Current(BaseModel):
     temp_c: float
     feels_c: float
+    # Drives the interface's colour state alongside sun position. Real measured cover rather
+    # than inferred from the weather code: "partly cloudy" spans 25-75% and the palette needs
+    # the number, not the bucket.
+    cloud_cover: int
     wind_kt: float
     wind_deg: int
     humidity: int

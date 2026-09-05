@@ -84,14 +84,21 @@ public final class WeatherModel {
 
     public func markContextPresented() { hasPresentedContext = true }
 
-    /// The sky for this snapshot's own location and moment, not the device's.
+    /// The sky for this snapshot's own location, moment, and conditions.
+    ///
+    /// The brief is explicit that colour state comes from sun position *and current
+    /// conditions*. `cloudCover` was a parameter from phase 3 that nothing ever passed, so
+    /// until now every day rendered as though it were clear.
     public var sky: SkyState {
         guard let snapshot else {
             return SkyState.now(latitude: 0, longitude: 0)
         }
         let parts = snapshot.cellId.split(separator: ",").compactMap { Double($0) }
         return SkyState.now(
-            latitude: parts.first ?? 0, longitude: parts.last ?? 0, date: .now
+            latitude: parts.first ?? 0,
+            longitude: parts.last ?? 0,
+            date: .now,
+            cloudCover: Double(snapshot.current.cloudCover ?? 0) / 100
         )
     }
 }

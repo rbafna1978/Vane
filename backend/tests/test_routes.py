@@ -2,6 +2,7 @@
 
 from sqlalchemy import select
 
+from tests.conftest import openmeteo_payload
 from vane.db import sessionmaker
 from vane.models import Cell as CellRow
 from vane.sources.base import SourceError
@@ -14,9 +15,11 @@ async def test_snapshot_returns_the_contract(client):
     assert r.status_code == 200
     body = r.json()
     assert body["cell_id"] == "37.75,-122.25"
-    assert body["current"]["temp_c"] == 21.9
+    assert body["current"]["temp_c"] == openmeteo_payload()["current"]["temperature_2m"]
+    assert body["current"]["cloud_cover"] == openmeteo_payload()["current"]["cloud_cover"]
     assert len(body["arc"]) == 48
-    assert body["sun"]["sunrise"].startswith("2026-09-03T06:41")
+    assert body["sun"]["sunrise"].startswith(openmeteo_payload()["daily"]["sunrise"][0])
+    assert body["utc_offset_seconds"] == openmeteo_payload()["utc_offset_seconds"]
     # A first request for this cell queues its backfill and returns immediately with no
     # context line, rather than making someone wait ~4s holding a phone (ADR-0004).
     assert body["context"] is None
@@ -130,7 +133,7 @@ async def test_redis_outage_degrades_to_the_provider(client, source, monkeypatch
 
     r = await client.get("/v1/snapshot", params=OAKLAND)
     assert r.status_code == 200
-    assert r.json()["current"]["temp_c"] == 21.9
+    assert r.json()["current"]["temp_c"] == openmeteo_payload()["current"]["temperature_2m"]
     assert source.calls == 1
 
 

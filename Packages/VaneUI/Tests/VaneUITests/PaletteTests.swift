@@ -167,3 +167,30 @@ private func chroma(_ c: RGB) -> Double { max(c.r, c.g, c.b) - min(c.r, c.g, c.b
     #expect(contrastRatio(palette.grid, palette.paper)
             <= contrastRatio(palette.band, palette.paper))
 }
+
+@Test func `overcast flattens the paper toward neutral`() {
+    // The brief asks for colour state driven by sun position AND conditions. `cloudCover` was
+    // a parameter nothing ever passed, so every day rendered as though it were clear.
+    let noon = utc(2026, 9, 4, 20, 0)
+    let clear = SkyState.now(latitude: 37.8, longitude: -122.25, date: noon, cloudCover: 0)
+    let overcast = SkyState.now(latitude: 37.8, longitude: -122.25, date: noon, cloudCover: 1)
+
+    #expect(chroma(overcast.palette.paper) < chroma(clear.palette.paper))
+    // Flatter, not darker — an overcast day loses colour, not light.
+    #expect(abs(overcast.palette.paper.luminance - clear.palette.paper.luminance) < 0.12)
+    // And the trace keeps its identity, because grey days are when it is hardest to find.
+    #expect(overcast.palette.trace == clear.palette.trace)
+}
+
+@Test func `contrast survives every level of cloud cover`() {
+    for cover in stride(from: 0.0, through: 1.0, by: 0.1) {
+        for hour in [3, 7, 12, 18, 21] {
+            let state = SkyState.now(
+                latitude: 37.8, longitude: -122.25,
+                date: utc(2026, 9, 4, hour, 0), cloudCover: cover
+            )
+            let ratio = contrastRatio(state.palette.paper, state.palette.ink)
+            #expect(ratio >= 4.5, "contrast \(ratio) at cover \(cover), hour \(hour)")
+        }
+    }
+}

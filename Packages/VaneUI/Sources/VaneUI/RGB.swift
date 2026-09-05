@@ -21,6 +21,13 @@ public nonisolated struct RGB: Sendable, Hashable {
 
     public var color: Color { Color(.sRGB, red: r, green: g, blue: b) }
 
+    /// The same colour with its chroma removed, at matching luminance. What an overcast sky
+    /// does to a scene: not darker, just less coloured.
+    public var neutral: RGB {
+        let grey = (max(r, g, b) + min(r, g, b)) / 2
+        return RGB(grey, grey, grey)
+    }
+
     /// WCAG relative luminance.
     public var luminance: Double {
         func lin(_ v: Double) -> Double { v <= 0.04045 ? v / 12.92 : pow((v + 0.055) / 1.055, 2.4) }

@@ -31,8 +31,13 @@ async def test_snapshot_attaches_the_local_utc_offset():
 
 
 async def test_snapshot_maps_current_conditions():
+    # Compared against the fixture's own values rather than a literal. Hardcoding the captured
+    # temperature means every re-record of the payload breaks the suite for no reason, and the
+    # thing under test is the mapping, not the weather in Oakland on one afternoon.
+    expected = openmeteo_payload()["current"]
     data = await _source(_ok).snapshot(CELL)
-    assert data.current.temp_c == 21.9
+    assert data.current.temp_c == expected["temperature_2m"]
+    assert data.current.cloud_cover == expected["cloud_cover"]
     assert data.current.wind_kt > 0
     assert 0 <= data.current.humidity <= 100
     assert isinstance(data.current.code, int)

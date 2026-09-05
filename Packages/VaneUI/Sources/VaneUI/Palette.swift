@@ -142,9 +142,22 @@ public nonisolated struct SkyState: Sendable, Hashable {
         // Blue wash for the hour after the warm one has gone: the sky is lit but the sun is not.
         let blueHour = smoothstep(-12, -4, sun.elevation) * (1 - smoothstep(-4, 2, sun.elevation))
 
-        let clear = 1 - min(1, max(0, cloudCover))
+        let cover = min(1, max(0, cloudCover))
+        let clear = 1 - cover
         if warmth > 0 { palette = palette.washed(RGB(hex: 0xE8DFC9), amount: warmth * 0.55 * clear) }
         if blueHour > 0 { palette = palette.washed(RGB(hex: 0x5B6E86), amount: blueHour * 0.45 * clear) }
+
+        // Cover does more than mute the wash: an overcast day is genuinely flatter, so the
+        // paper loses chroma toward its own neutral. Only the paper — draining colour from the
+        // trace would make the reading harder to find on exactly the days it is greyest.
+        if cover > 0.35 {
+            let flattening = smoothstep(0.35, 1.0, cover) * 0.7
+            palette = Palette(
+                paper: palette.paper.mixed(with: palette.paper.neutral, amount: flattening),
+                grid: palette.grid, ink: palette.ink,
+                trace: palette.trace, alert: palette.alert
+            )
+        }
 
         // Last word on legibility. Whatever the wash did to the paper, ink is pushed until it
         // clears WCAG AA for body text. Contrast is not something the palette gets to lose.
