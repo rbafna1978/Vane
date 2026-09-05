@@ -85,7 +85,9 @@ public struct Catalog: View {
             .padding(24)
         }
         .background(palette.paperColor)
-        .animation(VaneMotion.sky, value: palette)
+        // Deliberately NOT animated on `palette`. The scrubber drives the palette directly, and
+        // a 1.2s crossfade on a gesture-driven value trails the finger by over a second. The sky
+        // curve belongs to time passing on its own, which the catalog does not simulate.
     }
 
     private func header(_ state: SkyState) -> some View {

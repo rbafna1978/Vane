@@ -11,14 +11,18 @@ public nonisolated enum VaneMotion {
     /// machine rather than as a reading.
     public static let figure = Animation.smooth(duration: 0.28)
 
-    /// Content entering. Ease-out, because an entrance should decelerate into place; ease-in
-    /// on an entrance is the single most common motion mistake.
-    public static let entrance = Animation.smooth(duration: 0.34)
+    /// Content entering. `.smooth` is a zero-bounce spring, not an eased curve — it decelerates
+    /// into place like an ease-out and stays retargetable, which an eased duration is not.
+    /// 280ms keeps it inside the sub-300ms UI budget.
+    public static let entrance = Animation.smooth(duration: 0.28)
 
     /// Anything under a finger, or released from one. Interruptible and retargetable.
     public static let gesture = Animation.spring(response: 0.42, dampingFraction: 0.82)
 
-    /// The palette crossing dusk. Long, because the sun is not in a hurry, and because a
-    /// visible colour step is worse than no transition at all.
+    /// The palette crossing dusk. Long, because the sun is not in a hurry and a visible colour
+    /// step is worse than no transition.
+    ///
+    /// Only ever for time passing on its own. Never attach it to a value a finger is driving —
+    /// at 1.2s the colour trails the gesture by more than a second and the control feels broken.
     public static let sky = Animation.easeInOut(duration: 1.2)
 }

@@ -147,3 +147,22 @@ Append-only. Every ADR and design choice, one line of rationale.
   steep in the first place.
 - **Three motion primitives, chosen by `find-animation-opportunities`, which vetoed the obvious one.**
   See the phase 3 note in the README.
+
+## review-animations findings (phase 3) — all fixed
+
+- **`PaperScroll` release animation was dead code.** `settled` was assigned once outside
+  `withAnimation` and again inside it, so the block saw no change and the spring never ran —
+  every release teleported. Missed because the primitive has no call site until phase 5. Now one
+  assignment, inside the block.
+- **`PaperScroll` now carries real velocity.** `withAnimation(.spring)` starts from rest;
+  `predictedEndTranslation` projects a destination, not momentum. A flick and a slow drag settled
+  identically. Now `interpolatingSpring(initialVelocity:)` derived from the gap between predicted
+  and actual translation, clamped to ±12.
+- **`RollingNumber`'s reduced-motion path removed motion entirely.** `.contentTransition(.identity)`
+  hard-swaps the digits. Reduced motion means gentler, never absent — now `.opacity`.
+- **The catalog animated a gesture-driven value.** `.animation(VaneMotion.sky, value: palette)` at
+  1.2s made the colour trail the scrubbing finger by over a second. Removed; `VaneMotion.sky` is
+  documented as ambient-only. Same error I had correctly avoided on `PaperScroll`'s tracking path.
+- **`entrance` cut from 340ms to 280ms**, inside the sub-300ms UI budget.
+- **Two comments described curves the code did not use.** `.smooth` is a zero-bounce spring, not an
+  ease-out. Wrong comments in a design system propagate to every call site.

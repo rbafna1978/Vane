@@ -33,9 +33,10 @@ public struct RollingNumber: View {
             // Tabular figures: without them the glyph widths change as digits change and the
             // whole line shifts sideways while it rolls.
             .monospacedDigit()
-            .contentTransition(reduceMotion ? .identity : .numericText(value: value))
-            // The reduced path is designed, not disabled: the value still crossfades, it just
-            // does not travel. Someone who asked for less motion still gets to see it change.
+            .contentTransition(reduceMotion ? .opacity : .numericText(value: value))
+            // The reduced path is designed, not disabled. `.opacity` crossfades the digits;
+            // `.identity` would hard-swap them, which is *less* motion than asked for and reads
+            // as a glitch — reduced motion means gentler, never absent.
             .animation(reduceMotion ? .easeInOut(duration: 0.2) : VaneMotion.figure, value: value)
     }
 }

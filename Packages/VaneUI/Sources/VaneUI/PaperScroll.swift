@@ -51,17 +51,32 @@ public struct PaperScroll<Content: View>: View {
                 live = value.translation.width
             }
             .onEnded { value in
-                // Hand the finger's velocity to the spring rather than starting from rest.
-                // `predictedEndTranslation` is UIKit's own projection of where the gesture was
-                // heading, so momentum continues at the speed the finger was actually moving.
+                // `predictedEndTranslation` is UIKit's projection of where the flick was headed;
+                // the difference between it and the actual translation is the momentum left in
+                // the finger. Feed that in as initial velocity so a flick and a slow drag settle
+                // differently — a spring started from rest makes every release feel identical.
                 let projected = settled + value.predictedEndTranslation.width
-                live = 0
-                settled = min(0, max(minOffset, projected))
+                let target = min(0, max(minOffset, projected))
+                let remaining = value.predictedEndTranslation.width - value.translation.width
+                let distance = target - (settled + live)
+                let velocity = distance == 0 ? 0 : Double(remaining / distance)
 
-                withAnimation(reduceMotion ? .easeOut(duration: 0.25) : VaneMotion.gesture) {
-                    // Assigning inside the animation lets an interrupting drag retarget the
-                    // spring instead of fighting it.
-                    settled = min(0, max(minOffset, projected))
+                // Fold the live translation into `settled` first so the value does not jump when
+                // the gesture's contribution disappears.
+                settled += live
+                live = 0
+
+                // The ONLY assignment to the animated value. Doing it once outside the block as
+                // well would move it silently and leave the spring with nothing to animate.
+                withAnimation(
+                    reduceMotion
+                        ? .easeOut(duration: 0.25)
+                        : .interpolatingSpring(
+                            stiffness: 180, damping: 24,
+                            initialVelocity: min(max(velocity, -12), 12)
+                        )
+                ) {
+                    settled = target
                 }
             }
     }
