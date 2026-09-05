@@ -16,9 +16,12 @@ public struct BarographTrace: View {
     public struct Point: Sendable, Hashable {
         public let hour: Double
         public let value: Double
-        public init(hour: Double, value: Double) {
+        public let precipMm: Double
+
+        public init(hour: Double, value: Double, precipMm: Double = 0) {
             self.hour = hour
             self.value = value
+            self.precipMm = precipMm
         }
     }
 
@@ -53,15 +56,29 @@ public struct BarographTrace: View {
             let high = (values.max() ?? 1) + 2.5
             let span = max(high - low, 0.001)
 
-            let plot = CGRect(x: 0, y: 4, width: size.width, height: size.height - 22)
+            // A gutter on the left for the value scale, and a row at the foot for rainfall.
+            // Without the scale the trace is a shape with no magnitude — you can see that today
+            // rose, but not to what.
+            let gutter: CGFloat = typeSize.isAccessibilitySize ? 44 : 34
+            let precipRow: CGFloat = hasPrecipitation ? 22 : 0
+            let plot = CGRect(
+                x: gutter, y: 4,
+                width: size.width - gutter,
+                height: size.height - 22 - precipRow
+            )
             func x(_ hour: Double) -> CGFloat { plot.minX + plot.width * hour / 24 }
             func y(_ value: Double) -> CGFloat {
                 plot.maxY - plot.height * (value - low) / span
             }
 
-            drawGrid(context, plot: plot, x: x)
+            let ticks = valueTicks(low: low, high: high)
+            drawGrid(context, plot: plot, ticks: ticks, x: x, y: y)
             if let normalHigh, let normalLow {
                 drawNormalBand(context, plot: plot, top: y(normalHigh), bottom: y(normalLow))
+            }
+            drawValueLabels(context, plot: plot, ticks: ticks, gutter: gutter, y: y)
+            if hasPrecipitation {
+                drawPrecipitation(context, plot: plot, size: size, x: x)
             }
             drawTrace(context, x: x, y: y)
             drawPenTip(context, x: x, y: y)
@@ -74,15 +91,15 @@ public struct BarographTrace: View {
     // MARK: - Layers
 
     private func drawGrid(
-        _ context: GraphicsContext, plot: CGRect, x: (Double) -> CGFloat
+        _ context: GraphicsContext, plot: CGRect, ticks: [Double],
+        x: (Double) -> CGFloat, y: (Double) -> CGFloat
     ) {
-        // Printed ruling: horizontals for value, a tick every three hours for time. Hairlines,
-        // because on real chart paper the grid is underneath the reading, never competing.
-        for row in 0...5 {
-            let y = plot.minY + plot.height * CGFloat(row) / 5
+        // Ruling sits on the labelled values, not on arbitrary fractions of the height. A line
+        // you cannot name is decoration; a line at 20 degrees is a measurement.
+        for tick in ticks {
             context.stroke(
-                Path { $0.move(to: .init(x: plot.minX, y: y))
-                       $0.addLine(to: .init(x: plot.maxX, y: y)) },
+                Path { $0.move(to: .init(x: plot.minX, y: y(tick)))
+                       $0.addLine(to: .init(x: plot.maxX, y: y(tick))) },
                 with: .color(palette.gridColor), lineWidth: 0.5
             )
         }
@@ -165,6 +182,54 @@ public struct BarographTrace: View {
         )
     }
 
+    /// Round numbers, four or five of them.
+    ///
+    /// A scale labelled 13.4 / 17.8 / 22.2 is arithmetically correct and useless — nobody holds
+    /// those. Step up through 1, 2, 5, 10 until the range fits in about five lines.
+    private func valueTicks(low: Double, high: Double) -> [Double] {
+        let span = max(high - low, 1)
+        let step = [1.0, 2.0, 5.0, 10.0, 20.0].first { span / $0 <= 5.5 } ?? 20
+        let first = (low / step).rounded(.up) * step
+        return stride(from: first, through: high, by: step).map { $0 }
+    }
+
+    private func drawValueLabels(
+        _ context: GraphicsContext, plot: CGRect, ticks: [Double],
+        gutter: CGFloat, y: (Double) -> CGFloat
+    ) {
+        let pointSize: CGFloat = typeSize.isAccessibilitySize ? 15 : 12
+        for tick in ticks {
+            let text = Text("\(Int(tick))°")
+                .font(.custom(VaneFont.mono, fixedSize: pointSize))
+                .foregroundStyle(palette.inkColor.opacity(0.45))
+            context.draw(text, at: .init(x: gutter - 8, y: y(tick)), anchor: .trailing)
+        }
+    }
+
+    /// Rainfall, as a row of marks under the trace.
+    ///
+    /// Drawn only when something is actually falling — an always-present empty row would teach
+    /// people to ignore the one place the chart says it is going to rain.
+    private func drawPrecipitation(
+        _ context: GraphicsContext, plot: CGRect, size: CGSize, x: (Double) -> CGFloat
+    ) {
+        let peak = max(points.map(\.precipMm).max() ?? 0, 1)
+        let base = size.height - 22
+        let height: CGFloat = 18
+        let width = max(plot.width / CGFloat(max(points.count, 1)) - 1, 1.5)
+
+        for point in points where point.precipMm > 0 {
+            let bar = CGFloat(min(point.precipMm / peak, 1)) * height
+            context.fill(
+                Path(CGRect(x: x(point.hour) - width / 2, y: base - bar,
+                            width: width, height: bar)),
+                with: .color(palette.traceColor.opacity(point.hour <= nowHour ? 0.55 : 0.28))
+            )
+        }
+    }
+
+    private var hasPrecipitation: Bool { points.contains { $0.precipMm > 0 } }
+
     private func drawHourLabels(
         _ context: GraphicsContext, plot: CGRect, size: CGSize, x: (Double) -> CGFloat
     ) {
@@ -226,6 +291,10 @@ public struct BarographTrace: View {
             } else {
                 summary += " Within the usual range for this date."
             }
+        }
+        if hasPrecipitation {
+            let total = points.reduce(0) { $0 + $1.precipMm }
+            summary += String(format: " %.1f millimetres of rain expected today.", total)
         }
         return summary
     }

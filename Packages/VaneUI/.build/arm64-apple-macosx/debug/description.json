@@ -121,6 +121,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/WeatherCode.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
         },
         {
@@ -137,7 +141,8 @@
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/SnapshotStore.swift.o",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/StreakStore.swift.o",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/SunPosition.swift.o",
-        "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/VaneClient.swift.o"
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/VaneClient.swift.o",
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/WeatherCode.swift.o"
       ],
       "otherArguments" : [
         "-target",
@@ -216,6 +221,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/WeatherCode.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules/VaneKit.swiftmodule"
         }
       ],
@@ -226,7 +235,8 @@
         "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SnapshotStore.swift",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/StreakStore.swift",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SunPosition.swift",
-        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/VaneClient.swift"
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/VaneClient.swift",
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/WeatherCode.swift"
       ],
       "tempsPath" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build",
       "wholeModuleOptimization" : false
@@ -703,6 +713,7 @@
       "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/StreakStore.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SunPosition.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/VaneClient.swift",
+      "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/WeatherCode.swift",
       "-I",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules",
       "-target",
@@ -1022,6 +1033,10 @@
         {
           "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/VaneClient.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/WeatherCode.swift"
         }
       ],
       "outputFilePath" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/sources"
@@ -1136,6 +1151,10 @@
         {
           "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/VaneClient.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/WeatherCode.swift.o"
         },
         {
           "kind" : "file",

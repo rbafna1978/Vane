@@ -261,3 +261,22 @@ meaningful paint is instrumented instead, measured from `kinfo_proc` process sta
 included: **285 / 228 / 219 / 216 / 229 ms over five cold launches, median ~228ms against a
 1200ms budget.** Animation hitch numbers still need a physical device — a simulator has no
 ProMotion, no real GPU and no thermal behaviour, and reporting its figures would be theatre.
+
+## Phase 4 follow-up — chart legibility and conditions
+
+Feedback: the chart could not be read at a glance, and conditions were missing entirely.
+
+- **The chart had no value axis at all.** You could see that today rose; you could not see to
+  what. Ruling now sits on labelled round temperatures (a 1/2/5/10 step chosen so the range fits
+  in about five lines) rather than on arbitrary fractions of the height — a line you cannot name
+  is decoration, a line at 20 degrees is a measurement.
+- **Precipitation was in the payload since phase 1 and never drawn.** Now a row of marks under
+  the trace, scaled against a 1mm floor so light drizzle looks light and real rain fills the row,
+  and drawn only when something is actually falling — an always-present empty row teaches people
+  to ignore the one place the chart says it will rain.
+- **`current.code` was also unused since phase 1.** WMO 4677 codes now map to plain words
+  ("Overcast", "Light rain") rather than the METAR abbreviations the chart furniture borrows:
+  someone deciding on a jacket should not have to learn a code. An unrecognised code renders
+  nothing rather than guessing.
+- **Feels-like appears only when it differs from the reading by 2 degrees or more.** Printing
+  "feels like 20" beside 20 is noise dressed as data.

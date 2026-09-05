@@ -60,7 +60,10 @@ public struct MainScreen: View {
             Spacer().frame(height: 32)
             Reading(snapshot: snapshot, palette: palette)
 
-            Spacer().frame(height: 8)
+            Spacer().frame(height: 6)
+            ConditionLine(snapshot: snapshot, palette: palette)
+
+            Spacer().frame(height: 14)
             // No reserved height. A cold cell has no sentence, and holding 76pt of empty paper
             // for one leaves a hole that reads as a rendering bug. When the sentence does
             // arrive it pushes into the sheet and the chart yields — which is the arrival
@@ -70,7 +73,8 @@ public struct MainScreen: View {
             Spacer().frame(height: 28)
             BarographTrace(
                 points: snapshot.arc.map {
-                    .init(hour: hour(of: $0.t, in: snapshot), value: $0.tempC)
+                    .init(hour: hour(of: $0.t, in: snapshot), value: $0.tempC,
+                          precipMm: $0.precipMm)
                 },
                 normalHigh: snapshot.normal?.tmaxC,
                 normalLow: snapshot.normal?.tminC,
@@ -160,6 +164,45 @@ struct Reading: View {
         .foregroundStyle(palette.inkColor)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(Int(snapshot.current.tempC.rounded())) degrees")
+    }
+}
+
+/// What it is actually doing out, and what it feels like.
+///
+/// Sits directly under the reading and above the sentence, because that is the order of the
+/// questions: how warm, what kind of day, and then — the part only this app answers — is that
+/// unusual. Kept in the data face so it stays quieter than the sentence below it.
+struct ConditionLine: View {
+    let snapshot: Snapshot
+    let palette: Palette
+
+    var body: some View {
+        Text(parts.joined(separator: "   ·   "))
+            .font(.vaneData).tracking(1.3)
+            .foregroundStyle(palette.inkColor.opacity(0.72))
+            .accessibilityLabel(voiceOver)
+    }
+
+    private var parts: [String] {
+        var parts: [String] = []
+        let condition = snapshot.current.condition.label
+        if !condition.isEmpty { parts.append(condition.uppercased()) }
+        // Only when it disagrees with the reading by enough to change what someone wears.
+        // Printing "feels like 20" next to 20 is noise dressed as data.
+        if abs(snapshot.current.feelsC - snapshot.current.tempC) >= 2 {
+            parts.append("FEELS \(Int(snapshot.current.feelsC.rounded()))°")
+        }
+        parts.append("\(snapshot.current.humidity)% RH")
+        return parts
+    }
+
+    private var voiceOver: String {
+        var summary = snapshot.current.condition.label
+        if summary.isEmpty { summary = "Conditions" }
+        if abs(snapshot.current.feelsC - snapshot.current.tempC) >= 2 {
+            summary += ". Feels like \(Int(snapshot.current.feelsC.rounded())) degrees"
+        }
+        return summary + ". Humidity \(snapshot.current.humidity) percent."
     }
 }
 

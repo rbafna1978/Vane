@@ -105,3 +105,31 @@ import Testing
     // Travelling west or a manual clock change must not be rewarded.
     #expect(store.recordOpen(today: day.addingTimeInterval(-3 * 86_400), calendar: calendar) == 1)
 }
+
+// MARK: - WeatherCode
+
+@Test(arguments: [
+    (0, "Clear"), (3, "Overcast"), (45, "Fog"), (51, "Light drizzle"),
+    (63, "Rain"), (65, "Heavy rain"), (73, "Snow"), (82, "Heavy showers"),
+    (95, "Thunderstorm"), (99, "Hail"),
+])
+func `WMO codes map to words a person can act on`(code: Int, expected: String) {
+    #expect(WeatherCode(code).label == expected)
+}
+
+@Test func `an unrecognised code renders nothing rather than a guess`() {
+    // WMO has gaps and Open-Meteo may add codes. Showing "Unknown" next to a temperature is
+    // worse than showing nothing; the number is still true either way.
+    #expect(WeatherCode(7).label.isEmpty)
+    #expect(WeatherCode(999).label.isEmpty)
+    #expect(WeatherCode(7).isPrecipitating == false)
+}
+
+@Test func `precipitation codes are recognised as wet`() {
+    for code in [51, 61, 65, 80, 82, 95, 99, 71] {
+        #expect(WeatherCode(code).isPrecipitating, "code \(code) should be wet")
+    }
+    for code in [0, 1, 2, 3, 45] {
+        #expect(!WeatherCode(code).isPrecipitating, "code \(code) should be dry")
+    }
+}
