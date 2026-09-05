@@ -116,3 +116,14 @@ private func contrastRatio(_ a: RGB, _ b: RGB) -> Double {
 }
 
 private func chroma(_ c: RGB) -> Double { max(c.r, c.g, c.b) - min(c.r, c.g, c.b) }
+
+@Test func `every sky phase has a readable label`() {
+    // Uppercasing a camelCase rawValue silently produces "ASTRONOMICALTWILIGHT".
+    for phase in SkyPhase.allCases {
+        #expect(phase.label == phase.label.uppercased())
+        #expect(!phase.label.contains("  "))
+        if phase.rawValue.contains(where: \.isUppercase) {
+            #expect(phase.label.contains(" "), "\(phase) needs a word break")
+        }
+    }
+}

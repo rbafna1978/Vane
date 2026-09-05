@@ -79,6 +79,19 @@ public nonisolated struct Palette: Sendable, Hashable {
 public nonisolated enum SkyPhase: String, Sendable, CaseIterable {
     case night, astronomicalTwilight, nauticalTwilight, civilTwilight, goldenHour, day
 
+    /// Display name. Uppercasing the camelCase rawValue produces "ASTRONOMICALTWILIGHT"; the
+    /// names are written out because a label is content, not a derived string.
+    public var label: String {
+        switch self {
+        case .night: "NIGHT"
+        case .astronomicalTwilight: "ASTRONOMICAL TWILIGHT"
+        case .nauticalTwilight: "NAUTICAL TWILIGHT"
+        case .civilTwilight: "CIVIL TWILIGHT"
+        case .goldenHour: "GOLDEN HOUR"
+        case .day: "DAY"
+        }
+    }
+
     public init(elevation: Double) {
         switch elevation {
         case ..<(-18): self = .night

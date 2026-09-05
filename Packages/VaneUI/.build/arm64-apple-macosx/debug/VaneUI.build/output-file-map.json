@@ -2,6 +2,13 @@
   "": {
     "swift-dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/primary.swiftdeps"
   },
+  "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/BarographTrace.swift": {
+    "dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/BarographTrace.d",
+    "object": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/BarographTrace.swift.o",
+    "swiftmodule": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/BarographTrace~partial.swiftmodule",
+    "swift-dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/BarographTrace.swiftdeps",
+    "diagnostics": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/BarographTrace.dia"
+  },
   "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Catalog.swift": {
     "dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Catalog.d",
     "object": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Catalog.swift.o",

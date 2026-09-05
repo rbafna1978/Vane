@@ -184,6 +184,10 @@
       "inputs" : [
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/BarographTrace.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Catalog.swift"
         },
         {
@@ -239,6 +243,7 @@
       "moduleName" : "VaneUI",
       "moduleOutputPath" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules/VaneUI.swiftmodule",
       "objects" : [
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/BarographTrace.swift.o",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Catalog.swift.o",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/ContextLine.swift.o",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Motion.swift.o",
@@ -304,6 +309,10 @@
       "outputs" : [
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/BarographTrace.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Catalog.swift.o"
         },
         {
@@ -345,6 +354,7 @@
       ],
       "prepareForIndexing" : false,
       "sources" : [
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/BarographTrace.swift",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Catalog.swift",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/ContextLine.swift",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Motion.swift",
@@ -630,6 +640,7 @@
       "-package-name",
       "vaneui",
       "-c",
+      "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/BarographTrace.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Catalog.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/ContextLine.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Motion.swift",
@@ -880,6 +891,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/BarographTrace.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Catalog.swift"
         },
         {
@@ -945,6 +960,10 @@
         {
           "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/SunPosition.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/BarographTrace.swift.o"
         },
         {
           "kind" : "file",
