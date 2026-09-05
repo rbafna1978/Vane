@@ -89,8 +89,14 @@ public final class WeatherModel {
             snapshot = fresh
             screen = .content
             record(fresh)
-            // The forecast failing must not cost us the snapshot we already have.
-            forecast = try? await forecastTask
+            // The forecast failing must not cost us the snapshot we already have — but it must
+            // not be silent either. Three separate bugs this project have hidden behind a bare
+            // `try?`; the rule now is that a swallowed error still gets logged.
+            do {
+                forecast = try await forecastTask
+            } catch {
+                log.error("forecast unavailable: \(String(describing: error))")
+            }
         } catch {
             // A failed refresh with content on screen is not an error the user needs told
             // about — they are looking at the last known reading, which is what they wanted.
@@ -145,6 +151,11 @@ public final class WeatherModel {
             // and the archive is the one thing in the app that cannot be re-fetched.
             log.error("failed to archive \(day, privacy: .public): \(error)")
         }
+    }
+
+    /// The whole roll: record, today, forecast, as one ordered strip.
+    public var timeline: [TimelineMark] {
+        Timeline.build(archive: archivePoints(), snapshot: snapshot, forecast: forecast)
     }
 
     public func archivePoints() -> [ArchivePoint] {

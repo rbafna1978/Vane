@@ -331,3 +331,36 @@ Feedback: the chart could not be read at a glance, and conditions were missing e
 - **The archive got its own legend and axis range.** It had inherited the forecast's, which said
   "FORECAST" over days that had already happened and stretched the scale to 10 degrees for values
   that were never drawn.
+
+## Phase 5c — one surface, after feedback
+
+Feedback: the detail screens felt plasticky and boxed-in, and the flow should be one screen with
+things moving rather than screens being pushed.
+
+**This was a self-inflicted contradiction.** GATE 2 recorded "dragging left is not navigation —
+the same paper keeps moving", and the phase 5 handoff said "there is no shared-element transition
+because there is no jump". Then I built two pushed screens with back buttons. The premise of the
+design is a continuous roll; pushing a new screen to show yesterday denies it.
+
+- **`NavigationStack`, `DetailScreen` and `ArchiveScreen` deleted.** One surface, `RollScreen`.
+  The horizontal axis is time: past left, future right, pen at today.
+- **Content is a function of position, not of a threshold.** Scrubbing to a past day does not
+  "open" that day; the same three lines take different values. The reading rolls rather than
+  swapping, because it is the same number changing, not a new one arriving.
+- **The pen is fixed and the paper moves under it.** The instrument is the constant thing on
+  screen; the data is what travels.
+- **`apple-design` principles applied directly:** 1:1 tracking with no animation on the tracking
+  path; the drag starts from the presentation value so a moving roll can be grabbed and
+  redirected; Apple's momentum projection picks the landing day from where the flick was going
+  rather than from where the finger left; release hands velocity to an `interpolatingSpring`;
+  rubber-banding at both ends of the record.
+- **The comparison is present at every position.** Today keeps its context sentence; every other
+  day gets the same argument in the same form — how far it sat from its own date's normal — so
+  the product's claim is not only true at the anchor.
+
+**Lost, and worth naming:** the ten-day list view is gone. It was scannable in a way scrubbing is
+not. If scanning turns out to matter it belongs *below* the roll on the same surface, not behind
+a push.
+
+**A `try?` hid the forecast failure**, for the third time in this project. The rule now: an error
+may be swallowed, but it must still be logged. Both the archive write and the forecast fetch log.

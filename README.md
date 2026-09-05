@@ -58,7 +58,7 @@ AAA holds for 92% of the day.
 | 2 | Context engine — normals backfill, ranks, streaks, `/v1/context` | done |
 | 3 | Design system in code — tokens, type scale, sun engine, motion primitives | done |
 | 4 | Main screen | done |
-| 5 | Detail + archive | built, reviews pending |
+| 5 | Detail + archive — one continuous roll | built, reviews pending |
 | 6 | Widget + Live Activity | next |
 | 7 | Push loop + deploy | |
 | 8 | Polish + App Store submission | |

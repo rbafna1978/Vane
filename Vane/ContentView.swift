@@ -6,7 +6,7 @@ struct ContentView: View {
     @State private var model = WeatherModel(client: VaneClient(baseURL: .vaneBackend))
 
     var body: some View {
-        MainScreen(model: model)
+        RollScreen(model: model)
     }
 }
 
