@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 import Testing
 
 @testable import VaneUI
@@ -99,10 +100,28 @@ func `sky phase uses the standard twilight definitions`(elevation: Double, expec
     #expect(chroma(clear.palette.paper) > chroma(overcast.palette.paper))
 }
 
-@Test func `display type is clamped but body type is not`() {
-    let largest = VaneType.reading(for: .accessibilityExtraExtraExtraLarge)
-    #expect(largest <= VaneType.readingSize * 1.31)
+@Test func `display type grows with Dynamic Type but is clamped`() {
+    let largest = VaneType.reading(for: .accessibility5)
+    #expect(largest <= VaneType.readingSize * 1.31, "148pt x AX5 would be ~380pt; nothing survives that")
     #expect(largest > VaneType.readingSize, "it must still grow, just not without bound")
+}
+
+@Test func `type scales monotonically across every Dynamic Type size`() {
+    // Regression for the real bug: every font used `fixedSize:` or `Font.system(size:)`, both of
+    // which opt out of Dynamic Type entirely, so the accessibility setting did nothing at all —
+    // while these very curves sat tested and uncalled.
+    var previousReading = 0.0
+    var previousContext = 0.0
+    for size in DynamicTypeSize.allCases {
+        let reading = VaneType.reading(for: size)
+        let context = VaneType.context(for: size)
+        #expect(reading >= previousReading, "reading shrank at \(size)")
+        #expect(context >= previousContext, "context shrank at \(size)")
+        previousReading = reading
+        previousContext = context
+    }
+    #expect(VaneType.reading(for: .accessibility5) > VaneType.reading(for: .large))
+    #expect(VaneType.context(for: .accessibility5) > VaneType.context(for: .large))
 }
 
 private func luminance(_ c: RGB) -> Double {

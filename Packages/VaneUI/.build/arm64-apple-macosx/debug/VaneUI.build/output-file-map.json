@@ -23,6 +23,27 @@
     "swift-dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/ContextLine.swiftdeps",
     "diagnostics": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/ContextLine.dia"
   },
+  "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/EmptyStateView.swift": {
+    "dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/EmptyStateView.d",
+    "object": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/EmptyStateView.swift.o",
+    "swiftmodule": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/EmptyStateView~partial.swiftmodule",
+    "swift-dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/EmptyStateView.swiftdeps",
+    "diagnostics": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/EmptyStateView.dia"
+  },
+  "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/LaunchMetrics.swift": {
+    "dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/LaunchMetrics.d",
+    "object": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/LaunchMetrics.swift.o",
+    "swiftmodule": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/LaunchMetrics~partial.swiftmodule",
+    "swift-dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/LaunchMetrics.swiftdeps",
+    "diagnostics": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/LaunchMetrics.dia"
+  },
+  "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/MainScreen.swift": {
+    "dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/MainScreen.d",
+    "object": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/MainScreen.swift.o",
+    "swiftmodule": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/MainScreen~partial.swiftmodule",
+    "swift-dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/MainScreen.swiftdeps",
+    "diagnostics": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/MainScreen.dia"
+  },
   "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Motion.swift": {
     "dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Motion.d",
     "object": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Motion.swift.o",
@@ -64,6 +85,13 @@
     "swiftmodule": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Typography~partial.swiftmodule",
     "swift-dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Typography.swiftdeps",
     "diagnostics": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Typography.dia"
+  },
+  "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/WeatherModel.swift": {
+    "dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/WeatherModel.d",
+    "object": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/WeatherModel.swift.o",
+    "swiftmodule": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/WeatherModel~partial.swiftmodule",
+    "swift-dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/WeatherModel.swiftdeps",
+    "diagnostics": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/WeatherModel.dia"
   },
   "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/DerivedSources/resource_bundle_accessor.swift": {
     "dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/resource_bundle_accessor.d",

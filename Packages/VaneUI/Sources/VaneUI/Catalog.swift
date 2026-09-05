@@ -172,7 +172,7 @@ public struct Catalog: View {
     private func typeSpecimen(_ palette: Palette) -> some View {
         VStack(alignment: .leading, spacing: 9) {
             Text("Display L 40").font(.vaneDisplayLarge)
-            Text("Context 28 — the sentence that carries the product").font(.vaneContext)
+            Text("Context 28 — the sentence that carries the product").vaneContextType()
             Text("Body 17 — SF Pro Text, because Dynamic Type and VoiceOver come free with it.")
                 .font(.vaneBody)
             Text("Caption 13 — secondary labels").font(.vaneCaption)

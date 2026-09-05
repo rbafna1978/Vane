@@ -31,6 +31,7 @@ class SnapshotData(BaseModel):
     """What a source can answer about right now. Context and normals are ours, not theirs."""
 
     observed_at: datetime
+    utc_offset_seconds: int
     current: Current
     arc: list[ArcPoint]
     sun: Sun

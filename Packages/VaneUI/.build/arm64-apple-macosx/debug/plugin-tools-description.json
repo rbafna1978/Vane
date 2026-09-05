@@ -83,11 +83,23 @@
       "inputs" : [
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/LocationProvider.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/Models.swift"
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SnapshotStore.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SunPosition.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/VaneClient.swift"
         },
         {
           "kind" : "file",
@@ -102,8 +114,11 @@
       "moduleName" : "VaneKit",
       "moduleOutputPath" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules/VaneKit.swiftmodule",
       "objects" : [
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/LocationProvider.swift.o",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/Models.swift.o",
-        "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/SunPosition.swift.o"
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/SnapshotStore.swift.o",
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/SunPosition.swift.o",
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/VaneClient.swift.o"
       ],
       "otherArguments" : [
         "-target",
@@ -158,11 +173,23 @@
       "outputs" : [
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/LocationProvider.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/Models.swift.o"
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/SnapshotStore.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/SunPosition.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/VaneClient.swift.o"
         },
         {
           "kind" : "file",
@@ -171,8 +198,11 @@
       ],
       "prepareForIndexing" : false,
       "sources" : [
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/LocationProvider.swift",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/Models.swift",
-        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SunPosition.swift"
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SnapshotStore.swift",
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SunPosition.swift",
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/VaneClient.swift"
       ],
       "tempsPath" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build",
       "wholeModuleOptimization" : false
@@ -193,6 +223,18 @@
         {
           "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/ContextLine.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/EmptyStateView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/LaunchMetrics.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/MainScreen.swift"
         },
         {
           "kind" : "file",
@@ -217,6 +259,10 @@
         {
           "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Typography.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/WeatherModel.swift"
         },
         {
           "kind" : "file",
@@ -246,12 +292,16 @@
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/BarographTrace.swift.o",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Catalog.swift.o",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/ContextLine.swift.o",
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/EmptyStateView.swift.o",
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/LaunchMetrics.swift.o",
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/MainScreen.swift.o",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Motion.swift.o",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Palette.swift.o",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/PaperScroll.swift.o",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/RGB.swift.o",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/RollingNumber.swift.o",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Typography.swift.o",
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/WeatherModel.swift.o",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/resource_bundle_accessor.swift.o"
       ],
       "otherArguments" : [
@@ -321,6 +371,18 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/EmptyStateView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/LaunchMetrics.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/MainScreen.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Motion.swift.o"
         },
         {
@@ -345,6 +407,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/WeatherModel.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/resource_bundle_accessor.swift.o"
         },
         {
@@ -357,12 +423,16 @@
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/BarographTrace.swift",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Catalog.swift",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/ContextLine.swift",
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/EmptyStateView.swift",
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/LaunchMetrics.swift",
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/MainScreen.swift",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Motion.swift",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Palette.swift",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/PaperScroll.swift",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/RGB.swift",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/RollingNumber.swift",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Typography.swift",
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/WeatherModel.swift",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/DerivedSources/resource_bundle_accessor.swift"
       ],
       "tempsPath" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build",
@@ -579,8 +649,11 @@
       "-package-name",
       "vanekit",
       "-c",
+      "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/LocationProvider.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/Models.swift",
+      "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SnapshotStore.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SunPosition.swift",
+      "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/VaneClient.swift",
       "-I",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules",
       "-target",
@@ -643,12 +716,16 @@
       "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/BarographTrace.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Catalog.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/ContextLine.swift",
+      "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/EmptyStateView.swift",
+      "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/LaunchMetrics.swift",
+      "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/MainScreen.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Motion.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Palette.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/PaperScroll.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/RGB.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/RollingNumber.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Typography.swift",
+      "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/WeatherModel.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/DerivedSources/resource_bundle_accessor.swift",
       "-I",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules",
@@ -873,11 +950,23 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/LocationProvider.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/Models.swift"
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SnapshotStore.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SunPosition.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/VaneClient.swift"
         }
       ],
       "outputFilePath" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/sources"
@@ -903,6 +992,18 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/EmptyStateView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/LaunchMetrics.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/MainScreen.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Motion.swift"
         },
         {
@@ -924,6 +1025,10 @@
         {
           "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Typography.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/WeatherModel.swift"
         },
         {
           "kind" : "file",
@@ -955,11 +1060,23 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/LocationProvider.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/Models.swift.o"
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/SnapshotStore.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/SunPosition.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/VaneClient.swift.o"
         },
         {
           "kind" : "file",
@@ -972,6 +1089,18 @@
         {
           "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/ContextLine.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/EmptyStateView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/LaunchMetrics.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/MainScreen.swift.o"
         },
         {
           "kind" : "file",
@@ -996,6 +1125,10 @@
         {
           "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Typography.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/WeatherModel.swift.o"
         },
         {
           "kind" : "file",

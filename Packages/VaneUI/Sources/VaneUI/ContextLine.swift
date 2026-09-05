@@ -25,7 +25,7 @@ public struct ContextLine: View {
         ZStack(alignment: .leading) {
             if let context {
                 Text(context.headline)
-                    .font(.vaneContext)
+                    .vaneContextType()
                     .foregroundStyle(palette.inkColor)
                     // Low confidence means a short record. It still shows, quieter, rather
                     // than claiming the same authority as thirty years of data.

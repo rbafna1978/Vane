@@ -108,6 +108,7 @@ class OpenMeteoSource:
 
         return SnapshotData(
             observed_at=_dt(cur["time"], tz),
+            utc_offset_seconds=int(data["utc_offset_seconds"]),
             current=Current(
                 temp_c=cur["temperature_2m"],
                 feels_c=cur["apparent_temperature"],

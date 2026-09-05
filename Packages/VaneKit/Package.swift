@@ -11,6 +11,12 @@ let package = Package(
         // MainActor isolation; forcing it down here would drag the widget extension and the
         // sun engine onto the main actor for no reason.
         .target(name: "VaneKit"),
-        .testTarget(name: "VaneKitTests", dependencies: ["VaneKit"]),
+        .testTarget(
+            name: "VaneKitTests",
+            dependencies: ["VaneKit"],
+            // A payload captured from the running backend. Decoding it in a test is what
+            // catches contract drift — a renamed field shows up here, not on a blank screen.
+            resources: [.process("snapshot.json")]
+        ),
     ]
 )

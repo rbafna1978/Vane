@@ -344,6 +344,9 @@ extern "C" {
 #if __has_warning("-Watimport-in-framework-header")
 #pragma clang diagnostic ignored "-Watimport-in-framework-header"
 #endif
+@import CoreLocation;
+@import Foundation;
+@import ObjectiveC;
 #endif
 
 #endif // defined(__OBJC__)
@@ -365,6 +368,24 @@ extern "C" {
 #endif
 
 #if defined(__OBJC__)
+
+/// Where the phone is.
+/// <code>@MainActor</code> on purpose, and the one place in VaneKit that is: <code>CLLocationManager</code> is not
+/// <code>Sendable</code> and delivers its callbacks on the thread its delegate was set up on. Pinning it
+/// to the main actor is honest about that, rather than promising thread-safety with an
+/// <code>@unchecked Sendable</code> the compiler cannot verify.
+SWIFT_CLASS("_TtC7VaneKit16LocationProvider")
+@interface LocationProvider : NSObject
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+@end
+
+@class CLLocationManager;
+@class CLLocation;
+@interface LocationProvider (SWIFT_EXTENSION(VaneKit)) <CLLocationManagerDelegate>
+- (void)locationManager:(CLLocationManager * _Nonnull)manager didUpdateLocations:(NSArray<CLLocation *> * _Nonnull)locations;
+- (void)locationManager:(CLLocationManager * _Nonnull)manager didFailWithError:(NSError * _Nonnull)error;
+- (void)locationManagerDidChangeAuthorization:(CLLocationManager * _Nonnull)manager;
+@end
 
 #endif // defined(__OBJC__)
 #if __has_attribute(external_source_symbol)

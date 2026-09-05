@@ -55,6 +55,7 @@ async def snapshot(
     body = Snapshot(
         cell_id=cell.id,
         observed_at=data.observed_at,
+        utc_offset_seconds=data.utc_offset_seconds,
         current=data.current,
         arc=data.arc,
         normal=normal,

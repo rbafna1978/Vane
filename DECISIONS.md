@@ -166,3 +166,45 @@ Append-only. Every ADR and design choice, one line of rationale.
 - **`entrance` cut from 340ms to 280ms**, inside the sub-300ms UI budget.
 - **Two comments described curves the code did not use.** `.smooth` is a zero-bounce spring, not an
   ease-out. Wrong comments in a design system propagate to every call site.
+
+## Phase 4 — main screen (IN PROGRESS, paused 2026-09-05)
+
+Working end to end: real location via CoreLocation, real backend data, real context sentence,
+trace with pen tip, sunrise/sunset, wind, streak dots.
+
+- **Offline-first is real, not aspirational.** `SnapshotStore` loads synchronously in
+  `WeatherModel.init`, so the first frame the screen ever draws already has content. There is no
+  state in the model that means "waiting" while a cache exists, which is why there can be no
+  launch spinner.
+- **A failed refresh with content on screen is silent.** The user is looking at the last known
+  reading, which is what they wanted. It is only an error when there is nothing to show.
+- **The server now sends `utc_offset_seconds`.** Sunrise must render in the time of the place
+  being looked at, not the phone's. Inferring the offset from a midnight boundary breaks on DST
+  days, so the server sends what it already knows. Field is optional client-side so a cache
+  written by an older build still decodes — a schema addition must never blank a working app.
+- **Bug: sunset rendered as "07:33".** `.hour(.twoDigits(amPM: .omitted))` is a 12-hour clock
+  with the disambiguating half removed. On an instrument that is a wrong number, not a
+  formatting preference. Now explicit 24-hour in the location's zone.
+- **Bug: Dynamic Type did nothing at all.** Every font used `fixedSize:` or `Font.system(size:)`,
+  both of which opt out of scaling — while `VaneType.reading(for:)` sat fully unit-tested and
+  never called by anything. Tests giving false confidence about code with no callers.
+- **Fixing that exposed three layout failures at AX5**, all now handled: the station line
+  truncated (METAR code is dropped at accessibility sizes so the place name keeps the width);
+  the chart's hour labels collided into pulp (thinned to six-hourly, size capped — the axis is a
+  fixed width so its labels cannot scale freely); the footer truncated to "↑… ↓ 1… 285…"
+  (stacks vertically instead).
+- **Content overflowed the safe area at AX5.** A `ZStack` centres content taller than itself,
+  which pushed the station line under the status bar. Now a `ScrollView` with
+  `.scrollBounceBehavior(.basedOnSize)` — scrolls only when it must, still a fixed sheet at
+  normal sizes.
+- **Streak is local (UserDefaults), not server-backed.** `/v1/archive/open` lands with the push
+  loop in phase 7.
+
+### Still owed before phase 4 can be called done
+- `design:design-critique` and `design:accessibility-review` on the screen
+- `engineering:code-review` on the phase 4 diff
+- `engineering:tech-debt` — due at the end of phase 3 and skipped; covers phases 1-4
+- Instruments numbers. `xctrace` was killed against the simulator, and simulator hitch numbers
+  would be meaningless anyway: no ProMotion, no real GPU, no thermal behaviour. Launch-to-first-
+  paint is now instrumented via `LaunchMetrics` (measured from `kinfo_proc` process start, so it
+  includes dyld). Real 120fps hitch numbers need a physical device.

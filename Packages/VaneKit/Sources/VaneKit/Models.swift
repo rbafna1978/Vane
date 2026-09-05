@@ -78,6 +78,12 @@ public enum ContextState: String, Codable, Sendable {
 public struct Snapshot: Codable, Sendable, Hashable {
     public let cellId: String
     public let observedAt: Date
+    /// The location's own UTC offset, from the server.
+    ///
+    /// Optional so a cache written by an older build still decodes — a schema addition must
+    /// never turn a working offline app into a blank screen. When absent we fall back to the
+    /// device's zone, which is right for the common case of looking at where you are standing.
+    public let utcOffsetSeconds: Int?
     public let current: Current
     public let arc: [ArcPoint]
     public let normal: NormalBand?
@@ -88,5 +94,14 @@ public struct Snapshot: Codable, Sendable, Hashable {
     enum CodingKeys: String, CodingKey {
         case cellId = "cell_id", observedAt = "observed_at", current, arc, normal, context
         case contextState = "context_state", sun
+        case utcOffsetSeconds = "utc_offset_seconds"
+    }
+
+    /// The time zone of the place being looked at, not of the phone doing the looking.
+    ///
+    /// Sunrise at a saved location three time zones away has to read in *its* local time, or
+    /// the number is a lie dressed as a fact.
+    public var timeZone: TimeZone {
+        utcOffsetSeconds.flatMap { TimeZone(secondsFromGMT: $0) } ?? .current
     }
 }

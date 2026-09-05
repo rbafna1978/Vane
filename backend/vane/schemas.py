@@ -59,6 +59,10 @@ class Context(BaseModel):
 class Snapshot(BaseModel):
     cell_id: str
     observed_at: datetime
+    # The location's own UTC offset. Sent explicitly rather than left to the client to infer
+    # from timestamps: sunrise must render in the time of the place being looked at, not the
+    # time of the phone, and inferring an offset from a midnight boundary breaks on DST days.
+    utc_offset_seconds: int
     current: Current
     arc: list[ArcPoint]
     normal: NormalBand | None = None

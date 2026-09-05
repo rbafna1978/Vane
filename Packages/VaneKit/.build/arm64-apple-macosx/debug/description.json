@@ -7,7 +7,20 @@
     }
   ],
   "copyCommands" : {
-
+    "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit_VaneKitTests.bundle/snapshot.json" : {
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Tests/VaneKitTests/snapshot.json"
+        }
+      ],
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit_VaneKitTests.bundle/snapshot.json"
+        }
+      ]
+    }
   },
   "explicitTargetDependencyImportCheckingMode" : {
     "none" : {
@@ -28,11 +41,23 @@
       "inputs" : [
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/LocationProvider.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/Models.swift"
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SnapshotStore.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SunPosition.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/VaneClient.swift"
         },
         {
           "kind" : "file",
@@ -47,8 +72,11 @@
       "moduleName" : "VaneKit",
       "moduleOutputPath" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/Modules/VaneKit.swiftmodule",
       "objects" : [
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build/LocationProvider.swift.o",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build/Models.swift.o",
-        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build/SunPosition.swift.o"
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build/SnapshotStore.swift.o",
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build/SunPosition.swift.o",
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build/VaneClient.swift.o"
       ],
       "otherArguments" : [
         "-target",
@@ -103,11 +131,23 @@
       "outputs" : [
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build/LocationProvider.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build/Models.swift.o"
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build/SnapshotStore.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build/SunPosition.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build/VaneClient.swift.o"
         },
         {
           "kind" : "file",
@@ -116,8 +156,11 @@
       ],
       "prepareForIndexing" : false,
       "sources" : [
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/LocationProvider.swift",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/Models.swift",
-        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SunPosition.swift"
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SnapshotStore.swift",
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SunPosition.swift",
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/VaneClient.swift"
       ],
       "tempsPath" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build",
       "wholeModuleOptimization" : false
@@ -224,11 +267,23 @@
       "inputs" : [
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Tests/VaneKitTests/ContractTests.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Tests/VaneKitTests/SunPositionTests.swift"
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKitTests.build/DerivedSources/resource_bundle_accessor.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "virtual",
+          "name" : "<VaneKitTests-arm64-apple-macosx-debug.module-resources>"
         },
         {
           "kind" : "file",
@@ -243,7 +298,9 @@
       "moduleName" : "VaneKitTests",
       "moduleOutputPath" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/Modules/VaneKitTests.swiftmodule",
       "objects" : [
-        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKitTests.build/SunPositionTests.swift.o"
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKitTests.build/ContractTests.swift.o",
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKitTests.build/SunPositionTests.swift.o",
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKitTests.build/resource_bundle_accessor.swift.o"
       ],
       "otherArguments" : [
         "-target",
@@ -260,7 +317,7 @@
         "-j10",
         "-DSWIFT_PACKAGE",
         "-DDEBUG",
-        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_AVAILABLE",
         "-module-cache-path",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/ModuleCache",
         "-parseable-output",
@@ -297,7 +354,15 @@
       "outputs" : [
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKitTests.build/ContractTests.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKitTests.build/SunPositionTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKitTests.build/resource_bundle_accessor.swift.o"
         },
         {
           "kind" : "file",
@@ -306,7 +371,9 @@
       ],
       "prepareForIndexing" : false,
       "sources" : [
-        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Tests/VaneKitTests/SunPositionTests.swift"
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Tests/VaneKitTests/ContractTests.swift",
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Tests/VaneKitTests/SunPositionTests.swift",
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKitTests.build/DerivedSources/resource_bundle_accessor.swift"
       ],
       "tempsPath" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKitTests.build",
       "wholeModuleOptimization" : false
@@ -323,8 +390,11 @@
       "-package-name",
       "vanekit",
       "-c",
+      "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/LocationProvider.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/Models.swift",
+      "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SnapshotStore.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SunPosition.swift",
+      "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/VaneClient.swift",
       "-I",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/Modules",
       "-target",
@@ -444,7 +514,9 @@
       "-package-name",
       "vanekit",
       "-c",
+      "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Tests/VaneKitTests/ContractTests.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Tests/VaneKitTests/SunPositionTests.swift",
+      "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKitTests.build/DerivedSources/resource_bundle_accessor.swift",
       "-I",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/Modules",
       "-target",
@@ -461,7 +533,7 @@
       "-j10",
       "-DSWIFT_PACKAGE",
       "-DDEBUG",
-      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_AVAILABLE",
       "-module-cache-path",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/ModuleCache",
       "-parseable-output",
@@ -540,11 +612,23 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/LocationProvider.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/Models.swift"
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SnapshotStore.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SunPosition.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/VaneClient.swift"
         }
       ],
       "outputFilePath" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build/sources"
@@ -572,7 +656,15 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build/LocationProvider.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build/Models.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build/SnapshotStore.swift.o"
         },
         {
           "kind" : "file",
@@ -580,11 +672,23 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build/VaneClient.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKitPackageTests.build/runner.swift.o"
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKitTests.build/ContractTests.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKitTests.build/SunPositionTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKitTests.build/resource_bundle_accessor.swift.o"
         }
       ],
       "outputFilePath" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKitPackageTests.product/Objects.LinkFileList"
@@ -598,7 +702,15 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Tests/VaneKitTests/ContractTests.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Tests/VaneKitTests/SunPositionTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKitTests.build/DerivedSources/resource_bundle_accessor.swift"
         }
       ],
       "outputFilePath" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKitTests.build/sources"

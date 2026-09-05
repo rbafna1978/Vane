@@ -11,6 +11,8 @@ import SwiftUI
 /// average low for this calendar date. Where today's trace leaves the band is where today
 /// stops being ordinary, readable without a sentence.
 public struct BarographTrace: View {
+    @Environment(\.dynamicTypeSize) private var typeSize
+
     public struct Point: Sendable, Hashable {
         public let hour: Double
         public let value: Double
@@ -159,9 +161,16 @@ public struct BarographTrace: View {
     private func drawHourLabels(
         _ context: GraphicsContext, plot: CGRect, size: CGSize, x: (Double) -> CGFloat
     ) {
-        for hour in stride(from: 0.0, through: 21.0, by: 3) {
+        // The axis is a fixed width, so its labels cannot scale without colliding — at AX5 the
+        // three-hourly labels overlap into unreadable pulp. Thin them to six-hourly and cap the
+        // size instead. This is the designed accessibility path: fewer, larger, legible marks,
+        // not the same marks made illegible.
+        let step: Double = typeSize.isAccessibilitySize ? 6 : 3
+        let pointSize: CGFloat = typeSize.isAccessibilitySize ? 15 : 12
+
+        for hour in stride(from: 0.0, through: 24.0 - step, by: step) {
             let text = Text(String(format: "%02d", Int(hour)))
-                .font(.vaneData)
+                .font(.custom(VaneFont.mono, fixedSize: pointSize))
                 .foregroundStyle(palette.inkColor.opacity(0.45))
             // Centred on its own gridline, except the first, which would hang off the paper.
             let anchor: UnitPoint = hour == 0 ? .leading : .center

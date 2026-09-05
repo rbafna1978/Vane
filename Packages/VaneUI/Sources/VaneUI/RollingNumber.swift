@@ -15,21 +15,18 @@ public struct RollingNumber: View {
 
     private let value: Double
     private let format: FloatingPointFormatStyle<Double>
-    private let font: Font
 
     public init(
         _ value: Double,
-        format: FloatingPointFormatStyle<Double> = .number.precision(.fractionLength(0)),
-        font: Font = .vaneReading
+        format: FloatingPointFormatStyle<Double> = .number.precision(.fractionLength(0))
     ) {
         self.value = value
         self.format = format
-        self.font = font
     }
 
     public var body: some View {
         Text(value, format: format)
-            .font(font)
+            .vaneReadingType()
             // Tabular figures: without them the glyph widths change as digits change and the
             // whole line shifts sideways while it rolls.
             .monospacedDigit()

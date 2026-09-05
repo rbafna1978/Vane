@@ -35,15 +35,42 @@ public nonisolated enum VaneFont {
 }
 
 public extension Font {
-    /// The temperature. The one number the whole screen is built around.
-    /// Not Dynamic Type scaled by default — see `VaneType.reading(for:)`.
-    static let vaneReading = Font.custom(VaneFont.display, fixedSize: 148)
-    static let vaneDisplayLarge = Font.custom(VaneFont.display, fixedSize: 40)
-    /// The context line: the sentence that is the reason this app exists.
-    static let vaneContext = Font.custom(VaneFont.display, fixedSize: 28)
-    static let vaneBody = Font.system(size: 17)
-    static let vaneCaption = Font.system(size: 13)
-    static let vaneData = Font.custom(VaneFont.mono, fixedSize: 12)
+    /// Everything below scales with Dynamic Type.
+    ///
+    /// `fixedSize:` and `Font.system(size:)` both opt *out* of scaling — using them is how a
+    /// design system ends up with accessibility settings that do nothing at all. `relativeTo:`
+    /// is what ties a custom face to the user's chosen size.
+    static let vaneDisplayLarge = Font.custom(VaneFont.display, size: 40, relativeTo: .largeTitle)
+    static let vaneBody = Font.system(.body)          // 17pt at Large, scales to AX5
+    static let vaneCaption = Font.system(.footnote)   // 13pt at Large, scales to AX5
+    static let vaneData = Font.custom(VaneFont.mono, size: 12, relativeTo: .caption2)
+}
+
+/// The reading and the context line scale on a *clamped* curve rather than the full range.
+///
+/// A 148pt number multiplied by the AX5 factor is roughly 380pt and no layout survives it. So
+/// they grow, by less, and stop — which is a designed compromise, not a refusal to scale. Body
+/// and caption above are unrestricted, because that is what they are for.
+public extension View {
+    func vaneReadingType() -> some View { modifier(ClampedType(role: .reading)) }
+    func vaneContextType() -> some View { modifier(ClampedType(role: .context)) }
+}
+
+struct ClampedType: ViewModifier {
+    enum Role { case reading, context }
+    @Environment(\.dynamicTypeSize) private var size
+    let role: Role
+
+    func body(content: Content) -> some View {
+        content.font(.custom(VaneFont.display, fixedSize: pointSize))
+    }
+
+    private var pointSize: CGFloat {
+        switch role {
+        case .reading: VaneType.reading(for: size)
+        case .context: VaneType.context(for: size)
+        }
+    }
 }
 
 public nonisolated enum VaneType {
@@ -59,28 +86,28 @@ public nonisolated enum VaneType {
     /// they are for. A 148pt number scaled by the AX5 multiplier is roughly 380pt and there is
     /// no layout that survives it — so the reading and context sizes grow, but by less, and
     /// stop. This is the designed compromise, not a refusal to scale.
-    public static func reading(for category: ContentSizeCategory) -> CGFloat {
-        readingSize * clampedMultiplier(category, ceiling: 1.30)
+    public static func reading(for size: DynamicTypeSize) -> CGFloat {
+        readingSize * clampedMultiplier(size, ceiling: 1.30)
     }
 
-    public static func context(for category: ContentSizeCategory) -> CGFloat {
-        contextSize * clampedMultiplier(category, ceiling: 1.55)
+    public static func context(for size: DynamicTypeSize) -> CGFloat {
+        contextSize * clampedMultiplier(size, ceiling: 1.55)
     }
 
-    static func clampedMultiplier(_ category: ContentSizeCategory, ceiling: Double) -> CGFloat {
-        let raw: Double = switch category {
-        case .extraSmall: 0.90
+    static func clampedMultiplier(_ size: DynamicTypeSize, ceiling: Double) -> CGFloat {
+        let raw: Double = switch size {
+        case .xSmall: 0.90
         case .small: 0.94
         case .medium: 0.97
         case .large: 1.00
-        case .extraLarge: 1.06
-        case .extraExtraLarge: 1.12
-        case .extraExtraExtraLarge: 1.18
-        case .accessibilityMedium: 1.30
-        case .accessibilityLarge: 1.45
-        case .accessibilityExtraLarge: 1.60
-        case .accessibilityExtraExtraLarge: 1.75
-        case .accessibilityExtraExtraExtraLarge: 1.90
+        case .xLarge: 1.06
+        case .xxLarge: 1.12
+        case .xxxLarge: 1.18
+        case .accessibility1: 1.30
+        case .accessibility2: 1.45
+        case .accessibility3: 1.60
+        case .accessibility4: 1.75
+        case .accessibility5: 1.90
         @unknown default: 1.00
         }
         return CGFloat(min(raw, ceiling))
