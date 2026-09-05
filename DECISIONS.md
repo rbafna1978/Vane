@@ -111,3 +111,39 @@ Append-only. Every ADR and design choice, one line of rationale.
 - **A failed backfill resets the cell to cold.** Otherwise arq exhausts its retries, the cell stays
   `warming` forever, and the differentiator is lost silently — the exact failure ADR-0004 exists to
   prevent.
+
+## Phase 3 — design system in code
+
+- **Archivo Narrow, not FF DIN Condensed.** Your call on cost. Both are OFL and vendored with their
+  licences; JetBrains Mono carries the data. Registration is explicit at launch because SPM resource
+  bundles are not scanned the way an app's Info.plist is — and a font that fails to register falls
+  back to the system face silently, which would ship a different app than the one designed. Three
+  tests assert the faces actually resolve.
+- **VaneKit is NOT main-actor-by-default; VaneUI is.** `write-swift` is explicit that a library
+  should ship `nonisolated` APIs and let the caller decide where work runs. Forcing MainActor down
+  into VaneKit would drag the widget extension and the sun engine onto the main actor for nothing.
+  Pure value types inside VaneUI (`RGB`, `Palette`, `SkyState`, `VaneFont`) are marked `nonisolated`
+  for the same reason — the widget computes a palette without touching the main actor.
+- **Sun position is the NOAA algorithm, validated against Open-Meteo's published sunrise and sunset.**
+  Independent source, so agreement is evidence rather than self-consistency. Also pinned: polar night,
+  midnight sun, zenith over the Tropic of Cancer at the solstice, azimuth in both hemispheres.
+- **Bug found by dumping the curve, not by a test: azimuth ran backwards after noon.**
+  `truncatingRemainder` keeps the dividend's sign, so a western longitude left the hour angle at
+  -302 degrees instead of +58. Elevation survived it (cosine is periodic) but the azimuth branch
+  tests the *sign* to tell morning from afternoon, so the sun set in the east. The wash is driven by
+  azimuth, so the interface would have been lit from the wrong side of the sky.
+- **Colour is mixed in linear light, not in sRGB.** A straight average of gamma-encoded values lands
+  darker than the light physically would — the grey band halfway through every naive gradient.
+- **Contrast is guaranteed by construction, not by hoping.** Paper travels light-to-dark across dusk
+  while ink travels dark-to-light; unguarded they pass each other and contrast collapses to 1.48:1 —
+  the screen becomes unreadable at exactly the hour someone is outside looking at the sky. `ink` is
+  now pushed away from `paper` until it clears WCAG AA (4.5:1). Measured floor is exactly 4.50:1 at
+  every minute of the day; AAA holds for 92.2%.
+- **The lightness ramp spans exactly civil twilight (+6 to -6 degrees).** First attempt used a narrow
+  band to dodge the contrast problem, which made light/dark read as the toggle the brief forbids.
+  Once contrast was guaranteed independently, the gentle ramp cost 2 points of AAA and nothing else.
+- **The catalog shows the whole day as a strip, not one instant behind a slider.** A ramp has to be
+  judged as a ramp; seeing dawn, noon, dusk and midnight at once is what caught the ramp being too
+  steep in the first place.
+- **Three motion primitives, chosen by `find-animation-opportunities`, which vetoed the obvious one.**
+  See the phase 3 note in the README.

@@ -1,0 +1,27 @@
+{
+  "object" : {
+    "artifacts" : [
+
+    ],
+    "dependencies" : [
+      {
+        "basedOn" : null,
+        "packageRef" : {
+          "identity" : "vanekit",
+          "kind" : "fileSystem",
+          "location" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit",
+          "name" : "VaneKit"
+        },
+        "state" : {
+          "name" : "fileSystem",
+          "path" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit"
+        },
+        "subpath" : "vanekit"
+      }
+    ],
+    "prebuilts" : [
+
+    ]
+  },
+  "version" : 7
+}

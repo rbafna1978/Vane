@@ -1,0 +1,19 @@
+{
+  "": {
+    "swift-dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/primary.swiftdeps"
+  },
+  "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/Models.swift": {
+    "dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/Models.d",
+    "object": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/Models.swift.o",
+    "swiftmodule": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/Models~partial.swiftmodule",
+    "swift-dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/Models.swiftdeps",
+    "diagnostics": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/Models.dia"
+  },
+  "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SunPosition.swift": {
+    "dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/SunPosition.d",
+    "object": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/SunPosition.swift.o",
+    "swiftmodule": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/SunPosition~partial.swiftmodule",
+    "swift-dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/SunPosition.swiftdeps",
+    "diagnostics": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/SunPosition.dia"
+  }
+}

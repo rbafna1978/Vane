@@ -1,0 +1,12 @@
+{
+  "": {
+    "swift-dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKitPackageTests.build/primary.swiftdeps"
+  },
+  "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKitPackageTests.derived/runner.swift": {
+    "dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKitPackageTests.build/runner.d",
+    "object": "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKitPackageTests.build/runner.swift.o",
+    "swiftmodule": "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKitPackageTests.build/runner~partial.swiftmodule",
+    "swift-dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKitPackageTests.build/runner.swiftdeps",
+    "diagnostics": "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKitPackageTests.build/runner.dia"
+  }
+}

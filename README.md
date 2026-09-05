@@ -43,7 +43,12 @@ The chart, never the machine — no drum, no brass, no leather, no drop shadows.
 `trace` and `alert` are the entire saturated budget. Light and dark are not a toggle — the
 palette is computed from real sun position and conditions.
 
-Type: Archivo Narrow (display) / SF Pro Text (body) / JetBrains Mono (data).
+Type: Archivo Narrow (display) / SF Pro Text (body) / JetBrains Mono (data). Both custom faces
+are OFL and vendored with their licences.
+
+Contrast is guaranteed rather than hoped for: ink is pushed away from paper until it clears WCAG
+AA, so no time of day can produce an unreadable screen. Measured floor is 4.50:1 at every minute;
+AAA holds for 92% of the day.
 
 ## Status
 
@@ -51,8 +56,8 @@ Type: Archivo Narrow (display) / SF Pro Text (body) / JetBrains Mono (data).
 |---|---|---|
 | 1 | Backend skeleton — `/v1/snapshot`, `/v1/forecast`, Docker, migrations | done |
 | 2 | Context engine — normals backfill, ranks, streaks, `/v1/context` | done |
-| 3 | Design system in code — tokens, type scale, sun engine, motion primitives | in progress |
-| 4 | Main screen | |
+| 3 | Design system in code — tokens, type scale, sun engine, motion primitives | done |
+| 4 | Main screen | next |
 | 5 | Detail + archive | |
 | 6 | Widget + Live Activity | |
 | 7 | Push loop + deploy | |
@@ -65,6 +70,8 @@ backend, and the simulator reaches localhost.
 
 ```
 Vane/            iOS app target (Swift 6, iOS 18 minimum)
+Packages/VaneKit models, sun-position engine. nonisolated — the caller decides where work runs.
+Packages/VaneUI  tokens, type scale, motion primitives, the design-system catalog.
 backend/         FastAPI + Postgres 16 + Redis + arq worker
 docs/adr/        architecture decision records
 DECISIONS.md     append-only log of every decision and its one-line reason

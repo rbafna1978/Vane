@@ -1,0 +1,160 @@
+client:
+  name: basic
+  file-system: device-agnostic
+tools: {}
+targets:
+  "PackageStructure": ["<PackageStructure>"]
+  "VaneKit-arm64-apple-macosx-debug.module": ["<VaneKit-arm64-apple-macosx-debug.module>"]
+  "VaneUI-arm64-apple-macosx-debug.module": ["<VaneUI-arm64-apple-macosx-debug.module>"]
+  "VaneUIPackageTests-arm64-apple-macosx-debug.module": ["<VaneUIPackageTests-arm64-apple-macosx-debug.module>"]
+  "VaneUIPackageTests-arm64-apple-macosx-debug.test": ["<VaneUIPackageTests-arm64-apple-macosx-debug.test>"]
+  "VaneUITests-arm64-apple-macosx-debug.module": ["<VaneUITests-arm64-apple-macosx-debug.module>"]
+  "main": ["<VaneUI-arm64-apple-macosx-debug.module>"]
+  "test": ["<VaneUI-arm64-apple-macosx-debug.module>","<VaneUIPackageTests-arm64-apple-macosx-debug.test>","<VaneUITests-arm64-apple-macosx-debug.module>"]
+default: "main"
+nodes:
+  "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+  "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Tests/VaneUITests/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+commands:
+  "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/Models.swift","/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SunPosition.swift"]
+    outputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/sources"]
+    description: "Write auxiliary file /Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/sources"
+
+  "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Catalog.swift","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/ContextLine.swift","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Motion.swift","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Palette.swift","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/PaperScroll.swift","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/RGB.swift","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/RollingNumber.swift","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Typography.swift","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/DerivedSources/resource_bundle_accessor.swift"]
+    outputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/sources"]
+    description: "Write auxiliary file /Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/sources"
+
+  "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUIPackageTests.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUIPackageTests.derived/runner.swift"]
+    outputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUIPackageTests.build/sources"]
+    description: "Write auxiliary file /Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUIPackageTests.build/sources"
+
+  "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUIPackageTests.derived/runner.swift":
+    tool: test-entry-point-tool
+    inputs: []
+    outputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUIPackageTests.derived/runner.swift"]
+
+  "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUIPackageTests.product/Objects.LinkFileList":
+    tool: write-auxiliary-file
+    inputs: ["<link-file-list>","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/Models.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/SunPosition.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Catalog.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/ContextLine.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Motion.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Palette.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/PaperScroll.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/RGB.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/RollingNumber.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Typography.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/resource_bundle_accessor.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUIPackageTests.build/runner.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUITests.build/FontTests.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUITests.build/PaletteTests.swift.o"]
+    outputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUIPackageTests.product/Objects.LinkFileList"]
+    description: "Write auxiliary file /Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUIPackageTests.product/Objects.LinkFileList"
+
+  "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUITests.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Tests/VaneUITests/FontTests.swift","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Tests/VaneUITests/PaletteTests.swift"]
+    outputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUITests.build/sources"]
+    description: "Write auxiliary file /Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUITests.build/sources"
+
+  "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI_VaneUI.bundle/ArchivoNarrow.ttf":
+    tool: copy-tool
+    inputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Resources/Fonts/ArchivoNarrow.ttf"]
+    outputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI_VaneUI.bundle/ArchivoNarrow.ttf"]
+    description: "Copying /Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Resources/Fonts/ArchivoNarrow.ttf"
+
+  "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI_VaneUI.bundle/JetBrainsMono.ttf":
+    tool: copy-tool
+    inputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Resources/Fonts/JetBrainsMono.ttf"]
+    outputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI_VaneUI.bundle/JetBrainsMono.ttf"]
+    description: "Copying /Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Resources/Fonts/JetBrainsMono.ttf"
+
+  "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI_VaneUI.bundle/OFL-ArchivoNarrow.txt":
+    tool: copy-tool
+    inputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Resources/Fonts/OFL-ArchivoNarrow.txt"]
+    outputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI_VaneUI.bundle/OFL-ArchivoNarrow.txt"]
+    description: "Copying /Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Resources/Fonts/OFL-ArchivoNarrow.txt"
+
+  "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI_VaneUI.bundle/OFL-JetBrainsMono.txt":
+    tool: copy-tool
+    inputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Resources/Fonts/OFL-JetBrainsMono.txt"]
+    outputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI_VaneUI.bundle/OFL-JetBrainsMono.txt"]
+    description: "Copying /Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Resources/Fonts/OFL-JetBrainsMono.txt"
+
+  "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt":
+    tool: write-auxiliary-file
+    inputs: ["<swift-get-version>","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"]
+    outputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"]
+    always-out-of-date: "true"
+    description: "Write auxiliary file /Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+
+  "<VaneKit-arm64-apple-macosx-debug.module>":
+    tool: phony
+    inputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/Models.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/SunPosition.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules/VaneKit.swiftmodule"]
+    outputs: ["<VaneKit-arm64-apple-macosx-debug.module>"]
+
+  "<VaneUI-arm64-apple-macosx-debug.module>":
+    tool: phony
+    inputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Catalog.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/ContextLine.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Motion.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Palette.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/PaperScroll.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/RGB.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/RollingNumber.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Typography.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/resource_bundle_accessor.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules/VaneUI.swiftmodule"]
+    outputs: ["<VaneUI-arm64-apple-macosx-debug.module>"]
+
+  "<VaneUIPackageTests-arm64-apple-macosx-debug.module>":
+    tool: phony
+    inputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUIPackageTests.build/runner.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules/VaneUIPackageTests.swiftmodule"]
+    outputs: ["<VaneUIPackageTests-arm64-apple-macosx-debug.module>"]
+
+  "<VaneUIPackageTests-arm64-apple-macosx-debug.test>":
+    tool: phony
+    inputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUIPackageTests.xctest/Contents/MacOS/VaneUIPackageTests"]
+    outputs: ["<VaneUIPackageTests-arm64-apple-macosx-debug.test>"]
+
+  "<VaneUITests-arm64-apple-macosx-debug.module>":
+    tool: phony
+    inputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUITests.build/FontTests.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUITests.build/PaletteTests.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules/VaneUITests.swiftmodule"]
+    outputs: ["<VaneUITests-arm64-apple-macosx-debug.module>"]
+
+  "C.VaneKit-arm64-apple-macosx-debug.module":
+    tool: shell
+    inputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/Models.swift","/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SunPosition.swift","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/sources"]
+    outputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/Models.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/SunPosition.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules/VaneKit.swiftmodule"]
+    description: "Compiling Swift Module 'VaneKit' (2 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","VaneKit","-emit-dependencies","-emit-module","-emit-module-path","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules/VaneKit.swiftmodule","-output-file-map","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/output-file-map.json","-parse-as-library","-incremental","-c","@/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/sources","-I","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx15.0","-incremental","-enable-batch-mode","-serialize-diagnostics","-index-store-path","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/index/store","-Onone","-enable-testing","-j10","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-emit-objc-header","-emit-objc-header-path","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/include/VaneKit-Swift.h","-swift-version","6","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","vanekit"]
+
+  "C.VaneUI-arm64-apple-macosx-debug.module":
+    tool: shell
+    inputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Catalog.swift","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/ContextLine.swift","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Motion.swift","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Palette.swift","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/PaperScroll.swift","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/RGB.swift","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/RollingNumber.swift","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Typography.swift","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/DerivedSources/resource_bundle_accessor.swift","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","<VaneUI-arm64-apple-macosx-debug.module-resources>","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules/VaneKit.swiftmodule","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/sources"]
+    outputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Catalog.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/ContextLine.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Motion.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Palette.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/PaperScroll.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/RGB.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/RollingNumber.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Typography.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/resource_bundle_accessor.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules/VaneUI.swiftmodule"]
+    description: "Compiling Swift Module 'VaneUI' (9 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","VaneUI","-emit-dependencies","-emit-module","-emit-module-path","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules/VaneUI.swiftmodule","-output-file-map","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/output-file-map.json","-parse-as-library","-incremental","-c","@/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/sources","-I","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx15.0","-incremental","-enable-batch-mode","-serialize-diagnostics","-index-store-path","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/index/store","-Onone","-enable-testing","-j10","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_AVAILABLE","-module-cache-path","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-emit-objc-header","-emit-objc-header-path","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/include/VaneUI-Swift.h","-swift-version","6","-default-isolation","MainActor","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","vaneui"]
+
+  "C.VaneUIPackageTests-arm64-apple-macosx-debug.module":
+    tool: shell
+    inputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUIPackageTests.derived/runner.swift","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules/VaneUITests.swiftmodule","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUIPackageTests.build/sources"]
+    outputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUIPackageTests.build/runner.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules/VaneUIPackageTests.swiftmodule"]
+    description: "Compiling Swift Module 'VaneUIPackageTests' (1 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","VaneUIPackageTests","-emit-dependencies","-emit-module","-emit-module-path","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules/VaneUIPackageTests.swiftmodule","-output-file-map","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUIPackageTests.build/output-file-map.json","-parse-as-library","-incremental","-c","@/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUIPackageTests.build/sources","-I","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx15.0","-incremental","-enable-batch-mode","-serialize-diagnostics","-index-store-path","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/index/store","-Onone","-enable-testing","-Xfrontend","-enable-cross-import-overlays","-j10","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-emit-objc-header","-emit-objc-header-path","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUIPackageTests.build/include/VaneUIPackageTests-Swift.h","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","vaneui"]
+
+  "C.VaneUIPackageTests-arm64-apple-macosx-debug.test":
+    tool: shell
+    inputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/Models.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneKit.build/SunPosition.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Catalog.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/ContextLine.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Motion.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Palette.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/PaperScroll.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/RGB.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/RollingNumber.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Typography.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/resource_bundle_accessor.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUIPackageTests.build/runner.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUITests.build/FontTests.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUITests.build/PaletteTests.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUIPackageTests.product/Objects.LinkFileList"]
+    outputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUIPackageTests.xctest/Contents/MacOS/VaneUIPackageTests"]
+    description: "Linking ./.build/arm64-apple-macosx/debug/VaneUIPackageTests.xctest/Contents/MacOS/VaneUIPackageTests"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-L","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug","-o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUIPackageTests.xctest/Contents/MacOS/VaneUIPackageTests","-module-name","VaneUIPackageTests","-Xlinker","-no_warn_duplicate_libraries","-Xlinker","-bundle","-Xlinker","-rpath","-Xlinker","@loader_path/../../../","@/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUIPackageTests.product/Objects.LinkFileList","-Xlinker","-rpath","-Xlinker","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-6.2/macosx","-target","arm64-apple-macosx15.0","-Xlinker","-add_ast_path","-Xlinker","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules/VaneKit.swiftmodule","-Xlinker","-add_ast_path","-Xlinker","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules/VaneUI.swiftmodule","-Xlinker","-add_ast_path","-Xlinker","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules/VaneUIPackageTests.swiftmodule","-Xlinker","-add_ast_path","-Xlinker","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules/VaneUITests.swiftmodule","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g"]
+
+  "C.VaneUITests-arm64-apple-macosx-debug.module":
+    tool: shell
+    inputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Tests/VaneUITests/FontTests.swift","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Tests/VaneUITests/PaletteTests.swift","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules/VaneUI.swiftmodule","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUITests.build/sources"]
+    outputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUITests.build/FontTests.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUITests.build/PaletteTests.swift.o","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules/VaneUITests.swiftmodule"]
+    description: "Compiling Swift Module 'VaneUITests' (2 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","VaneUITests","-emit-dependencies","-emit-module","-emit-module-path","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules/VaneUITests.swiftmodule","-output-file-map","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUITests.build/output-file-map.json","-parse-as-library","-incremental","-c","@/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUITests.build/sources","-I","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx15.0","-incremental","-enable-batch-mode","-serialize-diagnostics","-index-store-path","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/index/store","-Onone","-enable-testing","-Xfrontend","-enable-cross-import-overlays","-j10","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-swift-version","6","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","vaneui"]
+
+  "PackageStructure":
+    tool: package-structure-tool
+    inputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Tests/VaneUITests/","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Package.swift","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Package.resolved"]
+    outputs: ["<PackageStructure>"]
+    description: "Planning build"
+    allow-missing-inputs: true
+
+  "VaneUI-arm64-apple-macosx-debug.module-resources":
+    tool: phony
+    inputs: ["/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI_VaneUI.bundle/ArchivoNarrow.ttf","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI_VaneUI.bundle/JetBrainsMono.ttf","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI_VaneUI.bundle/OFL-ArchivoNarrow.txt","/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI_VaneUI.bundle/OFL-JetBrainsMono.txt"]
+    outputs: ["<VaneUI-arm64-apple-macosx-debug.module-resources>"]
+
