@@ -23,6 +23,13 @@
     "swift-dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/ContextLine.swiftdeps",
     "diagnostics": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/ContextLine.dia"
   },
+  "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/DetailScreen.swift": {
+    "dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/DetailScreen.d",
+    "object": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/DetailScreen.swift.o",
+    "swiftmodule": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/DetailScreen~partial.swiftmodule",
+    "swift-dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/DetailScreen.swiftdeps",
+    "diagnostics": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/DetailScreen.dia"
+  },
   "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/EmptyStateView.swift": {
     "dependencies": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/EmptyStateView.d",
     "object": "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/EmptyStateView.swift.o",

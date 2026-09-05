@@ -223,3 +223,36 @@ def choose(facts: Facts, today: Date, rain_today: bool) -> Context | None:
         )
 
     return None
+
+
+async def normals_for(
+    session: AsyncSession, cell_id: str, dates: list[Date]
+) -> dict[Date, NormalBand]:
+    """The 30-year normal for each of a set of calendar dates.
+
+    One query for the whole forecast rather than one per day — ten round trips to answer a
+    single screen is the shape of an N+1, and it would sit on the request path.
+    """
+    if not dates:
+        return {}
+
+    # Matched on a single packed key (month * 100 + day) rather than a pair. Two parallel
+    # `unnest` calls make Postgres pick between overloads it cannot disambiguate from an
+    # untyped parameter, and pairing them positionally is fragile besides.
+    rows = (
+        await session.execute(
+            text(
+                "SELECT month, day, tmax_c, tmin_c, years FROM daily_normals "
+                "WHERE cell_id = :c AND (month * 100 + day) = ANY(CAST(:keys AS int[]))"
+            ),
+            {"c": cell_id, "keys": [d.month * 100 + d.day for d in dates]},
+        )
+    ).all()
+
+    by_key = {
+        (row.month, row.day): NormalBand(
+            tmax_c=round(row.tmax_c, 1), tmin_c=round(row.tmin_c, 1), years=row.years
+        )
+        for row in rows
+    }
+    return {d: band for d in dates if (band := by_key.get((d.month, d.day))) is not None}

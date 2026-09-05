@@ -15,10 +15,16 @@ public struct MainScreen: View {
     }
 
     public var body: some View {
+        NavigationStack {
+            screen
+        }
+    }
+
+    private var screen: some View {
         let sky = model.sky
         let palette = sky.palette
 
-        GeometryReader { geometry in
+        return GeometryReader { geometry in
         ZStack {
             palette.paperColor.ignoresSafeArea()
 
@@ -71,20 +77,30 @@ public struct MainScreen: View {
             ContextLine(snapshot.context, palette: palette)
 
             Spacer().frame(height: 28)
-            BarographTrace(
-                points: snapshot.arc.map {
-                    .init(hour: hour(of: $0.t, in: snapshot), value: $0.tempC,
-                          precipMm: $0.precipMm)
-                },
-                normalHigh: snapshot.normal?.tmaxC,
-                normalLow: snapshot.normal?.tminC,
-                nowHour: hour(of: snapshot.observedAt, in: snapshot),
-                palette: palette
-            )
-            // Flexible, not a fixed 200pt. The trace is the signature of this design and was
-            // the smallest voice on the screen while a third of the paper sat empty below it.
-            // A chart fills its sheet.
-            .frame(minHeight: 200, maxHeight: .infinity)
+            // The chart is the day, so the day's detail belongs behind it — the chart itself
+            // is the control. No navigation chrome added to a screen whose whole argument is
+            // quiet, and no separate tap target to discover.
+            NavigationLink {
+                DetailScreen(
+                    forecast: model.forecast, place: model.placeName,
+                    palette: palette, timeZone: snapshot.timeZone
+                )
+            } label: {
+                BarographTrace(
+                    points: snapshot.arc.map {
+                        .init(hour: hour(of: $0.t, in: snapshot), value: $0.tempC,
+                              precipMm: $0.precipMm)
+                    },
+                    normalHigh: snapshot.normal?.tmaxC,
+                    normalLow: snapshot.normal?.tminC,
+                    nowHour: hour(of: snapshot.observedAt, in: snapshot),
+                    palette: palette
+                )
+                .frame(minHeight: 200, maxHeight: .infinity)
+                .contentShape(.rect)
+            }
+            .buttonStyle(.plain)
+            .accessibilityHint("Opens the extended forecast")
 
             Spacer().frame(height: 24)
             Footer(snapshot: snapshot, palette: palette)

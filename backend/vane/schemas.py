@@ -98,9 +98,13 @@ class ForecastDay(BaseModel):
     tmax_c: float
     tmin_c: float
     precip_mm: float
+    precip_probability: int | None = None
     code: int
     sunrise: datetime
     sunset: datetime
+    # That calendar date's own 30-year normal. Without this the detail screen is a seven-day
+    # list like every other app's; with it, each day is readable against its own history.
+    normal: NormalBand | None = None
 
 
 class Forecast(BaseModel):

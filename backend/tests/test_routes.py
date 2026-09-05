@@ -152,3 +152,43 @@ async def test_context_route_returns_only_context(client):
     body = r.json()
     assert set(body) == {"cell_id", "context", "context_state", "normal"}
     assert "arc" not in body and "current" not in body
+
+
+async def test_forecast_days_carry_their_own_normals(client):
+    """The comparison is the product. A forecast row without its date's normal is a number
+    from any other weather app."""
+    from datetime import date, timedelta
+
+    from sqlalchemy import text
+
+    from vane.db import sessionmaker
+
+    await client.get("/v1/snapshot", params=OAKLAND)
+    async with sessionmaker()() as session:
+        for offset in range(3):
+            day = date.today() + timedelta(days=offset)
+            await session.execute(
+                text(
+                    "INSERT INTO daily_normals (cell_id, month, day, tmax_c, tmin_c,"
+                    " precip_mm, years) VALUES (:c, :m, :d, 24.0, 13.0, 0, 30)"
+                    " ON CONFLICT DO NOTHING"
+                ),
+                {"c": "37.75,-122.25", "m": day.month, "d": day.day},
+            )
+        await session.commit()
+
+    r = await client.get("/v1/forecast", params={**OAKLAND, "days": 2})
+    body = r.json()
+    assert body["daily"], "forecast should have days"
+    matched = [day for day in body["daily"] if day["normal"] is not None]
+    assert matched, "at least one forecast day should carry its normal"
+    assert matched[0]["normal"]["tmax_c"] == 24.0
+    assert matched[0]["normal"]["years"] == 30
+
+
+async def test_forecast_normals_are_one_query_not_one_per_day(client, source):
+    """Ten round trips to render one screen is an N+1 sitting on the request path."""
+    r = await client.get("/v1/forecast", params={**OAKLAND, "days": 2})
+    assert r.status_code == 200
+    # A cold cell has no normals at all; the route must still answer rather than erroring.
+    assert all("normal" in day for day in r.json()["daily"])

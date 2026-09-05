@@ -260,6 +260,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/DetailScreen.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/EmptyStateView.swift"
         },
         {
@@ -326,6 +330,7 @@
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/BarographTrace.swift.o",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/Catalog.swift.o",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/ContextLine.swift.o",
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/DetailScreen.swift.o",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/EmptyStateView.swift.o",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/LaunchMetrics.swift.o",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/MainScreen.swift.o",
@@ -405,6 +410,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/DetailScreen.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/EmptyStateView.swift.o"
         },
         {
@@ -457,6 +466,7 @@
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/BarographTrace.swift",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Catalog.swift",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/ContextLine.swift",
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/DetailScreen.swift",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/EmptyStateView.swift",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/LaunchMetrics.swift",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/MainScreen.swift",
@@ -776,6 +786,7 @@
       "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/BarographTrace.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/Catalog.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/ContextLine.swift",
+      "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/DetailScreen.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/EmptyStateView.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/LaunchMetrics.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/MainScreen.swift",
@@ -1062,6 +1073,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/DetailScreen.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/Sources/VaneUI/EmptyStateView.swift"
         },
         {
@@ -1167,6 +1182,10 @@
         {
           "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/ContextLine.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUI.build/DetailScreen.swift.o"
         },
         {
           "kind" : "file",

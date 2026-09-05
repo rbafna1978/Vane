@@ -107,3 +107,54 @@ public struct Snapshot: Codable, Sendable, Hashable {
         utcOffsetSeconds.flatMap { TimeZone(secondsFromGMT: $0) } ?? .current
     }
 }
+
+public struct ForecastHour: Codable, Sendable, Hashable {
+    public let t: Date
+    public let tempC: Double
+    public let precipMm: Double
+    public let precipProbability: Int?
+    public let code: Int
+
+    enum CodingKeys: String, CodingKey {
+        case t, tempC = "temp_c", precipMm = "precip_mm"
+        case precipProbability = "precip_probability", code
+    }
+}
+
+public struct ForecastDay: Codable, Sendable, Hashable, Identifiable {
+    /// Decoded from a bare `YYYY-MM-DD`, which the datetime strategy would reject. Anchored at
+    /// noon UTC rather than midnight so a day never lands on the wrong side of a zone boundary
+    /// when it is formatted for display.
+    public let d: Date
+    public let tmaxC: Double
+    public let tminC: Double
+    public let precipMm: Double
+    public let precipProbability: Int?
+    public let code: Int
+    public let sunrise: Date
+    public let sunset: Date
+    /// This calendar date's own 30-year normal. Nil while the cell is still warming.
+    public let normal: NormalBand?
+
+    public var id: Date { d }
+    public var condition: WeatherCode { WeatherCode(code) }
+
+    /// How far this day's high sits from the usual high for the date. The whole reason this
+    /// screen is not a list of numbers.
+    public var highAnomaly: Double? {
+        normal.map { tmaxC - $0.tmaxC }
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case d, tmaxC = "tmax_c", tminC = "tmin_c", precipMm = "precip_mm"
+        case precipProbability = "precip_probability", code, sunrise, sunset, normal
+    }
+}
+
+public struct Forecast: Codable, Sendable, Hashable {
+    public let cellId: String
+    public let hourly: [ForecastHour]
+    public let daily: [ForecastDay]
+
+    enum CodingKeys: String, CodingKey { case cellId = "cell_id", hourly, daily }
+}

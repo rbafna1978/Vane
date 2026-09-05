@@ -20,6 +20,7 @@ public final class WeatherModel {
     }
 
     public private(set) var snapshot: Snapshot?
+    public private(set) var forecast: Forecast?
     public private(set) var screen: Screen = .content
     public private(set) var streak: Int
 
@@ -70,10 +71,18 @@ public final class WeatherModel {
 
     private func load(latitude: Double, longitude: Double) async {
         do {
-            let fresh = try await client.snapshot(latitude: latitude, longitude: longitude)
+            // Two independent requests, so they run concurrently. The forecast is not on the
+            // first-paint path, but making the screen wait for it in series would add a whole
+            // round trip to a refresh nobody asked for.
+            async let snapshotTask = client.snapshot(latitude: latitude, longitude: longitude)
+            async let forecastTask = client.forecast(latitude: latitude, longitude: longitude)
+
+            let fresh = try await snapshotTask
             store.save(fresh)
             snapshot = fresh
             screen = .content
+            // The forecast failing must not cost us the snapshot we already have.
+            forecast = try? await forecastTask
         } catch {
             // A failed refresh with content on screen is not an error the user needs told
             // about — they are looking at the last known reading, which is what they wanted.

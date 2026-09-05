@@ -30,7 +30,10 @@ _CURRENT = (
     "wind_speed_10m,wind_direction_10m,weather_code,cloud_cover"
 )
 _HOURLY = "temperature_2m,precipitation,precipitation_probability,weather_code"
-_DAILY = "sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code"
+_DAILY = (
+    "sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_sum,"
+    "precipitation_probability_max,weather_code"
+)
 
 
 def _at(offset_seconds: int) -> timezone:
@@ -166,15 +169,17 @@ class OpenMeteoSource:
                     tmax_c=tmax,
                     tmin_c=tmin,
                     precip_mm=precip or 0.0,
+                    precip_probability=None if prob is None else int(prob),
                     code=int(code),
                     sunrise=_dt(sunrise, tz),
                     sunset=_dt(sunset, tz),
                 )
-                for d, tmax, tmin, precip, code, sunrise, sunset in zip(
+                for d, tmax, tmin, precip, prob, code, sunrise, sunset in zip(
                     daily["time"],
                     daily["temperature_2m_max"],
                     daily["temperature_2m_min"],
                     daily["precipitation_sum"],
+                    daily["precipitation_probability_max"],
                     daily["weather_code"],
                     daily["sunrise"],
                     daily["sunset"],

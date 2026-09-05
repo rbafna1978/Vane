@@ -72,6 +72,7 @@ async def forecast(
     lat: Lat,
     lon: Lon,
     redis: RedisDep,
+    session: SessionDep,
     source: SourceDep,
     days: Annotated[int, Query(ge=1, le=16)] = 7,
 ) -> Response:
@@ -85,6 +86,20 @@ async def forecast(
     if data is None:
         data = await source.forecast(cell, days)
         await set_model(redis, key, data, FORECAST_TTL_S)
+
+    # Normals are attached after the cache, not inside it: the provider payload and thirty
+    # years of history change on completely different clocks, and baking normals into a
+    # one-hour cache entry would freeze them there.
+    normals = await ctx.normals_for(session, cell.id, [day.d for day in data.daily])
+    if normals:
+        data = data.model_copy(
+            update={
+                "daily": [
+                    day.model_copy(update={"normal": normals.get(day.d)})
+                    for day in data.daily
+                ]
+            }
+        )
 
     return etag_response(request, data, FORECAST_TTL_S)
 
