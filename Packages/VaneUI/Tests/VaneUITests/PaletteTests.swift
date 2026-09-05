@@ -146,3 +146,24 @@ private func chroma(_ c: RGB) -> Double { max(c.r, c.g, c.b) - min(c.r, c.g, c.b
         }
     }
 }
+
+@Test func `the normal band clears WCAG non-text contrast at every hour`() {
+    // The band is the comparison the whole chart is read against — essential graphic content
+    // under WCAG 1.4.11, not ruling. It previously borrowed `grid`, which is held to a
+    // decorative 1.6:1 and was invisible on dark paper.
+    for minute in stride(from: 0, to: 1_440, by: 15) {
+        let state = SkyState.now(
+            latitude: 37.8, longitude: -122.25,
+            date: utc(2026, 9, 4, 0, 0).addingTimeInterval(Double(minute) * 60)
+        )
+        let ratio = contrastRatio(state.palette.band, state.palette.paper)
+        #expect(ratio >= 3.0, "band contrast \(ratio) at minute \(minute)")
+    }
+}
+
+@Test func `ruling stays quieter than the band it sits behind`() {
+    let palette = SkyState.now(latitude: 37.8, longitude: -122.25,
+                               date: utc(2026, 9, 4, 20, 0)).palette
+    #expect(contrastRatio(palette.grid, palette.paper)
+            <= contrastRatio(palette.band, palette.paper))
+}

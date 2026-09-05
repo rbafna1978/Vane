@@ -57,8 +57,8 @@ AAA holds for 92% of the day.
 | 1 | Backend skeleton — `/v1/snapshot`, `/v1/forecast`, Docker, migrations | done |
 | 2 | Context engine — normals backfill, ranks, streaks, `/v1/context` | done |
 | 3 | Design system in code — tokens, type scale, sun engine, motion primitives | done |
-| 4 | Main screen | next |
-| 5 | Detail + archive | |
+| 4 | Main screen | done |
+| 5 | Detail + archive | next |
 | 6 | Widget + Live Activity | |
 | 7 | Push loop + deploy | |
 | 8 | Polish + App Store submission | |

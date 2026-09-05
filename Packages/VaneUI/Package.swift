@@ -15,6 +15,6 @@ let package = Package(
             // nonisolated so the widget and the sun engine are not dragged onto the main actor.
             swiftSettings: [.defaultIsolation(MainActor.self)]
         ),
-        .testTarget(name: "VaneUITests", dependencies: ["VaneUI"]),
+        .testTarget(name: "VaneUITests", dependencies: ["VaneUI"], resources: [.process("snapshot.json")]),
     ]
 )

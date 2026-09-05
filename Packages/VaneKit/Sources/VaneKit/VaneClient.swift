@@ -12,9 +12,17 @@ public struct VaneClient: Sendable {
     private let baseURL: URL
     private let session: URLSession
 
-    public init(baseURL: URL, session: URLSession = .shared) {
+    public init(baseURL: URL, session: URLSession? = nil) {
         self.baseURL = baseURL
-        self.session = session
+        // URLSession's default 60s timeout is far longer than anyone waits before deciding the
+        // app is broken. There is always cached content behind this, so failing fast costs
+        // nothing and hanging costs the whole impression of the app.
+        self.session = session ?? {
+            let configuration = URLSessionConfiguration.default
+            configuration.timeoutIntervalForRequest = 10
+            configuration.waitsForConnectivity = false
+            return URLSession(configuration: configuration)
+        }()
     }
 
     public func snapshot(latitude: Double, longitude: Double) async throws -> Snapshot {
@@ -70,7 +78,9 @@ public struct VaneClient: Sendable {
     static let iso = Date.ISO8601FormatStyle(includingFractionalSeconds: false)
     static let isoFractional = Date.ISO8601FormatStyle(includingFractionalSeconds: true)
 
-    static let decoder: JSONDecoder = {
+    /// Public because it is the canonical decoder for this API's payloads, and the widget
+    /// extension reads the same cached JSON without going through the client.
+    public static let decoder: JSONDecoder = {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .custom { decoder in
             let container = try decoder.singleValueContainer()
@@ -84,7 +94,7 @@ public struct VaneClient: Sendable {
         return decoder
     }()
 
-    static let encoder: JSONEncoder = {
+    public static let encoder: JSONEncoder = {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .custom { date, encoder in
             var container = encoder.singleValueContainer()

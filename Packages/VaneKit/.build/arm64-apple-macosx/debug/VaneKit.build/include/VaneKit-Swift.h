@@ -369,11 +369,9 @@ extern "C" {
 
 #if defined(__OBJC__)
 
-/// Where the phone is.
-/// <code>@MainActor</code> on purpose, and the one place in VaneKit that is: <code>CLLocationManager</code> is not
-/// <code>Sendable</code> and delivers its callbacks on the thread its delegate was set up on. Pinning it
-/// to the main actor is honest about that, rather than promising thread-safety with an
-/// <code>@unchecked Sendable</code> the compiler cannot verify.
+/// <code>@Observable</code> so the place name can arrive <em>after</em> the coordinate and still reach the screen.
+/// Resolving the fix immediately is what stops a slow geocoder holding up the weather, but it
+/// means the name lands later — and without observation it would land nowhere.
 SWIFT_CLASS("_TtC7VaneKit16LocationProvider")
 @interface LocationProvider : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;

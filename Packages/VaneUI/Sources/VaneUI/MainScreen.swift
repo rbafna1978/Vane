@@ -6,6 +6,9 @@ public struct MainScreen: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var model: WeatherModel
     @State private var contextVisible = false
+    /// The chart expands to fill whatever the sheet leaves it, so the content needs to know how
+    /// tall the sheet is. Inside a ScrollView `maxHeight: .infinity` alone means nothing.
+    @State private var height: CGFloat = 0
 
     public init(model: WeatherModel) {
         _model = State(initialValue: model)
@@ -15,6 +18,7 @@ public struct MainScreen: View {
         let sky = model.sky
         let palette = sky.palette
 
+        GeometryReader { geometry in
         ZStack {
             palette.paperColor.ignoresSafeArea()
 
@@ -36,11 +40,16 @@ public struct MainScreen: View {
             }
         }
         .animation(VaneMotion.sky, value: palette)
+        .onAppear { height = geometry.size.height }
+        }
         .task {
             await model.refresh()
-            // The entry moment: the sentence arrives a beat after the reading it explains.
-            // Only when there is one to arrive, and only once.
-            if model.snapshot?.context != nil { contextVisible = true }
+        }
+        // Driven by the data, not by a flag set once. The previous version set `contextVisible`
+        // only inside `.task`, so a cell that was cold on first fetch and warm on a later one
+        // would keep its sentence hidden forever.
+        .onChange(of: model.snapshot?.context) { _, context in
+            contextVisible = context != nil
         }
     }
 
@@ -52,8 +61,11 @@ public struct MainScreen: View {
             Reading(snapshot: snapshot, palette: palette)
 
             Spacer().frame(height: 8)
-            ContextLine(contextVisible ? snapshot.context : nil, palette: palette)
-                .frame(minHeight: 76, alignment: .topLeading)
+            // No reserved height. A cold cell has no sentence, and holding 76pt of empty paper
+            // for one leaves a hole that reads as a rendering bug. When the sentence does
+            // arrive it pushes into the sheet and the chart yields — which is the arrival
+            // being visible, rather than something popping into a pre-cut slot.
+            ContextLine(snapshot.context, palette: palette)
 
             Spacer().frame(height: 28)
             BarographTrace(
@@ -65,18 +77,20 @@ public struct MainScreen: View {
                 nowHour: hour(of: snapshot.observedAt, in: snapshot),
                 palette: palette
             )
-            .frame(height: 200)
+            // Flexible, not a fixed 200pt. The trace is the signature of this design and was
+            // the smallest voice on the screen while a third of the paper sat empty below it.
+            // A chart fills its sheet.
+            .frame(minHeight: 200, maxHeight: .infinity)
 
             Spacer().frame(height: 24)
             Footer(snapshot: snapshot, palette: palette)
 
             Spacer().frame(height: 20)
-            StreakDots(count: model.streak, palette: palette)
-
-            Spacer(minLength: 0)
+            StreakBar(count: model.streak, palette: palette)
         }
         .padding(.horizontal, 24)
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.bottom, 8)
+        .frame(maxWidth: .infinity, minHeight: height, alignment: .leading)
     }
 
     /// Hours since local midnight, in the *location's* own timezone — which the arc's own
@@ -194,21 +208,30 @@ struct Footer: View {
     }
 }
 
-struct StreakDots: View {
+/// Consecutive days opened, as a measured rule rather than seven dots.
+///
+/// Seven evenly spaced dots at the bottom of a screen is a `UIPageControl`, and people will try
+/// to swipe it. A tick rule is the instrument's own vocabulary — a scale with a mark on it —
+/// and cannot be mistaken for navigation.
+struct StreakBar: View {
     let count: Int
     let palette: Palette
 
+    private var weeks: Int { max(1, Int(ceil(Double(min(count, 28)) / 7))) }
+
     var body: some View {
-        HStack(spacing: 8) {
-            ForEach(0..<7, id: \.self) { index in
-                Circle()
-                    .fill(index < min(count, 7) ? palette.traceColor : palette.gridColor)
-                    .frame(width: 5, height: 5)
+        HStack(alignment: .bottom, spacing: 4) {
+            ForEach(0..<28, id: \.self) { index in
+                Rectangle()
+                    .fill(index < min(count, 28) ? palette.traceColor : palette.gridColor)
+                    // Taller every seventh mark, the way a ruler marks its units. Gives the run
+                    // a readable length without printing a number that would start to nag.
+                    .frame(width: 1, height: index % 7 == 6 ? 9 : 5)
             }
+            Spacer()
         }
+        .frame(height: 9, alignment: .bottom)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(
-            count == 1 ? "Opened today" : "Opened \(count) days in a row"
-        )
+        .accessibilityLabel(count == 1 ? "Opened today" : "Opened \(count) days in a row")
     }
 }

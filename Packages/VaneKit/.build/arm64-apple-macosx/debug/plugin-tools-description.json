@@ -53,6 +53,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/StreakStore.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SunPosition.swift"
         },
         {
@@ -75,6 +79,7 @@
         "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build/LocationProvider.swift.o",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build/Models.swift.o",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build/SnapshotStore.swift.o",
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build/StreakStore.swift.o",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build/SunPosition.swift.o",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build/VaneClient.swift.o"
       ],
@@ -143,6 +148,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build/StreakStore.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build/SunPosition.swift.o"
         },
         {
@@ -159,6 +168,7 @@
         "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/LocationProvider.swift",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/Models.swift",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SnapshotStore.swift",
+        "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/StreakStore.swift",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SunPosition.swift",
         "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/VaneClient.swift"
       ],
@@ -393,6 +403,7 @@
       "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/LocationProvider.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/Models.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SnapshotStore.swift",
+      "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/StreakStore.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SunPosition.swift",
       "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/VaneClient.swift",
       "-I",
@@ -624,6 +635,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/StreakStore.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/Sources/VaneKit/SunPosition.swift"
         },
         {
@@ -665,6 +680,10 @@
         {
           "kind" : "file",
           "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build/SnapshotStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rishitbafna/Documents/Vane/Packages/VaneKit/.build/arm64-apple-macosx/debug/VaneKit.build/StreakStore.swift.o"
         },
         {
           "kind" : "file",

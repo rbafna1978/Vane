@@ -17,6 +17,11 @@ public nonisolated struct Palette: Sendable, Hashable {
     public let trace: RGB
     public let alert: RGB
 
+    /// The normal band. Derived from `grid` but held to 3:1, because it is information rather
+    /// than ruling — it is what "unusual" is measured against.
+    public var band: RGB { grid.meetingContrast(3.0, against: paper) }
+    public var bandColor: Color { band.color }
+
     public var paperColor: Color { paper.color }
     public var gridColor: Color { grid.color }
     public var inkColor: Color { ink.color }
@@ -50,9 +55,13 @@ public nonisolated struct Palette: Sendable, Hashable {
         )
     }
 
-    /// Ink and grid are pushed away from paper until they clear `minimum`, so no time of day
-    /// can produce an unreadable screen. Grid asks for less because it is a hairline rule, not
-    /// text — holding it to text contrast would make it shout.
+    /// Ink is pushed away from paper until it clears `minimum`, so no time of day can produce
+    /// an unreadable screen.
+    ///
+    /// `grid` carries two jobs at different weights: the hairline ruling, which is scaffolding
+    /// and should stay quiet, and the normal band, which is the chart's essential comparison and
+    /// so must clear WCAG 1.4.11's 3:1 for non-text content. The band gets its own token rather
+    /// than borrowing one held to a decorative threshold.
     func guaranteeingContrast(_ minimum: Double) -> Palette {
         Palette(
             paper: paper,

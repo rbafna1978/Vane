@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: vane
+          POSTGRES_PASSWORD: vane
+          POSTGRES_DB: vane
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U vane" --health-interval 3s
+          --health-timeout 3s --health-retries 20
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 3s
+          --health-timeout 3s --health-retries 20
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --all-groups
+      - run: uv run ruff check .
+      - run: uv run mypy vane
+      # The suite builds and drops its own vane_test database against the service above.
+      - run: uv run pytest -q
+
+  ios:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - run: xcodebuild -version
+      # The packages carry the logic and run without a simulator, so they gate every push
+      # cheaply. The app build is what catches integration breaks.
+      - run: swift test --package-path Packages/VaneKit
+      - run: swift test --package-path Packages/VaneUI
+      - run: |
+          xcodebuild build \
+            -project Vane.xcodeproj -scheme Vane \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
+            CODE_SIGNING_ALLOWED=NO

@@ -35,17 +35,26 @@ public struct SnapshotStore: Sendable {
             at: directory, includingPropertiesForKeys: [.contentModificationDateKey]
         ) else { return nil }
 
-        return files
+        // Sort by modification date first, then decode. Decoding every saved location to find
+        // the newest puts N full JSON parses on the synchronous launch path — the one path in
+        // the app that must be fast, and the reason there is no launch spinner to hide behind.
+        // Falls through to the next-newest if the newest file is corrupt.
+        let candidates = files
             .filter { $0.lastPathComponent.hasPrefix("snapshot-") }
-            .compactMap { url -> (Date, Snapshot)? in
-                guard let data = try? Data(contentsOf: url),
-                      let snapshot = try? VaneClient.decoder.decode(Snapshot.self, from: data),
-                      let modified = try? url.resourceValues(forKeys: [.contentModificationDateKey])
-                          .contentModificationDate
-                else { return nil }
-                return (modified, snapshot)
+            .compactMap { url -> (Date, URL)? in
+                guard let modified = try? url.resourceValues(forKeys: [.contentModificationDateKey])
+                    .contentModificationDate else { return nil }
+                return (modified, url)
             }
-            .max { $0.0 < $1.0 }?.1
+            .sorted { $0.0 > $1.0 }
+
+        for (_, url) in candidates {
+            if let data = try? Data(contentsOf: url),
+               let snapshot = try? VaneClient.decoder.decode(Snapshot.self, from: data) {
+                return snapshot
+            }
+        }
+        return nil
     }
 
     public func save(_ snapshot: Snapshot) {

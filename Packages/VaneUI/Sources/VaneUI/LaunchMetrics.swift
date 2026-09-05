@@ -6,11 +6,14 @@ import os
 /// Measured from process start — `kinfo_proc` gives the kernel's own record of when the process
 /// began, which includes dyld and everything before `main`. Timing from `init` instead would
 /// quietly exclude the slowest part of a cold launch and report a number that flatters us.
+@MainActor
 public enum LaunchMetrics {
     private static let log = Logger(subsystem: "com.rishitbafna.vane", category: "launch")
-    nonisolated(unsafe) private static var reported = false
+    // MainActor-isolated rather than `nonisolated(unsafe)`: it is only ever touched from a
+    // view's onAppear, so the isolation is real and the compiler can check it.
+    private static var reported = false
 
-    public static func processStart() -> Date? {
+    nonisolated public static func processStart() -> Date? {
         var info = kinfo_proc()
         var size = MemoryLayout<kinfo_proc>.stride
         var mib: [Int32] = [CTL_KERN, KERN_PROC, KERN_PROC_PID, getpid()]

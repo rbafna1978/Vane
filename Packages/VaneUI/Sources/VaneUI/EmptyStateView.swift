@@ -29,7 +29,10 @@ struct EmptyStateView: View {
                 Text(action)
                     .font(.vaneData).tracking(1.4)
                     .padding(.horizontal, 18)
-                    .padding(.vertical, 11)
+                    // 12pt text plus 22pt of padding is ~37pt — under the 44pt minimum target.
+                    // The frame sets the floor so the tappable area is right regardless of what
+                    // Dynamic Type does to the label.
+                    .frame(minWidth: 44, minHeight: 44)
                     .overlay(RoundedRectangle(cornerRadius: 2)
                         .strokeBorder(palette.traceColor, lineWidth: 1))
             }

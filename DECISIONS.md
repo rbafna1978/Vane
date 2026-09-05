@@ -208,3 +208,56 @@ trace with pen tip, sunrise/sunset, wind, streak dots.
   would be meaningless anyway: no ProMotion, no real GPU, no thermal behaviour. Launch-to-first-
   paint is now instrumented via `LaunchMetrics` (measured from `kinfo_proc` process start, so it
   includes dyld). Real 120fps hitch numbers need a physical device.
+
+## Phase 4 reviews — findings and fixes
+
+**design:design-critique.** The composition was unresolved: a third of the screen empty while the
+signature element was the quietest thing on it.
+- Chart takes the remaining height instead of a fixed 200pt. A chart fills its sheet.
+- Streak became a tick rule. Seven evenly spaced dots at the bottom of a screen is a
+  `UIPageControl` and people will try to swipe it; a rule is the instrument's own vocabulary.
+- The normal band was imperceptible on dark paper. Its weight now scales against the paper.
+- Stopped reserving 76pt for a context line that may not exist — an empty slot reads as a
+  rendering bug. The sentence pushes into the sheet when it arrives, and the chart yields.
+
+**design:accessibility-review.** Four findings, one critical.
+- The chart's VoiceOver summary said "Within the usual range" for a day *below* the band — the
+  exact case the on-screen sentence was describing. Sighted and non-sighted users were told
+  opposite things. Now reports all three cases.
+- Low-confidence context was distinguished only by 62% opacity; the label now says so.
+- The normal band borrowed `grid`, held to a decorative 1.6:1. It is essential graphic content
+  under WCAG 1.4.11, so it now has its own token held to 3:1, tested at every hour.
+- Empty-state button was ~37pt tall against the 44pt minimum.
+
+**engineering:code-review.** Six findings, two of which could hang the app.
+- `LocationProvider.request()` never resumed its continuation if the permission dialog was
+  ignored — no delegate callback fires, so `refresh()` and the caller's `.task` hung for the
+  life of the process. Now a timeout resolves the waiting continuation.
+- Location resolution awaited reverse geocoding, so a slow `CLGeocoder` held up the weather
+  fetch. The comment claimed a failed name must never cost us the location; the code did exactly
+  that. The coordinate now resolves first and the name arrives after — which required making
+  `LocationProvider` `@Observable`, or the late name would have reached nowhere.
+- `loadMostRecent()` decoded every cached file to find the newest, on the synchronous launch
+  path. Now sorts by modification date and decodes one, falling through if it is corrupt.
+- `contextVisible` was a one-shot flag set inside `.task`; a cell cold on first fetch and warm
+  later would keep its sentence hidden forever. Now driven by the data.
+- `URLSession`'s 60s default timeout is far longer than anyone waits. 10s, with cache behind it.
+- `StreakStore` moved to VaneKit (it is calendar arithmetic with no view in it) and dropped its
+  `Sendable` conformance rather than claiming `@unchecked` over `UserDefaults`.
+
+**engineering:tech-debt** (owed since phase 3). Ledger in `docs/TECH-DEBT.md`. Top four done:
+- Backend URL moved out of a source constant into build configuration. A Release build with no
+  host configured now fails at launch rather than shipping a TestFlight build pointed at
+  `localhost` — which is not a degraded app, it is a dead one.
+- CI added. Three suites across two languages and the only thing running them was me.
+- `WeatherModel` now has tests, through a `LocationProviding` seam and a `URLProtocol` stub. It
+  is the most breakable code in the app and had none.
+- `docs/api-contract.md` corrected: `normal` is a band, `utc_offset_seconds` documented, and
+  `forecast_cache` moved to the debt ledger rather than left as a table that exists on paper.
+
+**Profiling.** `xctrace` could not be made to complete against the simulator (three attempts,
+including one that ran past ten minutes for a 25-second recording). Cold launch to first
+meaningful paint is instrumented instead, measured from `kinfo_proc` process start so dyld is
+included: **285 / 228 / 219 / 216 / 229 ms over five cold launches, median ~228ms against a
+1200ms budget.** Animation hitch numbers still need a physical device — a simulator has no
+ProMotion, no real GPU and no thermal behaviour, and reporting its figures would be theatre.

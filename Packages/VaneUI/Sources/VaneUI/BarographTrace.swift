@@ -98,15 +98,22 @@ public struct BarographTrace: View {
     private func drawNormalBand(
         _ context: GraphicsContext, plot: CGRect, top: CGFloat, bottom: CGFloat
     ) {
+        // 0.28 over near-black paper is imperceptible, and "where today leaves the ordinary
+        // range" is the chart's whole argument. The band is scaled against the paper it sits on
+        // rather than fixed, so it stays a whisper on light stock and stays visible on dark.
+        // The fill stays a wash — it is a region, not a line — but the dashed edges that define
+        // the band are held to 3:1 (WCAG 1.4.11), because they are the boundary the whole
+        // reading is made against.
+        let strength = palette.paper.luminance < 0.2 ? 0.85 : 0.32
         context.fill(
             Path(CGRect(x: plot.minX, y: top, width: plot.width, height: bottom - top)),
-            with: .color(palette.gridColor.opacity(0.28))
+            with: .color(palette.gridColor.opacity(strength))
         )
         for edge in [top, bottom] {
             context.stroke(
                 Path { $0.move(to: .init(x: plot.minX, y: edge))
                        $0.addLine(to: .init(x: plot.maxX, y: edge)) },
-                with: .color(palette.gridColor),
+                with: .color(palette.bandColor),
                 style: StrokeStyle(lineWidth: 1, dash: [3, 3])
             )
         }
@@ -168,12 +175,17 @@ public struct BarographTrace: View {
         let step: Double = typeSize.isAccessibilitySize ? 6 : 3
         let pointSize: CGFloat = typeSize.isAccessibilitySize ? 15 : 12
 
-        for hour in stride(from: 0.0, through: 24.0 - step, by: step) {
+        for hour in stride(from: 0.0, through: 24.0, by: step) {
             let text = Text(String(format: "%02d", Int(hour)))
                 .font(.custom(VaneFont.mono, fixedSize: pointSize))
                 .foregroundStyle(palette.inkColor.opacity(0.45))
-            // Centred on its own gridline, except the first, which would hang off the paper.
-            let anchor: UnitPoint = hour == 0 ? .leading : .center
+            // Centred on its own gridline, except at the ends: hour 0 and hour 24 sit on the
+            // paper's edges and would hang off it, so they are pulled inward.
+            let anchor: UnitPoint = switch hour {
+            case 0: .leading
+            case 24: .trailing
+            default: .center
+            }
             context.draw(text, at: .init(x: x(hour), y: size.height - 7), anchor: anchor)
         }
     }
@@ -203,9 +215,17 @@ public struct BarographTrace: View {
               let low = points.map(\.value).min() else { return "Temperature chart" }
         var summary = "Today's temperature. Now \(Int(now.rounded())) degrees, "
         summary += "high \(Int(high.rounded())), low \(Int(low.rounded()))."
-        if let normalHigh {
-            summary += now > normalHigh ? " Above the usual range for this date."
-                                        : " Within the usual range for this date."
+        // Three cases, not two. Reporting "within the usual range" for a day that is below it
+        // tells a VoiceOver user the opposite of what the chart shows — and *below* the band is
+        // exactly the situation the sentence above the chart is currently describing.
+        if let normalHigh, let normalLow {
+            if now > normalHigh {
+                summary += " Above the usual range for this date."
+            } else if now < normalLow {
+                summary += " Below the usual range for this date."
+            } else {
+                summary += " Within the usual range for this date."
+            }
         }
         return summary
     }

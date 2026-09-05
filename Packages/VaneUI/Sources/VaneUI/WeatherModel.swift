@@ -20,7 +20,6 @@ public final class WeatherModel {
     }
 
     public private(set) var snapshot: Snapshot?
-    public private(set) var placeName: String?
     public private(set) var screen: Screen = .content
     public private(set) var streak: Int
 
@@ -28,15 +27,19 @@ public final class WeatherModel {
     /// *arrives*; re-rendering the same cached sentence several times a day is not a moment.
     public private(set) var hasPresentedContext = false
 
+    /// Read through to the provider rather than snapshotting the name at fetch time: geocoding
+    /// finishes after the coordinate does, so a copied value would stay "Here" forever.
+    public var placeName: String? { location.placeName }
+
     private let client: VaneClient
     private let store: SnapshotStore
-    private let location: LocationProvider
+    private let location: any LocationProviding
     private let streaks: StreakStore
 
     public init(
         client: VaneClient,
         store: SnapshotStore = SnapshotStore(),
-        location: LocationProvider = LocationProvider(),
+        location: any LocationProviding = LocationProvider(),
         streaks: StreakStore = StreakStore()
     ) {
         self.client = client
@@ -60,8 +63,7 @@ public final class WeatherModel {
             screen = snapshot == nil ? .locationDenied : .content
         case .unavailable:
             screen = snapshot == nil ? .unreachable : .content
-        case let .located(latitude, longitude, name):
-            placeName = name ?? placeName
+        case let .located(latitude, longitude, _):
             await load(latitude: latitude, longitude: longitude)
         }
     }
@@ -91,39 +93,5 @@ public final class WeatherModel {
         return SkyState.now(
             latitude: parts.first ?? 0, longitude: parts.last ?? 0, date: .now
         )
-    }
-}
-
-/// Consecutive days opened. Local, because the server has no `/v1/archive/open` yet — that
-/// lands with the push loop. Kept deliberately quiet in the UI: a streak that nags is a streak
-/// people delete the app to escape.
-public struct StreakStore: Sendable {
-    private let defaults: UserDefaults
-    private let lastKey = "vane.streak.lastOpen"
-    private let countKey = "vane.streak.count"
-
-    public init(defaults: UserDefaults = .standard) { self.defaults = defaults }
-
-    @discardableResult
-    public func recordOpen(today: Date = .now, calendar: Calendar = .current) -> Int {
-        let day = calendar.startOfDay(for: today)
-        let previous = defaults.object(forKey: lastKey) as? Date
-        var count = defaults.integer(forKey: countKey)
-
-        if let previous {
-            let last = calendar.startOfDay(for: previous)
-            let gap = calendar.dateComponents([.day], from: last, to: day).day ?? 0
-            switch gap {
-            case 0: return max(count, 1)      // already counted today
-            case 1: count += 1                 // consecutive
-            default: count = 1                 // streak broken; today starts a new one
-            }
-        } else {
-            count = 1
-        }
-
-        defaults.set(day, forKey: lastKey)
-        defaults.set(count, forKey: countKey)
-        return count
     }
 }

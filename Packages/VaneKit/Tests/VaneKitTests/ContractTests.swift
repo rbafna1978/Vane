@@ -74,3 +74,34 @@ import Testing
     #expect(snapshot.utcOffsetSeconds == nil)
     #expect(snapshot.timeZone == .current, "falls back to the device zone rather than failing")
 }
+
+// MARK: - StreakStore
+
+@Test func `a streak counts consecutive days and resets on a gap`() {
+    let defaults = try! #require(UserDefaults(suiteName: "vane.test.\(UUID().uuidString)"))
+    let store = StreakStore(defaults: defaults)
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+    let day = calendar.startOfDay(for: Date(timeIntervalSince1970: 1_800_000_000))
+
+    #expect(store.recordOpen(today: day, calendar: calendar) == 1)
+    // Opening twice in one day is still one day.
+    #expect(store.recordOpen(today: day.addingTimeInterval(3_600), calendar: calendar) == 1)
+    #expect(store.recordOpen(today: day.addingTimeInterval(86_400), calendar: calendar) == 2)
+    #expect(store.recordOpen(today: day.addingTimeInterval(2 * 86_400), calendar: calendar) == 3)
+    // A missed day breaks it, and today starts a new run rather than counting zero.
+    #expect(store.recordOpen(today: day.addingTimeInterval(5 * 86_400), calendar: calendar) == 1)
+}
+
+@Test func `a clock moving backwards does not inflate the streak`() {
+    let defaults = try! #require(UserDefaults(suiteName: "vane.test.\(UUID().uuidString)"))
+    let store = StreakStore(defaults: defaults)
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+    let day = calendar.startOfDay(for: Date(timeIntervalSince1970: 1_800_000_000))
+
+    #expect(store.recordOpen(today: day, calendar: calendar) == 1)
+    #expect(store.recordOpen(today: day.addingTimeInterval(86_400), calendar: calendar) == 2)
+    // Travelling west or a manual clock change must not be rewarded.
+    #expect(store.recordOpen(today: day.addingTimeInterval(-3 * 86_400), calendar: calendar) == 1)
+}

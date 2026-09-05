@@ -32,7 +32,14 @@ public struct ContextLine: View {
                     .opacity(context.confidence == .low ? 0.62 : 1)
                     .fixedSize(horizontal: false, vertical: true)
                     .transition(transition)
-                    .accessibilityLabel(context.headline)
+                    // The 62% opacity says "short record, weaker claim" to someone looking at
+                    // it. Conveying that by appearance alone leaves a VoiceOver user hearing a
+                    // superlative with no idea it is a provisional one.
+                    .accessibilityLabel(
+                        context.confidence == .low
+                            ? "\(context.headline) Based on a short record."
+                            : context.headline
+                    )
                     .id(context.headline)
             }
         }

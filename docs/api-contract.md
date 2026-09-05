@@ -32,9 +32,12 @@ GET /v1/snapshot?lat={f}&lon={f}
   200  {
     cell_id,                        # 0.25° cell, snapped server-side
     observed_at,
+    utc_offset_seconds,             # the location's own offset — sunrise must render in the
+                                    # time of the place, not the phone. Sent rather than
+                                    # inferred, because inference breaks on DST days.
     current:  { temp_c, feels_c, wind_kt, wind_deg, humidity, pressure_hpa, code },
     arc:      [ { t, temp_c, precip_mm, code } ],     # today, hourly, local midnight to midnight
-    normal:   [ { t, temp_c } ],                      # the dashed line behind the trace
+    normal:   { tmax_c, tmin_c, years } | null,       # the dashed band behind the trace
     context:  Context | null,
     context_state: "warm" | "warming",
     alerts:   [ Alert ],
@@ -43,11 +46,16 @@ GET /v1/snapshot?lat={f}&lon={f}
 ```
 
 `normal` and `sun` exist because the design needs them, not because the data is interesting.
-`normal` is the dashed 11-year line the trace is read against. `sun` drives the `wash` token — the
+
+`normal` is a **band**, not a series: the average high and low for this calendar date. We hold
+daily history, so an hourly normal would have to be invented from a diurnal shape, and a
+fabricated curve behind a real trace is the quiet dishonesty this app is built against. `sun` drives the `wash` token — the
 client computes color state from it locally so the palette keeps advancing while offline.
 
-`context_state: "warming"` means this cell is cold and backfill is queued (ADR-0004). The client
-renders everything except the context line. It is not an error and not a loading state.
+`context_state` is `cold` | `warming` | `warm`. `cold` means no history and nothing queued;
+`warming` means backfill is running; `warm` means history is present, though `context` may still
+be null when nothing true about today is interesting. All three render identically — everything
+except the context line — so the absence of a sentence is never read as an error.
 
 ## Remaining routes
 
@@ -124,6 +132,10 @@ who wants to know if it will rain.
 Changed from the brief: `users` dropped (see above). `cells` added — it holds warm/cold status per
 grid cell, which ADR-0004 needs and which nothing else owns.
 
-`forecast_cache` is a Postgres table *and* Redis holds the hot copy. That looks redundant and is
-deliberate: Redis eviction under memory pressure must not cause a stampede against Open-Meteo, so
-Postgres is the durable second tier. If this proves unnecessary in practice, the table goes.
+**Built so far:** `cells`, `observations`, `daily_normals`. Tables arrive with the code that uses
+them. `devices`, `locations`, `day_opens` and `archive_entries` land with the push loop and the
+archive.
+
+`forecast_cache` was specified as a durable second tier behind Redis and has **not** been built —
+the stampede it guards against has not been observed. Listed in `TECH-DEBT.md` rather than left
+in this document as a table that exists only on paper.
