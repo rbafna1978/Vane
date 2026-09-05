@@ -1,5 +1,0 @@
----
-triple:          'arm64-apple-darwin'
-binary-path:     '/Users/rishitbafna/Documents/Vane/Packages/VaneUI/.build/arm64-apple-macosx/debug/VaneUIPackageTests.xctest/Contents/MacOS/VaneUIPackageTests'
-relocations:     []
-...

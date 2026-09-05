@@ -9,6 +9,7 @@ public struct MainScreen: View {
     /// The chart expands to fill whatever the sheet leaves it, so the content needs to know how
     /// tall the sheet is. Inside a ScrollView `maxHeight: .infinity` alone means nothing.
     @State private var height: CGFloat = 0
+    @State private var showingArchive = false
 
     public init(model: WeatherModel) {
         _model = State(initialValue: model)
@@ -17,6 +18,9 @@ public struct MainScreen: View {
     public var body: some View {
         NavigationStack {
             screen
+                .navigationDestination(isPresented: $showingArchive) {
+                    ArchiveScreen(points: model.archivePoints(), palette: model.sky.palette)
+                }
         }
     }
 
@@ -101,6 +105,19 @@ public struct MainScreen: View {
             }
             .buttonStyle(.plain)
             .accessibilityHint("Opens the extended forecast")
+            // Dragging left moves along the same paper into the archive — the design's
+            // signature is that the roll is continuous, so the gesture is leftward travel
+            // rather than a button that opens a different place.
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 24)
+                    .onEnded { value in
+                        if value.translation.width < -60,
+                           abs(value.translation.height) < 60 {
+                            showingArchive = true
+                        }
+                    }
+            )
+            .accessibilityAction(named: "Open the archive") { showingArchive = true }
 
             Spacer().frame(height: 24)
             Footer(snapshot: snapshot, palette: palette)

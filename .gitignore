@@ -9,3 +9,8 @@ __pycache__/
 build/
 DerivedData/
 graphify-out/
+
+# SwiftPM build artefacts and dependency checkouts. GRDB's own repository is 225MB and has no
+# business in this history — dependencies are resolved from Package.resolved, not vendored.
+.build/
+.swiftpm/

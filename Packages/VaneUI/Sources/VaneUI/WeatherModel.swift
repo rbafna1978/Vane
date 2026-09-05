@@ -1,5 +1,6 @@
 import Foundation
 import Observation
+import os
 import SwiftUI
 import VaneKit
 
@@ -12,6 +13,9 @@ import VaneKit
 @Observable
 @MainActor
 public final class WeatherModel {
+    @ObservationIgnored
+    private let log = Logger(subsystem: "com.rishitbafna.vane", category: "archive")
+
     public enum Screen: Equatable {
         case content
         case needsLocation
@@ -36,17 +40,20 @@ public final class WeatherModel {
     private let store: SnapshotStore
     private let location: any LocationProviding
     private let streaks: StreakStore
+    private let archive: ArchiveStore?
 
     public init(
         client: VaneClient,
         store: SnapshotStore = SnapshotStore(),
         location: any LocationProviding = LocationProvider(),
-        streaks: StreakStore = StreakStore()
+        streaks: StreakStore = StreakStore(),
+        archive: ArchiveStore? = WeatherModel.openArchive()
     ) {
         self.client = client
         self.store = store
         self.location = location
         self.streaks = streaks
+        self.archive = archive
 
         // Synchronous, before the first frame. This is the line that makes the app open
         // instantly instead of showing a spinner and then content.
@@ -81,6 +88,7 @@ public final class WeatherModel {
             store.save(fresh)
             snapshot = fresh
             screen = .content
+            record(fresh)
             // The forecast failing must not cost us the snapshot we already have.
             forecast = try? await forecastTask
         } catch {
@@ -91,7 +99,58 @@ public final class WeatherModel {
         }
     }
 
+    /// Opening the archive is allowed to fail — the app still works without a record — but the
+    /// failure must be visible. A `try?` here hid the store never opening at all.
+    public static func openArchive() -> ArchiveStore? {
+        do {
+            return try ArchiveStore(path: ArchiveStore.defaultPath())
+        } catch {
+            Logger(subsystem: "com.rishitbafna.vane", category: "archive")
+                .error("could not open the archive: \(error)")
+            return nil
+        }
+    }
+
     public func markContextPresented() { hasPresentedContext = true }
+
+    /// Write today into the roll.
+    ///
+    /// Idempotent on the day, and every open overwrites — so a day first seen while its cell was
+    /// still cold gets its normal and its sentence filled in the next time the app is opened.
+    private func record(_ snapshot: Snapshot) {
+        guard let archive else { return }
+        let high = snapshot.arc.map(\.tempC).max() ?? snapshot.current.tempC
+        let low = snapshot.arc.map(\.tempC).min() ?? snapshot.current.tempC
+
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = snapshot.timeZone
+        let parts = calendar.dateComponents([.year, .month, .day], from: snapshot.observedAt)
+        let day = String(format: "%04d-%02d-%02d", parts.year ?? 0, parts.month ?? 0, parts.day ?? 0)
+
+        do {
+            try archive.record(ArchiveEntry(
+                day: day,
+                cellId: snapshot.cellId,
+                tmaxC: high,
+                tminC: low,
+                precipMm: snapshot.arc.reduce(0) { $0 + $1.precipMm },
+                normalTmaxC: snapshot.normal?.tmaxC,
+                normalTminC: snapshot.normal?.tminC,
+                code: snapshot.current.code,
+                headline: snapshot.context?.headline
+            ))
+            log.info("archived \(day, privacy: .public)")
+        } catch {
+            // Was `try?`. Swallowing this hid a silent failure to record anything at all —
+            // and the archive is the one thing in the app that cannot be re-fetched.
+            log.error("failed to archive \(day, privacy: .public): \(error)")
+        }
+    }
+
+    public func archivePoints() -> [ArchivePoint] {
+        guard let archive, let count = try? archive.count(), count > 0 else { return [] }
+        return (try? archive.points(scale: ArchiveStore.scale(forDays: count))) ?? []
+    }
 
     /// The sky for this snapshot's own location, moment, and conditions.
     ///

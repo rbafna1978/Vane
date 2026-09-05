@@ -300,3 +300,34 @@ Feedback: the chart could not be read at a glance, and conditions were missing e
   sunrise). Re-recording the payload broke four tests for no reason. They now assert against the
   fixture's own values — the thing under test is the mapping, not the weather in Oakland on one
   afternoon.
+
+## Phase 5 — detail and archive
+
+- **The detail screen is contextualised, not a seven-day list.** `/v1/forecast` now attaches each
+  day's own 30-year normal, and rows share one temperature axis so a warm day sits visibly right
+  of a cool one. Oakland on the day this was built: 3 below normal today, swinging to 10 above by
+  Wednesday — a heat wave visible as a shape.
+- **Normals are attached after the cache, not inside it.** A provider payload and thirty years of
+  history change on completely different clocks; baking normals into a one-hour cache entry would
+  freeze them there.
+- **One query for the whole forecast, matched on a packed `month * 100 + day` key.** Ten round
+  trips to render one screen is an N+1 on the request path, and two parallel `unnest` calls make
+  Postgres pick between overloads it cannot disambiguate from an untyped parameter.
+- **GRDB, as ADR-0002 specified.** Compression is a `GROUP BY` that runs under a finger.
+  Precipitation *sums* across a compressed span rather than averaging — averaging would report a
+  wet week as a damp day.
+- **`ArchiveStore` is `Sendable` without `@unchecked`.** GRDB's `DatabaseQueue` is itself
+  `Sendable` and serialises its own access, so there is no promise the compiler cannot check.
+- **Deviation from ADR-0002, stated.** That ADR made the server the source of truth and the local
+  store a cache. Device identity and `/v1/archive` land with the push loop in phase 7, so until
+  then the archive is *created* locally — we are the only party that knows the app was opened and
+  what it was like. Phase 7 adds upload so it survives reinstall.
+- **The archive is reached by dragging left on the chart**, not by a button. The signature is that
+  the roll is continuous; a control that "opens the archive" would contradict the thing the design
+  is about. A VoiceOver custom action provides the same route, since a drag is not operable.
+- **`try?` hid a real failure.** Recording to the archive swallowed its error, so when the roll
+  showed zero marks there was nothing to diagnose from. Both the store open and the write now log.
+  The archive is the one thing in the app that cannot be re-fetched from anywhere.
+- **The archive got its own legend and axis range.** It had inherited the forecast's, which said
+  "FORECAST" over days that had already happened and stretched the scale to 10 degrees for values
+  that were never drawn.
