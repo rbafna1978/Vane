@@ -38,3 +38,14 @@ has no `utc_offset_seconds`. A spec that lies is worse than no spec.
 Deployment (phase 7), GRDB and the archive (phase 5), the widget (phase 6), and Instruments hitch
 numbers (need a physical device) are all *sequenced*, not deferred maintenance. They are on the
 plan and nothing is decaying while they wait.
+
+## Phase 6c
+
+- **`INFOPLIST_KEY_*` only honours Apple's allowlist.** `INFOPLIST_KEY_VaneBackendURL` was set in
+  the project since phase 4 and never reached the bundle, so every Release build would have hit
+  the `fatalError` in `URL.vaneBackend` at launch. Custom keys now live in `VaneInfo.plist`, which
+  the generated keys merge into. Anything custom added to Info.plist in future goes in that file,
+  not in a build setting.
+- **`INFOPLIST_KEY_UILaunchScreen_Generation = YES` emits a nested `UILaunchScreen` dict** and
+  silently swallows the sibling `_UIColorName`, which is why the app opened on a white flash.
+  Also now literal in `VaneInfo.plist`.

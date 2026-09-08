@@ -10,6 +10,16 @@ import VaneKit
 /// Nothing here switches at a boundary: scrubbing to yesterday does not "open yesterday", it
 /// moves the same three lines to different values. The number rolls rather than swapping,
 /// because it is the same number changing, not a new one arriving.
+/// Slices one 0-to-1 entrance into an overlapping window for one element.
+///
+/// Overlapping on purpose: gaps between elements read as a queue of separate animations, while
+/// an overlap of roughly half each window reads as one movement passing through the layout.
+nonisolated func entrancePhase(_ t: Double, start: Double, span: Double = 0.45) -> Double {
+    let raw = min(max((t - start) / span, 0), 1)
+    // Ease-out, because everything here is *entering* — it should arrive fast and settle.
+    return 1 - pow(1 - raw, 3)
+}
+
 struct Header: View {
     @Environment(\.dynamicTypeSize) private var typeSize
     let mark: TimelineMark?
@@ -18,6 +28,7 @@ struct Header: View {
     let snapshot: Snapshot
     let scrub: Double
     let palette: Palette
+    var entrance: Double = 1
 
     private var isToday: Bool { day == 0 }
 
@@ -32,6 +43,7 @@ struct Header: View {
                 .tracking(2.2)
                 .foregroundStyle(palette.secondaryColor)
                 .contentTransition(.opacity)
+                .modifier(Enter(entrancePhase(entrance, start: 0)))
 
             // A day with no entry gets no number. Showing a dash, a zero, or the nearest
             // day's reading would all be inventing one — the honest thing a barograph does
@@ -52,6 +64,7 @@ struct Header: View {
                     .padding(.top, -VaneType.reading(for: typeSize) * 0.15)
                     .padding(.bottom, -VaneType.reading(for: typeSize) * 0.11)
                     .accessibilityLabel("\(Int(reading.rounded())) degrees")
+                    .modifier(Enter(entrancePhase(entrance, start: 0.08), rise: 22))
             } else {
                 Color.clear.frame(height: VaneType.readingSize * 0.72)
                     .accessibilityHidden(true)
@@ -62,6 +75,7 @@ struct Header: View {
                 .foregroundStyle(palette.secondaryColor)
                 .lineLimit(1).minimumScaleFactor(0.85)
                 .contentTransition(.opacity)
+                .modifier(Enter(entrancePhase(entrance, start: 0.18)))
 
             Text(sentence)
                 .vaneContextType()
@@ -70,6 +84,7 @@ struct Header: View {
                 .frame(minHeight: 40, alignment: .topLeading)
                 .padding(.top, Space.tight)
                 .contentTransition(.opacity)
+                .modifier(Enter(entrancePhase(entrance, start: 0.26)))
         }
         .animation(VaneMotion.figure, value: mark)
     }
@@ -129,25 +144,64 @@ struct Header: View {
 
 // MARK: - Readout
 
+/// The chart's key, and the day's sun times, in words rather than notation.
+///
+/// Was: `NORMAL 20°    ↑ 06:46   ↓ 19:28`. Three problems. "Normal" is a statistician's word and
+/// does not say normal *what*. Bare arrows are a symbol the reader has to guess at. And the chart
+/// above had two dashed lines in two colours with nothing anywhere saying which was which, so
+/// the single most important comparison in the app — this day against its own history — was
+/// unreadable unless you already knew.
 struct Readout: View {
+    @Environment(\.dynamicTypeSize) private var typeSize
     let mark: TimelineMark?
     let snapshot: Snapshot
     let palette: Palette
 
     var body: some View {
-        HStack(spacing: 18) {
-            if let normal = mark?.normalHighC {
-                Text("NORMAL \(Int(normal.rounded()))°")
+        VStack(alignment: .leading, spacing: Space.close) {
+            // The key. Drawn as the actual strokes, not described in words — a legend that says
+            // "dashed line" makes you translate; a legend that *is* the dashed line does not.
+            HStack(spacing: Space.block) {
+                key(dash: false, color: palette.traceColor, label: "This day")
+                key(dash: true, color: palette.bandColor,
+                    label: "Usual for the date\(mark?.normalHighC.map { " · \(Int($0.rounded()))°" } ?? "")")
+                Spacer(minLength: 0)
             }
-            Spacer()
-            Text("↑ \(time(snapshot.sun.sunrise))")
-            Text("↓ \(time(snapshot.sun.sunset))")
+
+            Text("Sunrise \(time(snapshot.sun.sunrise))     Sunset \(time(snapshot.sun.sunset))")
+                .font(.vaneData).tracking(1.1)
+                .foregroundStyle(palette.secondaryColor)
+                .lineLimit(1).minimumScaleFactor(0.8)
         }
-        .font(.vaneData).tracking(1.2)
-        .foregroundStyle(palette.secondaryColor)
-        .lineLimit(1)
         .accessibilityElement(children: .ignore)
-        .accessibilityHidden(true)
+        .accessibilityLabel(spoken)
+    }
+
+    private func key(dash: Bool, color: Color, label: String) -> some View {
+        HStack(spacing: 6) {
+            Rectangle()
+                .fill(color)
+                .frame(width: 16, height: 2)
+                .mask(alignment: .leading) {
+                    if dash {
+                        HStack(spacing: 2.5) {
+                            ForEach(0..<3, id: \.self) { _ in Rectangle().frame(width: 3.5) }
+                        }
+                    } else {
+                        Rectangle()
+                    }
+                }
+            Text(label)
+                .font(.vaneData).tracking(1.1)
+                .foregroundStyle(palette.secondaryColor)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    private var spoken: String {
+        var text = "Solid line, this day. Dashed line, usual for the date"
+        if let normal = mark?.normalHighC { text += ", \(Int(normal.rounded())) degrees" }
+        return text + ". Sunrise \(time(snapshot.sun.sunrise)), sunset \(time(snapshot.sun.sunset))."
     }
 
     private func time(_ date: Date) -> String {
@@ -170,6 +224,9 @@ struct RollCanvas: View {
     let dayWidth: CGFloat
     let palette: Palette
     let isDragging: Bool
+    var entrance: Double = 1
+    var timeZone: TimeZone = .current
+    var observedAt: Date = .now
 
     var body: some View {
         Canvas { context, size in
@@ -201,6 +258,10 @@ struct RollCanvas: View {
             // boundary and gets the weight, which is how a barograph drum is actually printed.
             let firstDay = Int((scrub - Double(plot.width / dayWidth) / 2 - 1).rounded(.down))
             let lastDay = Int((scrub + Double(plot.width / dayWidth) / 2 + 1).rounded(.up))
+            var calendar = Calendar(identifier: .gregorian)
+            calendar.timeZone = timeZone
+            let todayStart = calendar.startOfDay(for: observedAt)
+
             for day in firstDay...lastDay {
                 let isWeek = day % 7 == 0
                 context.stroke(
@@ -208,6 +269,25 @@ struct RollCanvas: View {
                            $0.addLine(to: .init(x: x(Double(day)), y: plot.maxY)) },
                     with: .color(palette.gridColor.opacity(isWeek ? 0.85 : 0.35)),
                     lineWidth: 0.5
+                )
+
+                // The axis this chart did not have.
+                //
+                // It was a time series with nothing on its time axis: no dates, no days, not
+                // even a "today". Every reading on it was unplaceable, which is most of why a
+                // first-time reader could not decode the screen. Labels every other day, so
+                // they do not collide at 46 points per day.
+                guard day % 2 == 0,
+                      let date = calendar.date(byAdding: .day, value: day, to: todayStart)
+                else { continue }
+                let label = day == 0
+                    ? "TODAY"
+                    : date.formatted(.dateTime.weekday(.abbreviated)).uppercased()
+                context.draw(
+                    Text(label)
+                        .font(.custom(VaneFont.mono, fixedSize: 9))
+                        .foregroundStyle(day == 0 ? palette.traceColor : palette.secondaryColor),
+                    at: .init(x: x(Double(day)), y: plot.maxY + 12), anchor: .center
                 )
             }
 
@@ -266,13 +346,24 @@ struct RollCanvas: View {
                 // Lighter than the record and dashed, because it has not happened — but not so
                 // light that it disappears. On a new install the forecast is most of what there
                 // is to look at, and at 40% of a hairline it read as a smudge.
-                context.stroke(path(ahead, x: x, y: y),
-                               with: .color(palette.traceColor.opacity(0.62)),
-                               style: StrokeStyle(lineWidth: 1.6, lineCap: .round, dash: [3, 3.5]))
+                context.stroke(
+                    // Trimmed by the entrance, so the pen lays the forecast down left to right
+                    // rather than the whole line appearing at once. This is the barograph doing
+                    // the one thing a barograph does, and it is the difference between a chart
+                    // that was printed and an instrument that is running.
+                    path(ahead, x: x, y: y).trimmedPath(from: 0, to: max(entrance, 0.001)),
+                    with: .color(palette.traceColor.opacity(0.62)),
+                    style: StrokeStyle(lineWidth: 1.6, lineCap: .round, dash: [3, 3.5])
+                )
             }
             if past.count > 1 {
-                context.stroke(path(past, x: x, y: y), with: .color(palette.traceColor),
-                               style: StrokeStyle(lineWidth: 1.9, lineCap: .round, lineJoin: .round))
+                // The record draws from its far end toward today, arriving at the pen — the
+                // direction the drum actually turns.
+                context.stroke(
+                    path(past, x: x, y: y).trimmedPath(from: 0, to: max(entrance, 0.001)),
+                    with: .color(palette.traceColor),
+                    style: StrokeStyle(lineWidth: 1.9, lineCap: .round, lineJoin: .round)
+                )
             }
 
             // The guide line is always there — it is the instrument, and the instrument does
@@ -286,7 +377,7 @@ struct RollCanvas: View {
             // The nib only touches the paper where there is a reading, and only on the exact
             // day under it. Nearest-mark would float the nib off the trace whenever the record
             // had a gap, which is precisely where it must not.
-            if let focused = marks.first(where: { $0.offset == scrub.rounded() }) {
+            if let focused = marks.first(where: { $0.offset == scrub.rounded() }), entrance > 0.55 {
                 let tip = CGPoint(x: penX, y: y(focused.highC))
                 context.fill(Path(ellipseIn: CGRect(x: tip.x - 5, y: tip.y - 5, width: 10, height: 10)),
                              with: .color(palette.paperColor))
@@ -353,7 +444,7 @@ struct StationLine: View {
             Spacer(minLength: 8)
             // Texture, not information. First thing to go when type gets large.
             if !typeSize.isAccessibilitySize {
-                Text(stationCode)
+                Text(updatedAt)
                     .font(.vaneData).tracking(1.4).opacity(0.55)
                     .accessibilityHidden(true)
             }
@@ -363,11 +454,16 @@ struct StationLine: View {
         .accessibilityLabel(place ?? "Current location")
     }
 
-    private var stationCode: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "ddHHmm"
-        formatter.timeZone = TimeZone(secondsFromGMT: 0)
-        return "\(formatter.string(from: snapshot.observedAt))Z"
+    /// Was `081915Z` — a METAR observation group, day-of-month plus Zulu time. It is exactly
+    /// the vernacular the brief asks the visual language to come from, and it is also completely
+    /// opaque to anyone who has not filed a flight plan. The instrument vocabulary is kept where
+    /// it is *explained* by what sits beside it — the Beaufort description, the okta labels, the
+    /// 1013 line — and dropped where it is only decoration standing in an information slot.
+    private var updatedAt: String {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = snapshot.timeZone
+        let parts = calendar.dateComponents([.hour, .minute], from: snapshot.observedAt)
+        return String(format: "UPDATED %02d:%02d", parts.hour ?? 0, parts.minute ?? 0)
     }
 }
 
@@ -388,7 +484,7 @@ struct StreakBar: View {
             }
             // A bare row of ticks is an artefact, not information. Nobody counts 28 hairlines
             // to find out they have a four-day streak.
-            Text(count == 1 ? "1 DAY" : "\(count) DAYS")
+            Text(count == 1 ? "OPENED 1 DAY IN A ROW" : "OPENED \(count) DAYS IN A ROW")
                 .font(.vaneData).tracking(1.4)
                 .foregroundStyle(palette.secondaryColor)
             Spacer(minLength: 0)

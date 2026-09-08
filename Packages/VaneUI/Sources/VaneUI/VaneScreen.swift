@@ -25,6 +25,16 @@ public struct VaneScreen: View {
     /// inferred from a gesture. The pen's guide line firms up while you are moving the paper.
     @State private var isDragging = false
 
+    /// The entrance, 0 to 1.
+    ///
+    /// One orchestrated moment, which is the budget `CLAUDE.md` allows per screen and the tier
+    /// `find-animation-opportunities` licenses for delight — a weather app is opened once or
+    /// twice a day, which is the rare end of its frequency table, not the hundred-times-a-day
+    /// end where motion has to be removed. Everything downstream reads this one value and
+    /// derives its own slice of it, so the sequence is a single interruptible animation rather
+    /// than a chain of nested delays that cannot be cancelled.
+    @State private var entrance: Double = 0
+
     /// Whether the roll has been placed on today yet. Once only — re-centring on every change
     /// would yank the paper out from under a finger each time a refresh landed.
     @State private var hasCentred = false
@@ -77,7 +87,21 @@ public struct VaneScreen: View {
             }
         }
         .animation(VaneMotion.sky, value: palette)
-        .task { await model.refresh() }
+        .task {
+            // The entrance runs *before* the refresh, not after it.
+            //
+            // `WeatherModel.init` loads the cached snapshot synchronously, so there is already
+            // content on screen at the first frame — running the entrance after the network
+            // meant the interface sat there fully formed and then animated itself in a second
+            // later, which is worse than not animating at all. Offline-first means the opening
+            // moment belongs to the cache, and the refresh just updates the numbers underneath.
+            if reduceMotion {
+                entrance = 1
+            } else {
+                withAnimation(.smooth(duration: 1.1)) { entrance = 1 }
+            }
+            await model.refresh()
+        }
     }
 
     @ViewBuilder
@@ -101,10 +125,10 @@ public struct VaneScreen: View {
                 // 2. The paper sheet. Everything from here down is ink on stock.
                 VStack(alignment: .leading, spacing: 0) {
                     Header(mark: focused, day: focusedDay, snapshot: snapshot,
-                           scrub: scrub, palette: palette)
+                           scrub: scrub, palette: palette, entrance: entrance)
                         .padding(.top, Space.group)
 
-                    roll(palette: palette)
+                    roll(palette: palette, snapshot: snapshot)
                         .padding(.top, 16)
 
                     Readout(mark: focused, snapshot: snapshot, palette: palette)
@@ -119,39 +143,7 @@ public struct VaneScreen: View {
                 .padding(.bottom, Space.section)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(alignment: .top) {
-                    // The sheet.
-                    //
-                    // A flat fill butt-joined to the sky by a hairline is what made the first
-                    // build read as two rectangles of paint. A real sheet lying on something has
-                    // three things this now has: a cast shadow above its edge, a tonal falloff
-                    // where the light from the sky reaches across it, and a hard edge only at
-                    // the very top.
-                    ZStack(alignment: .top) {
-                        palette.paperColor
-
-                        // Light from the sky, falling across the top of the sheet and dying out
-                        // within a couple of hundred points.
-                        LinearGradient(
-                            colors: [palette.paper.mixed(with: palette.ink, amount: 0.05).color,
-                                     palette.paperColor],
-                            startPoint: .top, endPoint: .bottom
-                        )
-                        .frame(height: 180)
-
-                        // The cast shadow, sitting *above* the sheet's edge on the sky side.
-                        // This is a shadow, not a glass panel — the brief bans the latter, and
-                        // the difference is that this darkens the ground rather than sampling
-                        // and blurring it.
-                        LinearGradient(
-                            colors: [.clear, palette.ink.color.opacity(0.16)],
-                            startPoint: .top, endPoint: .bottom
-                        )
-                        .frame(height: 14)
-                        .offset(y: -14)
-
-                        Rectangle().fill(palette.inkColor.opacity(0.28)).frame(height: 0.5)
-                    }
-                    .ignoresSafeArea(edges: .bottom)
+                    DrumSheet(palette: palette)
                 }
             }
         }
@@ -209,7 +201,7 @@ public struct VaneScreen: View {
     /// canvas is an overlay reading `scrub`, so the pen stays fixed and the paper still moves
     /// under it — the rendering is unchanged, the physics underneath it is now Apple's.
     @ViewBuilder
-    private func roll(palette: Palette) -> some View {
+    private func roll(palette: Palette, snapshot: Snapshot) -> some View {
         let span = bounds.last - bounds.first
 
         GeometryReader { proxy in
@@ -250,7 +242,8 @@ public struct VaneScreen: View {
                 .overlay {
                     RollCanvas(
                         marks: marks, scrub: scrub, dayWidth: dayWidth,
-                        palette: palette, isDragging: isDragging,
+                        palette: palette, isDragging: isDragging, entrance: entrance,
+                        timeZone: snapshot.timeZone, observedAt: snapshot.observedAt,
                         onAdjust: { step in
                             withAnimation(VaneMotion.figure) {
                                 scrub = min(max(scrub + step, bounds.first), bounds.last)

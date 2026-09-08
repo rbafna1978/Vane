@@ -116,8 +116,20 @@ static float fbm(float2 p) {
     float visible = (1.0 - cover * 0.75) * step(-6.0, elevation + (isDay ? 0.0 : 90.0));
     color = mix(color, light, half(clamp(glow * 0.5 + scatter + disc, 0.0, 1.0) * visible));
 
-    // 3. Cloud deck. Drifts on wind, and is squashed vertically so the noise reads as a deck
-    //    seen in perspective instead of as wallpaper.
+    // 3a. Cirrus veil. Always present, always moving, even on a cloudless day.
+    //
+    //     A clear sky rendered as a pure gradient is completely static, and a static sky is
+    //     what made the top of this screen read as a rectangle of paint. Real air is never
+    //     uniform — there is always some high haze shearing across it — and this is the layer
+    //     that makes the difference between a picture of a sky and a sky. Very low contrast on
+    //     purpose: it should be felt at a glance and only found if you look for it.
+    float2 veilUV = float2(uv.x * 1.1 + time * (wind * 0.55 + 0.006), uv.y * 3.0);
+    float veil = fbm(veilUV);
+    color.rgb = mix(color.rgb, mix(color.rgb, half3(1.0h), 0.35h),
+                    half(smoothstep(0.45, 0.85, veil) * 0.16 * (1.0 - cover)));
+
+    // 3b. Cloud deck. Drifts on wind, and is squashed vertically so the noise reads as a deck
+    //     seen in perspective instead of as wallpaper.
     float2 cloudUV = float2(uv.x * 2.4 + time * wind, uv.y * 4.2 - time * wind * 0.12);
     float n = fbm(cloudUV);
     // Second, slower, larger-scale layer. Two decks moving at different rates is the cheapest

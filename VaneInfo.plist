@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- The launch screen, written by hand.
+	     `INFOPLIST_KEY_UILaunchScreen_Generation = YES` emits a nested `UILaunchScreen`
+	     dict and swallows the sibling `INFOPLIST_KEY_UILaunchScreen_UIColorName`, so the
+	     colour never reached the bundle and the app opened on a white flash before an
+	     eau-de-nil interface. Everything else is still generated from build settings and
+	     merged into this file; this is the one key that has to be literal. -->
+	<!-- The backend URL, substituted from the build setting at build time.
+	     This was written as `INFOPLIST_KEY_VaneBackendURL` and never reached the bundle:
+	     the `INFOPLIST_KEY_` mechanism only honours Apple's own allowlist of keys, and
+	     silently drops anything custom. Debug never noticed because it falls back to
+	     localhost — but Release calls `fatalError` when this key is missing, so every
+	     Release build has been shipping a guaranteed launch crash since phase 4. A custom
+	     key has to live in a real plist. -->
+	<key>VaneBackendURL</key>
+	<string>$(VANE_BACKEND_URL)</string>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string>LaunchPaper</string>
+	</dict>
+</dict>
+</plist>
