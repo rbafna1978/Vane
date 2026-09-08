@@ -13,27 +13,27 @@ No features beyond that list without arguing for them first.
 ## Skill protocol
 Repo-scoped skills live in `.claude/skills/` (copied in, project-local, not global).
 
-| When | Skill |
-|---|---|
-| Concept + visual direction | `frontend-design`, `design:user-research` |
-| All Swift | `write-swift` |
-| Every phase, motion + interface | `apple-design` |
-| Before animating anything | `find-animation-opportunities` |
-| Naming/specifying motion | `animation-vocabulary` |
-| Every animation before review | `review-animations` |
-| End of phase 6 | `improve-animations` |
-| Tokens, component library | `design:design-system` |
-| Every screen before review | `design:design-critique` |
-| All UI text | `design:ux-copy` |
-| Before any screen is done | `design:accessibility-review` |
-| Spec per screen before building | `design:design-handoff` |
-| Architecture decisions | `engineering:architecture`, `engineering:system-design` |
-| Before writing tests | `engineering:testing-strategy` |
-| End of every phase, own diff | `engineering:code-review` |
-| Bug taking >1 attempt | `engineering:debug` |
-| README, runbook, API docs | `engineering:documentation` |
-| Before first deploy | `engineering:deploy-checklist` |
-| Every third phase | `engineering:tech-debt` |
+| When | Skill | Installed |
+|---|---|---|
+| Concept + visual direction | `frontend-design` | yes |
+| All Swift | `write-swift` | yes |
+| Every phase, motion + interface | `apple-design` | yes |
+| Before animating anything | `find-animation-opportunities` | yes |
+| Naming/specifying motion | `animation-vocabulary` | yes |
+| Every animation before review | `review-animations` | yes |
+| End of phase 6 | `improve-animations` | yes |
+| Interface craft, component detail | `emil-design-eng` | yes |
+| Prototyping a direction | `prototype` | yes |
+| Repo-wide code map | `graphify` | yes (global) |
+
+Verified against `~/.claude/plugins/installed_plugins.json`: swift-lsp, ui-ux-pro-max, ponytail.
+The `design:` and `engineering:` plugins named in the original table are **not installed**, so
+`design-critique`, `design-system`, `ux-copy`, `accessibility-review`, `design-handoff`,
+`architecture`, `system-design`, `testing-strategy`, `code-review`, `documentation`,
+`deploy-checklist` and `tech-debt` are unavailable here. Their jobs still get done — critique,
+accessibility, copy and code review are part of the definition of done below — but they are done
+by hand and reported as such, not attributed to a skill that never ran. Installing the plugins
+would change this; until then the table does not promise what it cannot deliver.
 
 Skill guidance outranks my instincts and the user's. Where it conflicts, follow the skill and say where we disagreed.
 The emilkowalski set (`apple-design`, `animation-vocabulary`, `review-animations`,

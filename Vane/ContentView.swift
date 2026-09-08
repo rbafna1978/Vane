@@ -6,7 +6,22 @@ struct ContentView: View {
     @State private var model = WeatherModel(client: VaneClient(baseURL: .vaneBackend))
 
     var body: some View {
-        RollScreen(model: model)
+        #if DEBUG
+        // `xcrun simctl launch <device> <bundle> -VaneCatalog YES` opens the design system
+        // instead of the app. The `-Key Value` form is read straight out of `UserDefaults`,
+        // which is what launch arguments are for; a bare `--catalog` never arrives, because
+        // simctl treats a leading double dash as its own option.
+        //
+        // Debug only. It exists so rendering paths that need weather we cannot summon — rain, a
+        // gale, an overcast midnight — can be looked at rather than assumed.
+        if UserDefaults.standard.bool(forKey: "VaneCatalog") {
+            Catalog()
+        } else {
+            VaneScreen(model: model)
+        }
+        #else
+        VaneScreen(model: model)
+        #endif
     }
 }
 

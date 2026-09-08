@@ -91,6 +91,11 @@ class ForecastHour(BaseModel):
     precip_mm: float
     precip_probability: int | None = None
     code: int
+    # Mean-sea-level. Optional because a cached forecast written before these existed must still
+    # validate rather than taking the whole response down.
+    pressure_hpa: float | None = None
+    wind_kt: float | None = None
+    wind_deg: int | None = None
 
 
 class ForecastDay(BaseModel):

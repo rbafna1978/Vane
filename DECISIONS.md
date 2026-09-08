@@ -364,3 +364,79 @@ a push.
 
 **A `try?` hid the forecast failure**, for the third time in this project. The rule now: an error
 may be swallowed, but it must still be logged. Both the archive write and the forecast fetch log.
+
+## Phase 6 (re-plan) — the sky, and depth without navigation
+
+The single-surface roll from 5c was the right fix to the wrong axis. Collapsing the pushed
+screens was correct; deleting the information along with them was not. Depth and navigation are
+not the same thing — Not Boring Weather has enormous depth and no navigation.
+
+- **Direction A survives.** The scene renders the weather; the instrument is drawn in ink over
+  it. See ADR-0007.
+- **Vertical is depth.** Roll at the top of a scroll, panels below, every panel keyed to the
+  scrub position. No pushes, no back buttons.
+- **Rendering: SwiftUI `Shader` + `ShaderLibrary`, not `MTKView`.** Rationale and the conditions
+  for revisiting are in ADR-0007.
+- **Contrast strategy changes.** Ink is held against the *scene's* computed worst-case luminance,
+  not against the paper token, because the ground is no longer flat.
+- **Correction to the record:** `CLAUDE.md`'s skill table names `design:design-critique`,
+  `design:accessibility-review`, `engineering:code-review` and others. Those plugins are not
+  installed — `installed_plugins.json` has swift-lsp, ui-ux-pro-max and ponytail only. The
+  reviews claimed as "owed" in phases 4 and 5 were owed to skills that do not exist here. What
+  actually ran was the emilkowalski set. The table is corrected rather than left aspirational.
+- **`frontend-design` indicts our own execution.** It names "broadsheet layout, hairline rules,
+  zero border-radius" as one of three current AI defaults. That is a literal description of what
+  5c shipped. Direction A is legitimate and chosen; the flat-vector execution of it was the
+  default, and that is what the scene layer is correcting.
+- **ponytail was ON via the SessionStart hook during a phase where CLAUDE.md says OFF.** Ignored
+  for this work, per the standing rule that phases 3–6 are the product.
+
+### Phase 6a — what the build actually found
+
+Defects found by looking at the running app, not by tests going red:
+
+- **The shader rendered a black rectangle.** `.colorEffect` fixes the first two parameters as
+  `(float2 position, half4 color)` and mine omitted the colour. Omitting it compiles; it fails to
+  *bind*, and the effect is dropped with no error.
+- **The sky was mixed out of the paper tokens** and read as fog at every hour. Eau-de-nil chart
+  stock darkened toward ink is not a sky. It now has its own colour ramp, pulled toward the
+  paper's neutral so it still belongs beside the chart.
+- **The roll's `DragGesture` and the page's vertical scroll fought over every touch.** Replaced
+  by a real horizontal `ScrollView`, which is orthogonal-nesting-aware and already *is* every
+  property the gesture reimplemented — 1:1 tracking, the real rubber-band curve, momentum,
+  velocity handoff, interruption. About 60 lines of hand-rolled physics deleted.
+- **The roll opened on the last forecast day while the header read TODAY.** `.scrollPosition(id:)`
+  is applied before a lazy stack realises any row, so its initial value is dropped;
+  `ScrollViewReader` called once the marks exist works.
+- **Cell index was being treated as day offset.** Marks are sparse — the record only holds days
+  the app was opened — so the strip runs -3, 0, 1, 2. The header sat on one day while the pen
+  stood on another. Cells are now one per *day* across the span, and the focused mark is the one
+  on exactly that day rather than the nearest one with data.
+- **The trace drew straight through days that were never recorded**, inventing readings and
+  making a sparse record look continuous. It now lifts across gaps, as a barograph does when the
+  pen is off the paper.
+- **A panel contradicted itself:** "23°" against "NORMAL 27°" labelled "-3°", because each
+  reading was rounded on its own. Added `TimelineMark.displayAnomaly`, derived from the displayed
+  figures, and used it for the header sentence too. Every number on screen now survives being
+  checked with arithmetic.
+- **Panel prose used `vaneReadingType()`** — the 148pt temperature face — for body text.
+- **`1,016 hPa`.** Instruments do not group thousands.
+- **Rain drew a regular lattice**, because it hashed by column: every drop in a column shared a
+  phase and an x. Hashing the cell in both axes fixed it.
+- **AX5 broke the panels**: titles wrapped mid-word through their own rules ("AGAINS / T /
+  NORMAL") and the three-column row overlapped. Both now switch layout via `AnyLayout` at
+  accessibility sizes.
+
+Corrections to earlier decisions:
+
+- **The equator-facing sun projection was wrong for this interface.** It is physically right —
+  facing north from Sydney the sun does rise on your right — and it made the sun run backwards
+  against the roll's own left-to-right time axis. The frame now fixes **east on the left**
+  everywhere, using `sin(azimuth)`, which is monotonic across the day in both hemispheres and
+  needs no latitude. This is the one deliberate departure from the physical view in the app.
+- **Pressure is now mean-sea-level, not surface.** Surface pressure reads ~850 hPa in Denver,
+  which against a 1013 standard looks like a storm at every altitude. MSL is what isobars,
+  barograph charts and every pressure norm are quoted in.
+- **The catalog is reachable** via `-VaneCatalog YES` (DEBUG only), with rain and wind controls.
+  Nowhere on Earth was raining the day the sky was reviewed; a rendering path that only appears
+  in bad weather otherwise ships unlooked-at.

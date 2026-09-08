@@ -24,6 +24,19 @@ public struct TimelineMark: Sendable, Hashable, Identifiable {
     public var id: String { "\(kind)-\(dayKey)-\(offset)" }
 
     public var anomaly: Double? { normalHighC.map { highC - $0 } }
+
+    /// The anomaly as the *displayed* numbers make it: the rounded high minus the rounded
+    /// normal.
+    ///
+    /// Rounding each reading on its own and then showing the precise difference between them
+    /// puts a visible contradiction on screen — 23 degrees against a normal of 27, labelled
+    /// "3 degrees cooler", because the true values were 23.4 and 26.6. Every figure the user
+    /// can see has to survive being checked with arithmetic, so the difference is derived from
+    /// what is shown rather than from what is stored. `anomaly` above keeps full precision for
+    /// anything that measures rather than displays.
+    public var displayAnomaly: Int? {
+        normalHighC.map { Int(highC.rounded()) - Int($0.rounded()) }
+    }
 }
 
 public enum Timeline {

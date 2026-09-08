@@ -180,4 +180,23 @@ public final class WeatherModel {
             cloudCover: Double(snapshot.current.cloudCover ?? 0) / 100
         )
     }
+
+    /// Everything the sky shader needs, derived from the same snapshot the palette is derived
+    /// from — so a rendered sky and a computed palette can never disagree about the weather.
+    ///
+    /// Nil until there is a snapshot: an invented sky is worse than no sky, because it would be
+    /// the one part of the interface not answerable to an observation.
+    public var scene: SkyScene? {
+        guard let snapshot else { return nil }
+        // Precipitation now, taken from the most recent hour of the arc rather than from the
+        // day's total — a day that rained this morning should not still be raining on screen.
+        let precipNow = snapshot.arc.last(where: { $0.t <= .now })?.precipMm ?? 0
+        return SkyScene.from(
+            sky: sky,
+            cover: Double(snapshot.current.cloudCover ?? 0) / 100,
+            precipMm: precipNow,
+            windKt: snapshot.current.windKt,
+            windDeg: snapshot.current.windDeg
+        )
+    }
 }

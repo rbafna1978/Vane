@@ -74,6 +74,30 @@ async def test_forecast_days_are_dates_with_sun_times():
     assert fc.cell_id == "37.75,-122.25"
 
 
+async def test_hourly_carries_pressure_and_wind():
+    """Guards the failure mode this project keeps repeating: a field plumbed and never carried.
+
+    `pressure_hpa`, `wind_kt` and `wind_deg` are optional on the schema so an older cached
+    payload still validates, which means a dropped mapping would show up as silently missing
+    panels rather than as a decode error. Asserted against the fixture's own values so
+    re-recording it does not break the test.
+    """
+    fc = await _source(_ok).forecast(CELL, 2)
+    hourly = openmeteo_payload()["hourly"]
+
+    assert [h.pressure_hpa for h in fc.hourly] == hourly["pressure_msl"]
+    assert [h.wind_kt for h in fc.hourly] == hourly["wind_speed_10m"]
+    assert [h.wind_deg for h in fc.hourly] == [int(d) for d in hourly["wind_direction_10m"]]
+    # Mean-sea-level, not surface: a station at altitude reporting ~850 hPa against a 1013
+    # standard would look like a storm everywhere above sea level.
+    assert all(900 < h.pressure_hpa < 1100 for h in fc.hourly)
+
+
+async def test_current_pressure_is_mean_sea_level():
+    snap = await _source(_ok).snapshot(CELL)
+    assert snap.current.pressure_hpa == openmeteo_payload()["current"]["pressure_msl"]
+
+
 @pytest.mark.parametrize(
     ("status", "code"),
     [(429, "source_rate_limited"), (400, "source_rejected"), (500, "source_rejected")],

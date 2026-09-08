@@ -1,144 +1,7 @@
 import SwiftUI
 import VaneKit
 
-/// One surface. The horizontal axis is time.
-///
-/// This replaces three pushed screens. The premise of the design is a barograph roll — past to
-/// the left, future to the right, the pen at today, and the trace never broken — and pushing a
-/// new screen to show yesterday contradicted that premise directly. Here nothing is pushed:
-/// dragging moves the paper, and the reading, the sentence and the readout are all *functions of
-/// where the pen is*, recomputed continuously rather than swapped at a threshold.
-public struct RollScreen: View {
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-
-    @State private var model: WeatherModel
-    /// Where the pen is, in days from today. Continuous, not an index — content responds to
-    /// position at every frame, which is what separates manipulation from navigation.
-    @State private var scrub: Double = 0
-    @State private var dragStart: Double = 0
-    @State private var isDragging = false
-
-    /// Points of paper per day. Fixed, so the roll's speed under the finger is the same whether
-    /// you are in the record or the forecast.
-    private let dayWidth: CGFloat = 46
-
-    public init(model: WeatherModel) {
-        _model = State(initialValue: model)
-    }
-
-    private var marks: [TimelineMark] { model.timeline }
-
-    private var bounds: (first: Double, last: Double) {
-        (marks.first?.offset ?? 0, marks.last?.offset ?? 0)
-    }
-
-    /// The mark the pen is nearest. Whole-number scrub lands exactly on one.
-    private var focused: TimelineMark? {
-        marks.min { abs($0.offset - scrub) < abs($1.offset - scrub) }
-    }
-
-    public var body: some View {
-        let palette = model.sky.palette
-
-        ZStack {
-            palette.paperColor.ignoresSafeArea()
-
-            if let snapshot = model.snapshot {
-                VStack(alignment: .leading, spacing: 0) {
-                    StationLine(snapshot: snapshot, place: model.placeName, palette: palette)
-
-                    Spacer().frame(height: 26)
-                    Header(mark: focused, snapshot: snapshot, scrub: scrub, palette: palette)
-
-                    Spacer(minLength: 18)
-                    RollCanvas(
-                        marks: marks, scrub: scrub, dayWidth: dayWidth,
-                        palette: palette, isDragging: isDragging,
-                        onAdjust: { step in
-                            withAnimation(VaneMotion.figure) {
-                                scrub = min(max(scrub + step, bounds.first), bounds.last)
-                            }
-                        }
-                    )
-                    .frame(maxHeight: .infinity)
-                    .contentShape(.rect)
-                    .gesture(drag)
-
-                    Spacer().frame(height: 16)
-                    Readout(mark: focused, snapshot: snapshot, palette: palette)
-
-                    Spacer().frame(height: 18)
-                    StreakBar(count: model.streak, palette: palette)
-                }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 10)
-            } else {
-                EmptyStateView(screen: model.screen, palette: palette) {
-                    Task { await model.refresh() }
-                }
-            }
-        }
-        .animation(VaneMotion.sky, value: palette)
-        .task {
-            await model.refresh()
-        }
-    }
-
-    private var drag: some Gesture {
-        DragGesture(minimumDistance: 4)
-            .onChanged { value in
-                if !isDragging {
-                    isDragging = true
-                    // Start from where the paper currently *is*, so grabbing a moving roll
-                    // continues from the presentation value instead of jumping to the target.
-                    dragStart = scrub
-                }
-                // 1:1 with the finger. No animation on the tracking path — anything here puts
-                // lag between the touch and the paper, which is the whole difference between
-                // dragging paper and dragging a picture of paper.
-                scrub = rubberBanded(dragStart - value.translation.width / dayWidth)
-            }
-            .onEnded { value in
-                isDragging = false
-                let velocityDays = -value.predictedEndTranslation.width / dayWidth
-                    + value.translation.width / dayWidth
-
-                // Apple's momentum projection: land where the flick was *going*, then snap to
-                // the nearest day from there. Snapping from the release point instead makes a
-                // hard flick feel identical to a slow drag.
-                let projected = dragStart - value.predictedEndTranslation.width / dayWidth
-                let target = min(max(projected.rounded(), bounds.first), bounds.last)
-
-                withAnimation(
-                    reduceMotion
-                        ? .easeOut(duration: 0.25)
-                        : .interpolatingSpring(
-                            stiffness: 200, damping: 26,
-                            initialVelocity: min(max(velocityDays, -20), 20)
-                        )
-                ) {
-                    scrub = target
-                }
-            }
-    }
-
-    /// Progressive resistance past the ends of the record, using UIScrollView's own curve. The
-    /// roll has a beginning and an end; a hard stop reads as broken, resistance reads as "there
-    /// is no more paper here".
-    private func rubberBanded(_ raw: Double) -> Double {
-        let constant = 0.55
-        let dimension = 6.0
-        if raw < bounds.first {
-            let past = bounds.first - raw
-            return bounds.first - (past * dimension * constant) / (dimension + constant * past)
-        }
-        if raw > bounds.last {
-            let past = raw - bounds.last
-            return bounds.last + (past * dimension * constant) / (dimension + constant * past)
-        }
-        return raw
-    }
-}
+// Components of the roll. The surface that composes them is `VaneScreen`.
 
 // MARK: - Header
 
@@ -149,11 +12,13 @@ public struct RollScreen: View {
 /// because it is the same number changing, not a new one arriving.
 struct Header: View {
     let mark: TimelineMark?
+    /// The day under the pen, whether or not anything was recorded on it.
+    let day: Int
     let snapshot: Snapshot
     let scrub: Double
     let palette: Palette
 
-    private var isToday: Bool { abs(scrub) < 0.5 }
+    private var isToday: Bool { day == 0 }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -162,16 +27,24 @@ struct Header: View {
                 .foregroundStyle(palette.inkColor.opacity(0.55))
                 .contentTransition(.opacity)
 
-            HStack(alignment: .top, spacing: 0) {
-                RollingNumber(reading)
-                    .lineLimit(1).minimumScaleFactor(0.7)
-                Text("°")
-                    .font(.custom(VaneFont.display, fixedSize: 46))
-                    .offset(y: 34)
+            // A day with no entry gets no number. Showing a dash, a zero, or the nearest
+            // day's reading would all be inventing one — the honest thing a barograph does
+            // when the pen was lifted is leave the paper blank.
+            if let reading {
+                HStack(alignment: .top, spacing: 0) {
+                    RollingNumber(reading)
+                        .lineLimit(1).minimumScaleFactor(0.7)
+                    Text("°")
+                        .font(.custom(VaneFont.display, fixedSize: 46))
+                        .offset(y: 34)
+                        .accessibilityHidden(true)
+                }
+                .foregroundStyle(palette.inkColor)
+                .accessibilityLabel("\(Int(reading.rounded())) degrees")
+            } else {
+                Color.clear.frame(height: VaneType.readingSize * 0.72)
                     .accessibilityHidden(true)
             }
-            .foregroundStyle(palette.inkColor)
-            .accessibilityLabel("\(Int(reading.rounded())) degrees")
 
             Text(secondary)
                 .font(.vaneData).tracking(1.3)
@@ -191,14 +64,19 @@ struct Header: View {
 
     /// Today shows the live reading; any other day shows that day's high, which is the only
     /// figure a past or future day actually has.
-    private var reading: Double {
-        isToday ? snapshot.current.tempC : (mark?.highC ?? snapshot.current.tempC)
+    private var reading: Double? {
+        if isToday { return snapshot.current.tempC }
+        return mark?.highC
     }
 
+    /// Derived from the day offset rather than from the mark, so a day with no entry is still
+    /// named. The strip's axis is time; a blank day is still a date.
     private var dayLabel: String {
-        guard let mark, !isToday else { return "TODAY" }
-        guard let date = Timeline.dayFormatter(in: snapshot.timeZone).date(from: mark.dayKey)
-        else { return mark.dayKey }
+        guard !isToday else { return "TODAY" }
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = snapshot.timeZone
+        let today = calendar.startOfDay(for: snapshot.observedAt)
+        guard let date = calendar.date(byAdding: .day, value: day, to: today) else { return "" }
         return date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated))
             .uppercased()
     }
@@ -213,7 +91,7 @@ struct Header: View {
             }
             return parts.joined(separator: "   ·   ")
         }
-        guard let mark else { return "" }
+        guard let mark else { return "NO ENTRY" }
         var parts: [String] = []
         if let low = mark.lowC { parts.append("LOW \(Int(low.rounded()))°") }
         if mark.precipMm > 0 { parts.append(String(format: "%.1fMM", mark.precipMm)) }
@@ -226,11 +104,14 @@ struct Header: View {
     /// present at every position on the roll, not only at the anchor.
     private var sentence: String {
         if isToday, let headline = snapshot.context?.headline { return headline }
-        guard let mark, let anomaly = mark.anomaly else { return "" }
-        let rounded = Int(abs(anomaly).rounded())
-        if rounded == 0 { return "Right on the usual mark for the date." }
-        let direction = anomaly > 0 ? "warmer" : "cooler"
-        return "\(rounded)° \(direction) than usual for the date."
+        guard mark != nil else {
+            return "The record has no entry for this day. Vane keeps what it sees while it is open."
+        }
+        // The same rounded difference the panel prints, so the sentence and the figures below
+        // it can never disagree by a degree.
+        guard let mark, let shown = mark.displayAnomaly else { return "" }
+        if shown == 0 { return "Right on the usual mark for the date." }
+        return "\(abs(shown))° \(shown > 0 ? "warmer" : "cooler") than usual for the date."
     }
 }
 
@@ -315,9 +196,15 @@ struct RollCanvas: View {
             let normals = marks.compactMap { mark in mark.normalHighC.map { (mark.offset, $0) } }
             if normals.count > 1 {
                 var path = Path()
-                for (index, entry) in normals.enumerated() {
+                var previous: Double?
+                for entry in normals {
                     let point = CGPoint(x: x(entry.0), y: y(entry.1))
-                    index == 0 ? path.move(to: point) : path.addLine(to: point)
+                    if let previous, entry.0 - previous <= 1.0 {
+                        path.addLine(to: point)
+                    } else {
+                        path.move(to: point)
+                    }
+                    previous = entry.0
                 }
                 context.stroke(path, with: .color(palette.bandColor),
                                style: StrokeStyle(lineWidth: 1, dash: [3, 3]))
@@ -346,14 +233,19 @@ struct RollCanvas: View {
             }
 
             // The pen. Fixed at centre; the value under it is what the header is reading.
-            if let focused = marks.min(by: { abs($0.offset - scrub) < abs($1.offset - scrub) }) {
+            // The guide line is always there — it is the instrument, and the instrument does
+            // not disappear on a day with no reading.
+            context.stroke(
+                Path { $0.move(to: .init(x: penX, y: plot.minY))
+                       $0.addLine(to: .init(x: penX, y: plot.maxY)) },
+                with: .color(palette.traceColor.opacity(isDragging ? 0.35 : 0.18)),
+                lineWidth: 0.75
+            )
+            // The nib only touches the paper where there is a reading, and only on the exact
+            // day under it. Nearest-mark would float the nib off the trace whenever the record
+            // had a gap, which is precisely where it must not.
+            if let focused = marks.first(where: { $0.offset == scrub.rounded() }) {
                 let tip = CGPoint(x: penX, y: y(focused.highC))
-                context.stroke(
-                    Path { $0.move(to: .init(x: penX, y: plot.minY))
-                           $0.addLine(to: .init(x: penX, y: plot.maxY)) },
-                    with: .color(palette.traceColor.opacity(isDragging ? 0.35 : 0.18)),
-                    lineWidth: 0.75
-                )
                 context.fill(Path(ellipseIn: CGRect(x: tip.x - 5, y: tip.y - 5, width: 10, height: 10)),
                              with: .color(palette.paperColor))
                 context.fill(Path(ellipseIn: CGRect(x: tip.x - 3, y: tip.y - 3, width: 6, height: 6)),
@@ -370,18 +262,29 @@ struct RollCanvas: View {
     }
 
     private var accessibilityValue: String {
-        guard let focused = marks.min(by: { abs($0.offset - scrub) < abs($1.offset - scrub) })
-        else { return "" }
+        guard let focused = marks.first(where: { $0.offset == scrub.rounded() })
+        else { return "No entry for this day" }
         return "\(focused.dayKey), high \(Int(focused.highC.rounded())) degrees"
     }
 
+    /// The trace, lifted across any day that has no entry.
+    ///
+    /// Joining two marks three days apart with a straight line draws two readings that were
+    /// never taken and makes the record look continuous when it is not. A real barograph leaves
+    /// the paper blank when the pen is off it, and so does this one.
     private func path(
         _ marks: [TimelineMark], x: (Double) -> CGFloat, y: (Double) -> CGFloat
     ) -> Path {
         Path { path in
-            for (index, mark) in marks.enumerated() {
+            var previous: Double?
+            for mark in marks {
                 let point = CGPoint(x: x(mark.offset), y: y(mark.highC))
-                index == 0 ? path.move(to: point) : path.addLine(to: point)
+                if let previous, mark.offset - previous <= 1.0 {
+                    path.addLine(to: point)
+                } else {
+                    path.move(to: point)
+                }
+                previous = mark.offset
             }
         }
     }

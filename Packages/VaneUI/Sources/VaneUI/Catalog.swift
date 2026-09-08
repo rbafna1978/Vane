@@ -10,6 +10,11 @@ public struct Catalog: View {
     @State private var hour: Double = 13
     @State private var oktas: Int = 0
     @State private var contextIndex = 0
+    /// Millimetres in the last hour. Rain cannot be summoned on demand — nowhere on the planet
+    /// was wet the day this panel was reviewed — so the one path that only appears in bad
+    /// weather gets a control here rather than going unlooked-at until a user finds it.
+    @State private var precipMm: Double = 0
+    @State private var windKt: Double = 12
 
     private let samples: [WeatherContext?] = [
         WeatherContext(headline: "Warmest September 5th in 30 years.",
@@ -47,6 +52,40 @@ public struct Catalog: View {
         )
     }
 
+    private var scene: SkyScene {
+        SkyScene.from(sky: sky, cover: cloud, precipMm: precipMm,
+                      windKt: windKt, windDeg: 270)
+    }
+
+    /// The two conditions that change what the sky *does* rather than what colour it is.
+    private func weatherControls(_ palette: Palette) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(String(format: "RAIN %.1f MM/H  ·  WIND %.0f KT", precipMm, windKt))
+                .font(.vaneData).tracking(1.2)
+                .foregroundStyle(palette.inkColor.opacity(0.55))
+            HStack(spacing: 6) {
+                ForEach([0.0, 0.3, 1.0, 2.5, 6.0], id: \.self) { mm in
+                    stepButton(String(format: mm < 1 ? "%.1f" : "%.0f", mm),
+                               on: precipMm == mm, palette: palette) { precipMm = mm }
+                }
+                Spacer(minLength: 12)
+                ForEach([0.0, 12.0, 34.0, 60.0], id: \.self) { kt in
+                    stepButton("\(Int(kt))kt", on: windKt == kt, palette: palette) { windKt = kt }
+                }
+            }
+        }
+    }
+
+    private func stepButton(
+        _ label: String, on: Bool, palette: Palette, action: @escaping () -> Void
+    ) -> some View {
+        Button(label, action: action)
+            .font(.vaneData)
+            .foregroundStyle(on ? palette.paperColor : palette.inkColor)
+            .padding(.horizontal, 8).padding(.vertical, 6)
+            .background(on ? palette.traceColor : palette.gridColor.opacity(0.4))
+    }
+
     /// A plausible day: coolest before dawn, peak in mid-afternoon.
     private var tracePoints: [BarographTrace.Point] {
         (0...48).map { step in
@@ -67,6 +106,12 @@ public struct Catalog: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 26) {
                 header(state)
+
+                SkyView(scene: scene, phaseLabel: state.phase.label)
+                    .frame(height: 220)
+                    .clipShape(.rect(cornerRadius: 2))
+                weatherControls(palette)
+
                 dayStrip(palette)
                 BarographTrace(
                     points: tracePoints, normalHigh: 25.7, normalLow: 14.4,

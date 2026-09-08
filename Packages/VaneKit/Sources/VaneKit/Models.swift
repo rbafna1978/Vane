@@ -114,10 +114,19 @@ public struct ForecastHour: Codable, Sendable, Hashable {
     public let precipMm: Double
     public let precipProbability: Int?
     public let code: Int
+    /// Mean-sea-level pressure. The barograph's own quantity, and the one the direction is
+    /// named after — surface pressure would read ~850 hPa in Denver and make every altitude
+    /// look like a storm.
+    public let pressureHpa: Double?
+    public let windKt: Double?
+    public let windDeg: Int?
+
+    public var condition: WeatherCode { WeatherCode(code) }
 
     enum CodingKeys: String, CodingKey {
         case t, tempC = "temp_c", precipMm = "precip_mm"
         case precipProbability = "precip_probability", code
+        case pressureHpa = "pressure_hpa", windKt = "wind_kt", windDeg = "wind_deg"
     }
 }
 

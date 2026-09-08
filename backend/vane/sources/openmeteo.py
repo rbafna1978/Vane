@@ -26,10 +26,17 @@ from vane.schemas import (
 from vane.sources.base import DailyRecord, SnapshotData, SourceError
 
 _CURRENT = (
-    "temperature_2m,apparent_temperature,relative_humidity_2m,surface_pressure,"
+    "temperature_2m,apparent_temperature,relative_humidity_2m,pressure_msl,"
     "wind_speed_10m,wind_direction_10m,weather_code,cloud_cover"
 )
-_HOURLY = "temperature_2m,precipitation,precipitation_probability,weather_code"
+# Mean-sea-level pressure, not surface pressure. Surface pressure at altitude reads ~850 hPa
+# in Denver, which against a 1013 hPa "normal" looks like a broken sensor. MSL is what isobars,
+# barograph charts and every pressure norm are quoted in, so it is the only one comparable
+# between two places — and this app draws a barograph.
+_HOURLY = (
+    "temperature_2m,precipitation,precipitation_probability,weather_code,"
+    "pressure_msl,wind_speed_10m,wind_direction_10m"
+)
 _DAILY = (
     "sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_sum,"
     "precipitation_probability_max,weather_code"
@@ -119,7 +126,7 @@ class OpenMeteoSource:
                 wind_kt=cur["wind_speed_10m"],
                 wind_deg=int(cur["wind_direction_10m"]),
                 humidity=int(cur["relative_humidity_2m"]),
-                pressure_hpa=cur["surface_pressure"],
+                pressure_hpa=cur["pressure_msl"],
                 code=int(cur["weather_code"]),
             ),
             arc=arc,
@@ -153,13 +160,19 @@ class OpenMeteoSource:
                     precip_mm=precip or 0.0,
                     precip_probability=None if prob is None else int(prob),
                     code=int(code),
+                    pressure_hpa=pressure,
+                    wind_kt=wind,
+                    wind_deg=None if wdir is None else int(wdir),
                 )
-                for t, temp, precip, prob, code in zip(
+                for t, temp, precip, prob, code, pressure, wind, wdir in zip(
                     hourly["time"],
                     hourly["temperature_2m"],
                     hourly["precipitation"],
                     hourly["precipitation_probability"],
                     hourly["weather_code"],
+                    hourly["pressure_msl"],
+                    hourly["wind_speed_10m"],
+                    hourly["wind_direction_10m"],
                     strict=True,
                 )
             ],
