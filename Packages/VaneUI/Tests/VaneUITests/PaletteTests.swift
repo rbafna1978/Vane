@@ -230,3 +230,49 @@ struct SecondaryTextTests {
         #expect(p.secondary.contrast(against: p.paper) < p.ink.contrast(against: p.paper))
     }
 }
+
+/// The odometer's wheels.
+///
+/// A counter that is wrong is worse than a counter that is plain, and the failure mode is
+/// specifically invisible in a screenshot: a wheel sitting permanently mid-roll still *looks*
+/// like a number if you squint.
+@Suite("Odometer wheels")
+struct OdometerTests {
+    /// Every wheel above the units place is still for nine tenths of the turn below it. The
+    /// obvious implementation — roll each wheel by its own fraction — leaves the tens digit
+    /// parked halfway between two numerals at almost every value.
+    @Test func `only the units wheel turns until the tens is due`() {
+        // 25 exactly: both wheels on whole numerals.
+        #expect(Wheel.position(for: 25, place: 0) == 25)
+        #expect(Wheel.position(for: 25, place: 1) == 2)
+
+        // 25.4: units 40% of the way from 5 to 6, tens still dead on 2.
+        #expect(abs(Wheel.position(for: 25.4, place: 0) - 25.4) < 0.0001)
+        #expect(Wheel.position(for: 25.4, place: 1) == 2)
+
+        // 29.5: the units wheel is past nine tenths, so the tens has begun to turn.
+        #expect(abs(Wheel.position(for: 29.5, place: 1) - 2.5) < 0.0001)
+        // 29.95: nearly round.
+        #expect(Wheel.position(for: 29.95, place: 1) > 2.9)
+    }
+
+    /// The window shows numerals 0-9 as a loop; below zero it must wrap rather than run off.
+    @Test func `numerals wrap in both directions`() {
+        #expect(Wheel.numeral(0) == "0")
+        #expect(Wheel.numeral(9) == "9")
+        #expect(Wheel.numeral(10) == "0")
+        #expect(Wheel.numeral(-1) == "9")
+    }
+
+    /// The metrics are memoised because they sit on the drag path; the memo must not change
+    /// the answer.
+    @MainActor
+    @Test func `cached metrics match a fresh measurement`() {
+        let first = DisplayMetrics.forSize(148)
+        let second = DisplayMetrics.forSize(148)
+        #expect(first.capHeight == second.capHeight)
+        #expect(first.digitWidth == second.digitWidth)
+        #expect(first.capHeight > 0)
+        #expect(first.digitWidth > 0)
+    }
+}

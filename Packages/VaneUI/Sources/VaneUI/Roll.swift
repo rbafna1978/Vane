@@ -26,6 +26,9 @@ struct Header: View {
     /// The day under the pen, whether or not anything was recorded on it.
     let day: Int
     let snapshot: Snapshot
+    /// Already interpolated between rounded day values by the surface, because the surface is
+    /// what knows the neighbouring days.
+    let reading: Double
     let scrub: Double
     let palette: Palette
     var entrance: Double = 1
@@ -48,26 +51,30 @@ struct Header: View {
             // A day with no entry gets no number. Showing a dash, a zero, or the nearest
             // day's reading would all be inventing one — the honest thing a barograph does
             // when the pen was lifted is leave the paper blank.
-            if let reading {
-                RollingNumber(reading, unit: "°")
-                    .lineLimit(1).minimumScaleFactor(0.7)
+            if mark != nil || isToday {
+                Odometer(reading, unit: "°")
                     .foregroundStyle(palette.inkColor)
-                    // Trim the line box.
-                    //
-                    // A 148pt face reserves its ascender and descender whether or not the
-                    // glyphs use them, and "28" uses neither — which left about 60 points of
-                    // dead air above the caps and another 40 below the baseline, reading as
-                    // two accidental gaps rather than as one deliberate one. Negative padding
-                    // pulls the box in to roughly the cap-to-baseline extent without clipping
-                    // anything, so the spacing scale controls the gaps instead of the font's
-                    // metrics doing it by accident.
-                    .padding(.top, -VaneType.reading(for: typeSize) * 0.15)
-                    .padding(.bottom, -VaneType.reading(for: typeSize) * 0.11)
-                    .accessibilityLabel("\(Int(reading.rounded())) degrees")
+                    // The odometer's frame is exactly the digit band — no descender space at
+                    // all — so the gap below it has to be given rather than inherited.
+                    .padding(.bottom, Space.block)
+                    // No line-box trimming needed any more: the odometer's window *is* the
+                    // digit band, so there is no ascender or descender reserved around it.
                     .modifier(Enter(entrancePhase(entrance, start: 0.08), rise: 22))
             } else {
-                Color.clear.frame(height: VaneType.readingSize * 0.72)
-                    .accessibilityHidden(true)
+                // A day with no observation gets the notation for one, not an empty hole.
+                //
+                // The earlier build reserved the space and left it blank, which read as the app
+                // having failed rather than as the record having a gap. A dash is not inventing
+                // a reading: it is what climate records and METAR have always printed for a
+                // missing observation, and it belongs to the same instrument vocabulary as the
+                // rest of the screen.
+                Text("—")
+                    .font(.custom(VaneFont.display,
+                                  fixedSize: VaneType.reading(for: typeSize) * 0.5))
+                    .foregroundStyle(palette.secondaryColor)
+                    .frame(height: DisplayMetrics.forSize(VaneType.reading(for: typeSize)).capHeight)
+                    .padding(.bottom, Space.block)
+                    .accessibilityLabel("No reading")
             }
 
             Text(secondary)
@@ -77,25 +84,23 @@ struct Header: View {
                 .contentTransition(.opacity)
                 .modifier(Enter(entrancePhase(entrance, start: 0.18)))
 
-            Text(sentence)
+            // Sets itself word by word on the way in; crossfades when the day changes under a
+            // finger. Two behaviours, because the two moments are at opposite ends of the
+            // frequency table and the gate treats them differently.
+            SettingText(text: sentence, progress: entrancePhase(entrance, start: 0.26, span: 0.62))
                 .vaneContextType()
                 .foregroundStyle(palette.inkColor)
-                .fixedSize(horizontal: false, vertical: true)
                 .frame(minHeight: 40, alignment: .topLeading)
                 .padding(.top, Space.tight)
-                .contentTransition(.opacity)
-                .modifier(Enter(entrancePhase(entrance, start: 0.26)))
+                .id(sentence)
+                .transition(.opacity)
+                .animation(VaneMotion.figure, value: sentence)
         }
         .animation(VaneMotion.figure, value: mark)
     }
 
     /// Today shows the live reading; any other day shows that day's high, which is the only
     /// figure a past or future day actually has.
-    private var reading: Double? {
-        if isToday { return snapshot.current.tempC }
-        return mark?.highC
-    }
-
     /// Derived from the day offset rather than from the mark, so a day with no entry is still
     /// named. The strip's axis is time; a blank day is still a date.
     private var dayLabel: String {
@@ -492,5 +497,80 @@ struct StreakBar: View {
         .frame(height: 11, alignment: .bottom)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(count == 1 ? "Opened today" : "Opened \(count) days in a row")
+    }
+}
+
+// MARK: - The drum's rim
+
+/// Day ticks and the day under the pen. Deliberately not a chart.
+///
+/// This is what the main surface kept when the chart moved to a panel. It carries no values, no
+/// axis and no trace — its whole job is to say "this surface moves sideways, and here is where
+/// you are", in 44 points instead of 176. A surface with a gesture and no affordance is a
+/// surface nobody discovers; a surface with a chart on it is the report we were trying to stop
+/// making.
+struct DayRule: View {
+    let days: [Int]
+    let marks: [TimelineMark]
+    let scrub: Double
+    let dayWidth: CGFloat
+    let palette: Palette
+    let isDragging: Bool
+    var entrance: Double = 1
+    var timeZone: TimeZone = .current
+    var observedAt: Date = .now
+    var onAdjust: ((Double) -> Void)?
+
+    var body: some View {
+        Canvas { context, size in
+            let penX = size.width / 2
+            let baseline = size.height - 14
+            func x(_ day: Int) -> CGFloat { penX + CGFloat(Double(day) - scrub) * dayWidth }
+
+            var calendar = Calendar(identifier: .gregorian)
+            calendar.timeZone = timeZone
+            let todayStart = calendar.startOfDay(for: observedAt)
+
+            for day in days {
+                let position = x(day)
+                guard position > -dayWidth, position < size.width + dayWidth else { continue }
+
+                // Days with a reading are inked; days the app never saw are ruled but empty.
+                // The record's gaps are visible at a glance and cost nothing to show.
+                let recorded = marks.contains { $0.offset == Double(day) }
+                let isWeek = day % 7 == 0
+                // Fades toward the edges so the strip has no hard ends — a rule that stops dead
+                // reads as clipped rather than as continuing past the frame.
+                let fade = 1 - min(1, abs(position - penX) / (size.width * 0.62))
+
+                context.stroke(
+                    Path { $0.move(to: .init(x: position, y: baseline - (isWeek ? 11 : 6)))
+                           $0.addLine(to: .init(x: position, y: baseline)) },
+                    with: .color(recorded ? palette.traceColor.opacity(fade * 0.85)
+                                          : palette.gridColor.opacity(fade)),
+                    lineWidth: isWeek ? 1 : 0.75
+                )
+
+                guard day == 0,
+                      let date = calendar.date(byAdding: .day, value: day, to: todayStart)
+                else { continue }
+                _ = date
+            }
+
+            // The pen. One mark, at the centre, always — the fixed point the paper moves under.
+            context.stroke(
+                Path { $0.move(to: .init(x: penX, y: baseline - 17))
+                       $0.addLine(to: .init(x: penX, y: baseline + 4)) },
+                with: .color(palette.traceColor.opacity(isDragging ? 1 : 0.7)),
+                lineWidth: 1.5
+            )
+        }
+        .opacity(entrancePhase(entrance, start: 0.34))
+        .accessibilityElement()
+        .accessibilityLabel("Day. Swipe left or right to move through the record.")
+        .accessibilityValue(marks.first { $0.offset == scrub.rounded() }?.dayKey ?? "No entry")
+        .accessibilityAdjustableAction { direction in
+            onAdjust?(direction == .increment ? 1 : -1)
+        }
     }
 }

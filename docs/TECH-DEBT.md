@@ -49,3 +49,12 @@ plan and nothing is decaying while they wait.
 - **`INFOPLIST_KEY_UILaunchScreen_Generation = YES` emits a nested `UILaunchScreen` dict** and
   silently swallows the sibling `_UIColorName`, which is why the app opened on a white flash.
   Also now literal in `VaneInfo.plist`.
+
+## Phase 6d
+
+- **`VaneScreen` builds its subviews in methods, not types.** `content(snapshot:palette:)`,
+  `panels(snapshot:palette:)` and `dayRule(palette:snapshot:)` are `@ViewBuilder` methods.
+  `swiftui-pro`'s performance reference is explicit that this is worse than dedicated views, and
+  that `@ViewBuilder` on a method does not fix it — SwiftUI cannot track structural identity
+  across a method call the way it can across a type. Not urgent (the surface is small) but it is
+  the kind of thing that gets expensive quietly as panels are added.

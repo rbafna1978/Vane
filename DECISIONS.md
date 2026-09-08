@@ -496,3 +496,45 @@ Accessibility, from `design:accessibility-review`:
   lightest tone that is still legal for text. Ruling and hairlines keep opacity, because they
   carry no information. Asserted across all 24 hours and three cloud covers so it cannot come
   back one `.opacity()` at a time.
+
+## Phase 6d — the type performs, and the chart leaves the main screen
+
+**Rule 1 is now in `CLAUDE.md`:** every decision consults a skill first, and where no installed
+skill covers it, one gets found on the web and installed before deciding. This phase is the first
+worked under it.
+
+- **Installed `swiftui-pro`** (MIT, Paul Hudson) under Rule 1, after searching for a kinetic
+  typography skill and finding none that was not React-bound. It is Swift-native and covers the
+  SwiftUI animation and accessibility APIs that `write-swift` does not. It immediately paid for
+  itself: it caught that `DisplayMetrics` was doing a CoreText font lookup inside `body`, twice
+  per frame, on the drag path.
+- **The chart is off the main screen.** It was the hero from GATE 2 and it was the wrong hero:
+  dense, slow to read, and the single largest reason the opening surface looked like a report. It
+  is now `RollPanel`, one detail among several, for anyone who scrolls to it. Direction A's
+  signature survives — it just is not the first thing anybody sees.
+- **Time travel is expressed by the figure, not by a plot.** The reading is a mechanical odometer:
+  digit wheels, each engaging only as the wheel to its right passes nine. Same vocabulary as the
+  drum the paper is wrapped around. The gate that licenses it: motion is 1:1 with the finger, so
+  it is manipulation feedback rather than decoration, and a number that *travels* carries the
+  direction and magnitude the chart used to carry.
+- **No `Animation` is involved in the roll.** The wheels are a pure function of scrub position, so
+  there is nothing to animate during a drag; only the release is animated, by the spring that
+  settles the scrub, and the wheels follow it for free.
+- **The sentence sets itself word by word on the way in, and crossfades on scrub.** Two
+  behaviours, because the two moments sit at opposite ends of the frequency table — delight is
+  licensed once per open, not dozens of times inside one gesture on text somebody is reading.
+- **What is left of the roll on the main surface is 44 points of day ticks.** A gesture with no
+  affordance is undiscoverable; a chart is clutter. The rim is neither.
+
+Defects found and fixed on the way:
+
+- The odometer's digit band was guessed as `size * 0.74` and clipped, leaving slivers of the
+  neighbouring numerals around every digit. Positioned now from the font's own cap height and
+  ascent, measured with CoreText. The digit advance was guessed too, which left a visible gap
+  between the tens and units so the figure read as two numbers.
+- The wheels sat **permanently mid-roll**, because they were fed the raw temperature: 25.4°C is a
+  wheel 40% of the way from 5 to 6. The surface now interpolates between *rounded* day values, so
+  a whole-numbered scrub always lands on a whole-numbered wheel.
+- A day with no observation left a blank hole where the reading was, which read as the app having
+  failed. It now prints an em dash — the notation climate records and METAR have always used for
+  a missing observation.

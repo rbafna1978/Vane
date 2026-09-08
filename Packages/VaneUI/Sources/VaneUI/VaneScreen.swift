@@ -67,6 +67,31 @@ public struct VaneScreen: View {
     /// The day under the pen, whether or not anything was recorded on it.
     private var focusedDay: Int { Int(scrub.rounded()) }
 
+    /// The figure on the wheels: this day's reading and the next one's, mixed by how far the
+    /// scrub sits between them.
+    ///
+    /// Interpolating between the **rounded** day values, not the raw ones, is what makes the
+    /// odometer land clean. Fed the live temperature directly it sat permanently mid-roll —
+    /// 25.4°C is a wheel 40% of the way from 5 to 6, so the reading was never legible at rest.
+    /// Rounding first means a whole-numbered scrub always produces a whole-numbered wheel, and
+    /// everything in between is the honest travel from one to the other.
+    private func displayReading(snapshot: Snapshot) -> Double {
+        func value(day: Int) -> Double? {
+            if day == 0 { return snapshot.current.tempC.rounded() }
+            return marks.first { $0.offset == Double(day) }?.highC.rounded()
+        }
+        let lower = Int(scrub.rounded(.down))
+        let fraction = scrub - Double(lower)
+        switch (value(day: lower), value(day: lower + 1)) {
+        case let (start?, end?): return start + (end - start) * fraction
+        case let (start?, nil): return start
+        case let (nil, end?): return end
+        // A gap in the record on both sides: hold the live reading rather than invent a journey
+        // between two days that have none.
+        default: return snapshot.current.tempC.rounded()
+        }
+    }
+
     public var body: some View {
         let palette = model.sky.palette
 
@@ -125,17 +150,24 @@ public struct VaneScreen: View {
                 // 2. The paper sheet. Everything from here down is ink on stock.
                 VStack(alignment: .leading, spacing: 0) {
                     Header(mark: focused, day: focusedDay, snapshot: snapshot,
+                           reading: displayReading(snapshot: snapshot),
                            scrub: scrub, palette: palette, entrance: entrance)
                         .padding(.top, Space.group)
 
-                    roll(palette: palette, snapshot: snapshot)
-                        .padding(.top, 16)
-
-                    Readout(mark: focused, snapshot: snapshot, palette: palette)
+                    // The time control.
+                    //
+                    // The chart used to live here and it was the wrong hero: dense, unreadable
+                    // at a glance, and the single thing that made the opening screen read as a
+                    // report. Time travel is now expressed by the figure itself rolling, so all
+                    // that is left is the drum's rim — a rule of day ticks, which exists to say
+                    // "this surface moves" and nothing else. Without any affordance at all the
+                    // gesture is undiscoverable; with a chart it is clutter.
+                    dayRule(palette: palette, snapshot: snapshot)
                         .padding(.top, Space.block)
 
                     StreakBar(count: model.streak, palette: palette)
                         .padding(.top, Space.group)
+                        .modifier(Enter(entrancePhase(entrance, start: 0.42)))
 
                     panels(snapshot: snapshot, palette: palette)
                 }
@@ -157,6 +189,14 @@ public struct VaneScreen: View {
 
         VStack(spacing: 0) {
             HourlyPanel(hours: hours, palette: palette)
+            // The chart, demoted from hero to detail. It is a genuinely good instrument and a
+            // genuinely bad opening screen — dense, slow to read, and the reason the surface
+            // looked like a report. Down here it is one panel among several, available to
+            // anyone who wants it and in nobody's way.
+            RollPanel(
+                marks: marks, scrub: scrub, dayWidth: dayWidth, palette: palette,
+                timeZone: snapshot.timeZone, observedAt: snapshot.observedAt
+            )
             PressurePanel(hours: hours, palette: palette)
             WindPanel(
                 // Today reads the live observation; any other day in the forecast window reads
@@ -200,8 +240,11 @@ public struct VaneScreen: View {
     /// The content is invisible: it exists only to give the scroll view a length to travel. The
     /// canvas is an overlay reading `scrub`, so the pen stays fixed and the paper still moves
     /// under it — the rendering is unchanged, the physics underneath it is now Apple's.
+    /// The drum's rim: day ticks and the day under the pen. Not a chart — no values, no axis,
+    /// no trace. It is the affordance for the horizontal gesture and the readout of where that
+    /// gesture has got to, in about a fortieth of the height the chart took.
     @ViewBuilder
-    private func roll(palette: Palette, snapshot: Snapshot) -> some View {
+    private func dayRule(palette: Palette, snapshot: Snapshot) -> some View {
         let span = bounds.last - bounds.first
 
         GeometryReader { proxy in
@@ -240,8 +283,8 @@ public struct VaneScreen: View {
                     scrub = min(max(bounds.first + days, bounds.first - 2), bounds.last + 2)
                 }
                 .overlay {
-                    RollCanvas(
-                        marks: marks, scrub: scrub, dayWidth: dayWidth,
+                    DayRule(
+                        days: days, marks: marks, scrub: scrub, dayWidth: dayWidth,
                         palette: palette, isDragging: isDragging, entrance: entrance,
                         timeZone: snapshot.timeZone, observedAt: snapshot.observedAt,
                         onAdjust: { step in
@@ -250,7 +293,7 @@ public struct VaneScreen: View {
                             }
                         }
                     )
-                    // The scroll view underneath owns the touch; the canvas is what you look at.
+                    // The scroll view underneath owns the touch; the rule is what you look at.
                     .allowsHitTesting(false)
                 }
                 // The roll opens on today, not on the oldest day in the record.
@@ -266,7 +309,7 @@ public struct VaneScreen: View {
                 }
             }
         }
-        .frame(height: 176)
+        .frame(height: 44)
         .accessibilityHidden(span <= 0)
     }
 }

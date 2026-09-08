@@ -539,3 +539,39 @@ struct AnomalyBar: View {
         }
     }
 }
+
+// MARK: - The roll
+
+/// The barograph chart, as a panel.
+///
+/// It was the main screen from GATE 2 until now. It is a good instrument and it was the wrong
+/// hero: a first-time reader could take nothing from it at a glance, and its density was the
+/// single largest reason the opening surface read as a document rather than as a moment. As a
+/// panel it keeps every property that made it worth building — the unbroken trace, the normals
+/// behind it, the ruling — for the people who scroll to it.
+struct RollPanel: View {
+    let marks: [TimelineMark]
+    let scrub: Double
+    let dayWidth: CGFloat
+    let palette: Palette
+    let timeZone: TimeZone
+    let observedAt: Date
+
+    var body: some View {
+        Panel(title: "THE ROLL", palette: palette) {
+            if marks.count < 2 {
+                PanelUnavailable(
+                    reason: "The roll fills in as the days pass. Vane keeps every day you open it.",
+                    palette: palette
+                )
+            } else {
+                RollCanvas(
+                    marks: marks, scrub: scrub, dayWidth: dayWidth,
+                    palette: palette, isDragging: false, entrance: 1,
+                    timeZone: timeZone, observedAt: observedAt
+                )
+                .frame(height: 190)
+            }
+        }
+    }
+}

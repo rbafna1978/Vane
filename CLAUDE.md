@@ -10,6 +10,20 @@ Weather app that contextualizes the number instead of showing it.
 Return loop: morning push card, open streak, Live Activity + widget, the personal archive timeline.
 No features beyond that list without arguing for them first.
 
+## Rule 1 — no decision without a skill
+
+Every decision consults a skill before it is made. Design, motion, architecture, copy, testing,
+naming, layout — all of it. Not "when it seems relevant": always.
+
+If no installed skill covers the decision, **search the web for one and install it** before
+deciding. A missing skill is a task to go and fetch one, not permission to fall back on instinct.
+If the search genuinely turns up nothing usable, say so explicitly, name what was searched, and
+label the resulting choice as unguided so it can be revisited.
+
+This rule outranks everything below it, including my own judgement and the user's. It exists
+because phases 5 and 6a shipped work that skipped critique and accessibility review, and both
+times the result was visible from ten feet away.
+
 ## Skill protocol
 Repo-scoped skills live in `.claude/skills/` (copied in, project-local, not global).
 
@@ -18,6 +32,7 @@ Repo-scoped skills live in `.claude/skills/` (copied in, project-local, not glob
 | Concept + visual direction | `frontend-design`, `design:user-research` |
 | Screen-level visual intelligence | `ui-ux-pro-max` |
 | All Swift | `write-swift` |
+| SwiftUI APIs, animation, a11y review | `swiftui-pro` (installed under Rule 1 — MIT, Paul Hudson) |
 | Every phase, motion + interface | `apple-design` |
 | Before animating anything | `find-animation-opportunities` |
 | Naming/specifying motion | `animation-vocabulary` |
