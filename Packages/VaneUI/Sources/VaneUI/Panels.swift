@@ -35,7 +35,7 @@ struct Panel<Content: View>: View {
             stack {
                 Text(title)
                     .font(.vaneData).tracking(1.6)
-                    .foregroundStyle(palette.inkColor.opacity(0.55))
+                    .foregroundStyle(palette.secondaryColor)
                     .fixedSize(horizontal: false, vertical: true)
                 // The rule runs to the edge rather than boxing the panel. A barograph chart is
                 // ruled, not carded.
@@ -59,7 +59,7 @@ struct PanelUnavailable: View {
     var body: some View {
         Text(reason)
             .font(.vaneBody)
-            .foregroundStyle(palette.inkColor.opacity(0.5))
+            .foregroundStyle(palette.secondaryColor)
             .fixedSize(horizontal: false, vertical: true)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -157,7 +157,7 @@ struct HourlyCurve: View {
                 )
                 context.draw(
                     Text("\(Int(value.rounded()))°").font(.custom(VaneFont.mono, fixedSize: 11))
-                        .foregroundStyle(palette.inkColor.opacity(0.45)),
+                        .foregroundStyle(palette.secondaryColor),
                     at: CGPoint(x: plot.minX - 6, y: y(value)), anchor: .trailing
                 )
             }
@@ -181,7 +181,7 @@ struct HourlyCurve: View {
                 context.draw(
                     Text(formatter.string(from: hour.t))
                         .font(.custom(VaneFont.mono, fixedSize: 11))
-                        .foregroundStyle(palette.inkColor.opacity(0.45)),
+                        .foregroundStyle(palette.secondaryColor),
                     at: CGPoint(x: x(index), y: size.height - 8), anchor: .center
                 )
             }
@@ -222,7 +222,7 @@ struct PressurePanel: View {
                             .font(.custom(VaneFont.mono, size: 22))
                         Text(tendencyLabel)
                             .font(.vaneData).tracking(1.2)
-                            .foregroundStyle(palette.inkColor.opacity(0.6))
+                            .foregroundStyle(palette.secondaryColor)
                     }
                     .foregroundStyle(palette.inkColor)
 
@@ -283,7 +283,7 @@ struct PressureTrace: View {
             )
             context.draw(
                 Text("1013").font(.custom(VaneFont.mono, fixedSize: 10))
-                    .foregroundStyle(palette.inkColor.opacity(0.5)),
+                    .foregroundStyle(palette.secondaryColor),
                 at: CGPoint(x: size.width, y: standardY), anchor: .trailing
             )
 
@@ -319,10 +319,10 @@ struct WindPanel: View {
                             .foregroundStyle(palette.inkColor)
                         Text("\(compass(degrees))   ·   FORCE \(beaufort(knots))")
                             .font(.vaneData).tracking(1.2)
-                            .foregroundStyle(palette.inkColor.opacity(0.6))
+                            .foregroundStyle(palette.secondaryColor)
                         Text(beaufortDescription(knots))
                             .font(.vaneBody)
-                            .foregroundStyle(palette.inkColor.opacity(0.75))
+                            .foregroundStyle(palette.secondaryColor)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     Spacer(minLength: 0)
@@ -487,7 +487,7 @@ struct NormalPanel: View {
     private func column(_ label: String, _ value: String) -> some View {
         VStack(alignment: .leading, spacing: 3) {
             Text(label).font(.vaneData).tracking(1.3)
-                .foregroundStyle(palette.inkColor.opacity(0.5))
+                .foregroundStyle(palette.secondaryColor)
                 .fixedSize(horizontal: false, vertical: true)
             // `relativeTo:` rather than a fixed size, so the figure scales with the label
             // instead of staying 20pt while its caption grows past it.

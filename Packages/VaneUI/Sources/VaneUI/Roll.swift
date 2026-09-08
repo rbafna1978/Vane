@@ -11,6 +11,7 @@ import VaneKit
 /// moves the same three lines to different values. The number rolls rather than swapping,
 /// because it is the same number changing, not a new one arriving.
 struct Header: View {
+    @Environment(\.dynamicTypeSize) private var typeSize
     let mark: TimelineMark?
     /// The day under the pen, whether or not anything was recorded on it.
     let day: Int
@@ -21,26 +22,36 @@ struct Header: View {
     private var isToday: Bool { day == 0 }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: Space.close) {
+            // The day is a heading, not metadata. Three mono rows at one size and one opacity
+            // made "SAT, SEP 5", "LOW 12° · RECORDED" and "NORMAL 27°" indistinguishable, which
+            // is a hierarchy with two levels and a hole in the middle. This one is the largest
+            // and darkest of the three; the other two step down from it.
             Text(dayLabel)
-                .font(.vaneData).tracking(1.4)
-                .foregroundStyle(palette.inkColor.opacity(0.55))
+                .font(.custom(VaneFont.mono, size: 13, relativeTo: .footnote))
+                .tracking(2.2)
+                .foregroundStyle(palette.secondaryColor)
                 .contentTransition(.opacity)
 
             // A day with no entry gets no number. Showing a dash, a zero, or the nearest
             // day's reading would all be inventing one — the honest thing a barograph does
             // when the pen was lifted is leave the paper blank.
             if let reading {
-                HStack(alignment: .top, spacing: 0) {
-                    RollingNumber(reading)
-                        .lineLimit(1).minimumScaleFactor(0.7)
-                    Text("°")
-                        .font(.custom(VaneFont.display, fixedSize: 46))
-                        .offset(y: 34)
-                        .accessibilityHidden(true)
-                }
-                .foregroundStyle(palette.inkColor)
-                .accessibilityLabel("\(Int(reading.rounded())) degrees")
+                RollingNumber(reading, unit: "°")
+                    .lineLimit(1).minimumScaleFactor(0.7)
+                    .foregroundStyle(palette.inkColor)
+                    // Trim the line box.
+                    //
+                    // A 148pt face reserves its ascender and descender whether or not the
+                    // glyphs use them, and "28" uses neither — which left about 60 points of
+                    // dead air above the caps and another 40 below the baseline, reading as
+                    // two accidental gaps rather than as one deliberate one. Negative padding
+                    // pulls the box in to roughly the cap-to-baseline extent without clipping
+                    // anything, so the spacing scale controls the gaps instead of the font's
+                    // metrics doing it by accident.
+                    .padding(.top, -VaneType.reading(for: typeSize) * 0.15)
+                    .padding(.bottom, -VaneType.reading(for: typeSize) * 0.11)
+                    .accessibilityLabel("\(Int(reading.rounded())) degrees")
             } else {
                 Color.clear.frame(height: VaneType.readingSize * 0.72)
                     .accessibilityHidden(true)
@@ -48,7 +59,7 @@ struct Header: View {
 
             Text(secondary)
                 .font(.vaneData).tracking(1.3)
-                .foregroundStyle(palette.inkColor.opacity(0.72))
+                .foregroundStyle(palette.secondaryColor)
                 .lineLimit(1).minimumScaleFactor(0.85)
                 .contentTransition(.opacity)
 
@@ -57,6 +68,7 @@ struct Header: View {
                 .foregroundStyle(palette.inkColor)
                 .fixedSize(horizontal: false, vertical: true)
                 .frame(minHeight: 40, alignment: .topLeading)
+                .padding(.top, Space.tight)
                 .contentTransition(.opacity)
         }
         .animation(VaneMotion.figure, value: mark)
@@ -132,7 +144,7 @@ struct Readout: View {
             Text("↓ \(time(snapshot.sun.sunset))")
         }
         .font(.vaneData).tracking(1.2)
-        .foregroundStyle(palette.inkColor.opacity(0.6))
+        .foregroundStyle(palette.secondaryColor)
         .lineLimit(1)
         .accessibilityElement(children: .ignore)
         .accessibilityHidden(true)
@@ -168,26 +180,63 @@ struct RollCanvas: View {
             let high = (values.max() ?? 1) + 2
             let span = max(high - low, 0.001)
 
-            let plot = CGRect(x: 34, y: 8, width: size.width - 34, height: size.height - 30)
+            // The plot starts at the text margin, not at an inset of its own. Value labels sit
+            // *on* the paper above their rule, the way a printed chart carries its scale,
+            // rather than in a gutter that pushes the chart out of line with everything above.
+            let plot = CGRect(x: 0, y: 10, width: size.width, height: size.height - 30)
             // The pen stays put and the paper moves under it — the fixed thing on screen is the
             // instrument, not the data.
             let penX = plot.midX
             func x(_ offset: Double) -> CGFloat { penX + CGFloat(offset - scrub) * dayWidth }
             func y(_ value: Double) -> CGFloat { plot.maxY - plot.height * (value - low) / span }
 
-            // Value scale
+            // MARK: The printed grid
+            //
+            // Direction A has said "printed hairline grid" since GATE 2 and the paper was a flat
+            // fill for four phases. It is not decoration: ruling is what makes a blank stretch
+            // read as chart stock with nothing recorded on it, instead of as a broken screen.
+            // On a new install most of the roll *is* blank, so this carries the whole surface.
+
+            // Vertical: one rule per day, travelling with the paper. Every seventh is a week
+            // boundary and gets the weight, which is how a barograph drum is actually printed.
+            let firstDay = Int((scrub - Double(plot.width / dayWidth) / 2 - 1).rounded(.down))
+            let lastDay = Int((scrub + Double(plot.width / dayWidth) / 2 + 1).rounded(.up))
+            for day in firstDay...lastDay {
+                let isWeek = day % 7 == 0
+                context.stroke(
+                    Path { $0.move(to: .init(x: x(Double(day)), y: plot.minY))
+                           $0.addLine(to: .init(x: x(Double(day)), y: plot.maxY)) },
+                    with: .color(palette.gridColor.opacity(isWeek ? 0.85 : 0.35)),
+                    lineWidth: 0.5
+                )
+            }
+
+            // Horizontal: a labelled rule at each step, and an unlabelled half-step between —
+            // the minor ruling is most of what your eye reads as "printed" rather than "drawn".
             let stepValue = [2.0, 5.0, 10.0, 20.0].first { span / $0 <= 5.5 } ?? 20
+            var minor = (low / (stepValue / 2)).rounded(.up) * (stepValue / 2)
+            while minor <= high {
+                context.stroke(
+                    Path { $0.move(to: .init(x: plot.minX, y: y(minor)))
+                           $0.addLine(to: .init(x: plot.maxX, y: y(minor))) },
+                    with: .color(palette.gridColor.opacity(0.3)), lineWidth: 0.5
+                )
+                minor += stepValue / 2
+            }
+
             var tick = (low / stepValue).rounded(.up) * stepValue
             while tick <= high {
                 context.stroke(
                     Path { $0.move(to: .init(x: plot.minX, y: y(tick)))
                            $0.addLine(to: .init(x: plot.maxX, y: y(tick))) },
-                    with: .color(palette.gridColor), lineWidth: 0.5
+                    with: .color(palette.gridColor.opacity(0.85)), lineWidth: 0.5
                 )
+                // Above the rule and hard left, sitting on the paper. Two points of optical
+                // offset because a baseline set exactly on a rule reads as touching it.
                 context.draw(
-                    Text("\(Int(tick))°").font(.custom(VaneFont.mono, fixedSize: 11))
-                        .foregroundStyle(palette.inkColor.opacity(0.45)),
-                    at: .init(x: 26, y: y(tick)), anchor: .trailing
+                    Text("\(Int(tick))°").font(.custom(VaneFont.mono, fixedSize: 10))
+                        .foregroundStyle(palette.secondaryColor),
+                    at: .init(x: plot.minX + 1, y: y(tick) - 3), anchor: .bottomLeading
                 )
                 tick += stepValue
             }
@@ -214,25 +263,18 @@ struct RollCanvas: View {
             let past = marks.filter { $0.offset <= 0 }
             let ahead = marks.filter { $0.offset >= 0 }
             if ahead.count > 1 {
+                // Lighter than the record and dashed, because it has not happened — but not so
+                // light that it disappears. On a new install the forecast is most of what there
+                // is to look at, and at 40% of a hairline it read as a smudge.
                 context.stroke(path(ahead, x: x, y: y),
-                               with: .color(palette.traceColor.opacity(0.4)),
-                               style: StrokeStyle(lineWidth: 1.2, lineCap: .round, dash: [2.5, 3]))
+                               with: .color(palette.traceColor.opacity(0.62)),
+                               style: StrokeStyle(lineWidth: 1.6, lineCap: .round, dash: [3, 3.5]))
             }
             if past.count > 1 {
                 context.stroke(path(past, x: x, y: y), with: .color(palette.traceColor),
                                style: StrokeStyle(lineWidth: 1.9, lineCap: .round, lineJoin: .round))
             }
 
-            // Day ticks, so the scale is readable rather than merely continuous.
-            for mark in marks where Int(mark.offset) % 7 == 0 {
-                context.stroke(
-                    Path { $0.move(to: .init(x: x(mark.offset), y: plot.maxY))
-                           $0.addLine(to: .init(x: x(mark.offset), y: plot.maxY + 5)) },
-                    with: .color(palette.gridColor), lineWidth: 0.5
-                )
-            }
-
-            // The pen. Fixed at centre; the value under it is what the header is reading.
             // The guide line is always there — it is the instrument, and the instrument does
             // not disappear on a day with no reading.
             context.stroke(
@@ -336,15 +378,22 @@ struct StreakBar: View {
     let palette: Palette
 
     var body: some View {
-        HStack(alignment: .bottom, spacing: 4) {
-            ForEach(0..<28, id: \.self) { index in
-                Rectangle()
-                    .fill(index < min(count, 28) ? palette.traceColor : palette.gridColor)
-                    .frame(width: 1, height: index % 7 == 6 ? 9 : 5)
+        HStack(alignment: .bottom, spacing: Space.block) {
+            HStack(alignment: .bottom, spacing: 4) {
+                ForEach(0..<28, id: \.self) { index in
+                    Rectangle()
+                        .fill(index < min(count, 28) ? palette.traceColor : palette.gridColor)
+                        .frame(width: 1, height: index % 7 == 6 ? 9 : 5)
+                }
             }
-            Spacer()
+            // A bare row of ticks is an artefact, not information. Nobody counts 28 hairlines
+            // to find out they have a four-day streak.
+            Text(count == 1 ? "1 DAY" : "\(count) DAYS")
+                .font(.vaneData).tracking(1.4)
+                .foregroundStyle(palette.secondaryColor)
+            Spacer(minLength: 0)
         }
-        .frame(height: 9, alignment: .bottom)
+        .frame(height: 11, alignment: .bottom)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(count == 1 ? "Opened today" : "Opened \(count) days in a row")
     }

@@ -76,6 +76,14 @@ static float fbm(float2 p) {
     //    which is how the sky actually reads when you look at it.
     half4 color = mix(zenith, horizon, half(uv.y * uv.y));
 
+    // Horizon haze. The last few degrees above the ground are looking through far more
+    // atmosphere, so they lighten and lose saturation into a soft band. Without it the gradient
+    // stops dead at the bottom edge and the sky reads as a rectangle of paint, which is exactly
+    // what it looked like before this line existed.
+    float haze = smoothstep(0.55, 1.0, uv.y);
+    half3 hazeColor = mix(horizon.rgb, half3(1.0h), 0.32h);
+    color.rgb = mix(color.rgb, hazeColor, half(haze * 0.55));
+
     // 2. The luminary. Distance is corrected for aspect so the disc is round in a tall frame.
     float aspect = size.x / size.y;
     float2 toSun = (uv - sun) * float2(aspect, 1.0);
@@ -84,20 +92,29 @@ static float fbm(float2 p) {
     bool isDay = elevation > -0.833;   // the sun's disc plus atmospheric refraction
     // Small disc, wide glow. The sun subtends half a degree; almost all of what you see
     // looking at it is atmosphere, not disc, and a large flat disc is the tell of a drawn sun.
-    float discR = isDay ? 0.019 : 0.014;
-    float glowR = isDay ? 0.78 : 0.26;
+    float discR = isDay ? 0.016 : 0.013;
+    float glowR = isDay ? 0.95 : 0.30;
 
     // Glow falls off on an inverse curve rather than a linear ramp; a linear halo has a visible
     // outer edge where it reaches zero, and the sky does not have one.
     float glow = discR / max(dist, 1e-4);
-    glow = pow(clamp(glow, 0.0, 1.0), 2.2) * smoothstep(glowR, 0.0, dist);
+    glow = pow(clamp(glow, 0.0, 1.0), 2.6) * smoothstep(glowR, 0.0, dist);
 
-    float disc = 1.0 - smoothstep(discR * 0.75, discR, dist);
+    // A second, far wider and fainter term. One falloff curve gives the uniform airbrushed
+    // circle this looked like on the first pass; real forward scatter is a bright tight core
+    // riding on a very broad, very dim wash across most of the sky, and it is the broad term
+    // that stops it reading as a sticker.
+    float scatter = pow(clamp(discR * 3.4 / max(dist, 1e-4), 0.0, 1.0), 1.15) * 0.22;
+
+    // Antialiased by the pixel's own footprint rather than a guessed constant, so the limb
+    // stays crisp at any scale instead of blurring on a large frame.
+    float edge = fwidth(dist) * 1.5;
+    float disc = 1.0 - smoothstep(discR - edge, discR + edge, dist);
 
     // Cloud thins the sun rather than erasing it — an overcast sun is a bright patch, not an
     // absence — and the luminary is cut off entirely once it is genuinely below the horizon.
     float visible = (1.0 - cover * 0.75) * step(-6.0, elevation + (isDay ? 0.0 : 90.0));
-    color = mix(color, light, half(clamp(glow * 0.55 + disc, 0.0, 1.0) * visible));
+    color = mix(color, light, half(clamp(glow * 0.5 + scatter + disc, 0.0, 1.0) * visible));
 
     // 3. Cloud deck. Drifts on wind, and is squashed vertically so the noise reads as a deck
     //    seen in perspective instead of as wallpaper.

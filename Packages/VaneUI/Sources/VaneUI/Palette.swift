@@ -22,6 +22,22 @@ public nonisolated struct Palette: Sendable, Hashable {
     public var band: RGB { grid.meetingContrast(3.0, against: paper) }
     public var bandColor: Color { band.color }
 
+    /// Reduced-emphasis **text**: labels, units, captions, the mono metadata rows.
+    ///
+    /// This exists because the entire interface was written as `inkColor.opacity(0.45…0.8)`,
+    /// which quietly throws away the contrast guarantee the palette spends its whole design
+    /// earning — 10pt mono at 45% opacity measures about 2.2:1, well under half of what AA
+    /// asks for. Opacity is a rendering trick; contrast is a measurement, and only one of them
+    /// survives being checked.
+    ///
+    /// Mixing halfway to paper and then pushing back to the 4.5:1 floor gives the *lightest*
+    /// tone that is still legal for text — visually quiet, and it cannot fail. Ruling and
+    /// hairlines may still use opacity, because they are decoration carrying no information.
+    public var secondary: RGB {
+        ink.mixed(with: paper, amount: 0.5).meetingContrast(4.5, against: paper)
+    }
+    public var secondaryColor: Color { secondary.color }
+
     public var paperColor: Color { paper.color }
     public var gridColor: Color { grid.color }
     public var inkColor: Color { ink.color }

@@ -62,7 +62,7 @@ public struct Catalog: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(String(format: "RAIN %.1f MM/H  ·  WIND %.0f KT", precipMm, windKt))
                 .font(.vaneData).tracking(1.2)
-                .foregroundStyle(palette.inkColor.opacity(0.55))
+                .foregroundStyle(palette.secondaryColor)
             HStack(spacing: 6) {
                 ForEach([0.0, 0.3, 1.0, 2.5, 6.0], id: \.self) { mm in
                     stepButton(String(format: mm < 1 ? "%.1f" : "%.0f", mm),
@@ -155,7 +155,7 @@ public struct Catalog: View {
     private func dayStrip(_ palette: Palette) -> some View {
         VStack(alignment: .leading, spacing: 5) {
             Text("ONE DAY — 37.8N 122.25W  ·  DRAG TO SCRUB")
-                .font(.vaneData).tracking(1.2).foregroundStyle(palette.inkColor.opacity(0.55))
+                .font(.vaneData).tracking(1.2).foregroundStyle(palette.secondaryColor)
 
             GeometryReader { geometry in
                 HStack(spacing: 0) {
@@ -187,7 +187,7 @@ public struct Catalog: View {
     private func coverageControl(_ palette: Palette) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("CLOUD  \(oktas)/8 OKTAS")
-                .font(.vaneData).tracking(1.2).foregroundStyle(palette.inkColor.opacity(0.55))
+                .font(.vaneData).tracking(1.2).foregroundStyle(palette.secondaryColor)
             HStack(spacing: 0) {
                 ForEach(coverage, id: \.0) { value, code, _ in
                     Button { oktas = value } label: {

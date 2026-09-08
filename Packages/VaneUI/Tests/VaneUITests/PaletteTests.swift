@@ -194,3 +194,39 @@ private func chroma(_ c: RGB) -> Double { max(c.r, c.g, c.b) - min(c.r, c.g, c.b
         }
     }
 }
+
+/// Reduced-emphasis text is still text.
+///
+/// The whole interface was written as `inkColor.opacity(0.45…0.8)`, which discards the contrast
+/// the palette spends its design earning — 10pt mono at 45% opacity measures about 2.2:1. This
+/// asserts the replacement token holds the floor at every hour and every cloud cover, so the
+/// regression cannot come back quietly one `.opacity()` at a time.
+@Suite("Secondary text")
+struct SecondaryTextTests {
+    @Test func `secondary text clears AA at every hour`() {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "Europe/London")!
+
+        for hour in 0..<24 {
+            for cover in [0.0, 0.5, 1.0] {
+                let date = calendar.date(
+                    from: DateComponents(year: 2026, month: 9, day: 8, hour: hour)
+                )!
+                let p = SkyState.now(
+                    latitude: 51.5, longitude: -0.13, date: date, cloudCover: cover
+                ).palette
+                #expect(
+                    p.secondary.contrast(against: p.paper) >= 4.49,
+                    "hour \(hour) cover \(cover)"
+                )
+            }
+        }
+    }
+
+    /// It has to be visibly quieter than full ink, or the token is pointless and every label
+    /// on the screen shouts at the same volume.
+    @Test func `secondary is lighter than ink`() {
+        let p = Palette.day
+        #expect(p.secondary.contrast(against: p.paper) < p.ink.contrast(against: p.paper))
+    }
+}

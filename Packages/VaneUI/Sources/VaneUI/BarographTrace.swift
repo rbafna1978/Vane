@@ -140,7 +140,7 @@ public struct BarographTrace: View {
         // thirty-year answer the whole app is built to give.
         let caption = Text("30-YEAR NORMAL")
             .font(.custom(VaneFont.mono, fixedSize: typeSize.isAccessibilitySize ? 11 : 9))
-            .foregroundStyle(palette.inkColor.opacity(0.5))
+            .foregroundStyle(palette.secondaryColor)
         context.draw(caption, at: .init(x: plot.maxX - 4, y: top + 9), anchor: .topTrailing)
     }
 
@@ -209,7 +209,7 @@ public struct BarographTrace: View {
         for tick in ticks {
             let text = Text("\(Int(tick))°")
                 .font(.custom(VaneFont.mono, fixedSize: pointSize))
-                .foregroundStyle(palette.inkColor.opacity(0.45))
+                .foregroundStyle(palette.secondaryColor)
             context.draw(text, at: .init(x: gutter - 8, y: y(tick)), anchor: .trailing)
         }
     }
@@ -251,7 +251,7 @@ public struct BarographTrace: View {
         for hour in stride(from: 0.0, through: 24.0, by: step) {
             let text = Text(String(format: "%02d", Int(hour)))
                 .font(.custom(VaneFont.mono, fixedSize: pointSize))
-                .foregroundStyle(palette.inkColor.opacity(0.45))
+                .foregroundStyle(palette.secondaryColor)
             // Centred on its own gridline, except at the ends: hour 0 and hour 24 sit on the
             // paper's edges and would hang off it, so they are pulled inward.
             let anchor: UnitPoint = switch hour {

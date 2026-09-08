@@ -22,7 +22,7 @@ struct EmptyStateView: View {
                 .foregroundStyle(palette.inkColor)
             Text(message)
                 .font(.vaneBody)
-                .foregroundStyle(palette.inkColor.opacity(0.75))
+                .foregroundStyle(palette.secondaryColor)
                 .fixedSize(horizontal: false, vertical: true)
 
             Button(action: act) {

@@ -440,3 +440,59 @@ Corrections to earlier decisions:
 - **The catalog is reachable** via `-VaneCatalog YES` (DEBUG only), with rain and wind controls.
   Nowhere on Earth was raining the day the sky was reviewed; a rendering path that only appears
   in bad weather otherwise ships unlooked-at.
+
+### Phase 6b — the execution, after actually running design critique
+
+Correction first: **the `design:` and `engineering:` skills are installed and invocable.** In 6a I
+checked `~/.claude/plugins/installed_plugins.json`, saw three entries, concluded the rest were
+missing, and rewrote the skill table in CLAUDE.md to say so. That file is not the roster — the
+session's skill list is. The wrong check cost a phase of skipped `design:design-critique` and
+`design:accessibility-review`, which is precisely how a screen ships looking like a mockup.
+Verify a skill by invoking it, never by reading a manifest.
+
+What critique found, and what changed:
+
+- **The printed grid has been missing since GATE 2.** Direction A reads "Pale eau-de-nil stock,
+  *printed hairline grid*, one aniline-violet pen trace" and the paper was a flat fill for four
+  phases. Ruling is not decoration here: on a new install most of the roll is blank, and ruling
+  is the entire difference between "chart stock with nothing recorded on it" and "broken app".
+  Now: one vertical rule per day travelling with the paper, weighted every seventh for the week;
+  labelled horizontal rules at each step with unlabelled half-steps between.
+- **`ui-ux-pro-max` §Layout — "random spacing increments with no rhythm".** The screen used 10,
+  14, 16, 18, 22, 26, 48 and 214pt gaps, each chosen on its own. Added `Space` — four tiers, not
+  eight, because a scale with a step for every occasion is the same as no scale.
+- **The chart was inset to 34pt while every line of text sat at 24pt.** Nothing aligned. The plot
+  now starts at the text margin and its value labels sit *on* the paper, as a printed chart's
+  scale does.
+- **Two flat rectangles butt-joined by a hairline.** The sheet now has a cast shadow above its
+  edge, a tonal falloff where the sky's light reaches across it, and the sky has horizon haze —
+  the last few degrees above the ground look through far more atmosphere and lighten. Without
+  it the gradient stopped dead at the edge, which is what made it read as paint.
+- **The sun was an airbrush blob** — one falloff curve gives a uniform disc. Real forward scatter
+  is a tight bright core riding on a very broad, very dim wash; added the second term, and
+  antialiased the limb by the pixel's own footprint (`fwidth`) rather than a guessed constant.
+- **The type hierarchy had two levels and a hole.** Three mono rows at one size and one opacity
+  made a heading, metadata and a readout indistinguishable. The day label is now the largest and
+  darkest of the three.
+- **The degree ring never attached to the numeral.** Two failed attempts are worth recording:
+  `.top` in an HStack aligns to the *ascender*, which on a 148pt condensed face sits far above
+  the cap line; `baselineOffset` inside a stack moves the run's own baseline so the stack
+  re-aligns around it and the ring floats free. Concatenating the runs into one `Text` makes the
+  baseline shared by construction.
+- **A 148pt face reserves ascender and descender whether the glyphs use them or not**, and "28"
+  uses neither — about 60pt of dead air above the caps and 40 below the baseline, reading as two
+  accidental gaps. Negative padding trims the box so the spacing scale controls the gaps instead
+  of the font's metrics doing it by accident.
+- **The streak was 28 unlabelled hairlines.** Nobody counts hairlines to learn they have a
+  four-day streak. It now carries its number.
+
+Accessibility, from `design:accessibility-review`:
+
+- **Every reduced-emphasis label was `inkColor.opacity(0.45…0.8)`**, in 22 places, which throws
+  away the contrast the palette spends its whole design earning — 10pt mono at 45% opacity
+  measures about 2.2:1 against paper, less than half of AA. Opacity is a rendering trick;
+  contrast is a measurement, and only one of them survives being checked. Added
+  `Palette.secondary`: mixed halfway to paper, then pushed back to the 4.5:1 floor, giving the
+  lightest tone that is still legal for text. Ruling and hairlines keep opacity, because they
+  carry no information. Asserted across all 24 hours and three cloud covers so it cannot come
+  back one `.opacity()` at a time.

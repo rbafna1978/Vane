@@ -91,41 +91,67 @@ public struct VaneScreen: View {
                 // 1. Over the sky.
                 StationLine(snapshot: snapshot, place: model.placeName, palette: palette)
                     .foregroundStyle(skyInk)
-                    .padding(.horizontal, 24)
+                    .padding(.horizontal, Space.margin)
                     // Sky-side room. Roughly a third of the screen, which is what it takes for
                     // the sun to sit in open sky rather than in a letterbox. At accessibility
                     // sizes it collapses first — the sky is content, but it is not content
                     // anyone needs at AX5, where the reading has to be the whole screen.
-                    .padding(.bottom, typeSize.isAccessibilitySize ? 24 : 214)
+                    .padding(.bottom, typeSize.isAccessibilitySize ? Space.group : 208)
 
                 // 2. The paper sheet. Everything from here down is ink on stock.
                 VStack(alignment: .leading, spacing: 0) {
                     Header(mark: focused, day: focusedDay, snapshot: snapshot,
                            scrub: scrub, palette: palette)
-                        .padding(.top, 22)
+                        .padding(.top, Space.group)
 
                     roll(palette: palette)
                         .padding(.top, 16)
 
                     Readout(mark: focused, snapshot: snapshot, palette: palette)
-                        .padding(.top, 14)
+                        .padding(.top, Space.block)
 
                     StreakBar(count: model.streak, palette: palette)
-                        .padding(.top, 18)
+                        .padding(.top, Space.group)
 
                     panels(snapshot: snapshot, palette: palette)
                 }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 48)
+                .padding(.horizontal, Space.margin)
+                .padding(.bottom, Space.section)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(alignment: .top) {
-                    // The sheet's own top edge, drawn as a rule. This is where the sky stops and
-                    // the chart begins, and it is the only hard boundary on the surface.
-                    palette.paperColor
-                        .overlay(alignment: .top) {
-                            Rectangle().fill(palette.gridColor).frame(height: 0.5)
-                        }
-                        .ignoresSafeArea(edges: .bottom)
+                    // The sheet.
+                    //
+                    // A flat fill butt-joined to the sky by a hairline is what made the first
+                    // build read as two rectangles of paint. A real sheet lying on something has
+                    // three things this now has: a cast shadow above its edge, a tonal falloff
+                    // where the light from the sky reaches across it, and a hard edge only at
+                    // the very top.
+                    ZStack(alignment: .top) {
+                        palette.paperColor
+
+                        // Light from the sky, falling across the top of the sheet and dying out
+                        // within a couple of hundred points.
+                        LinearGradient(
+                            colors: [palette.paper.mixed(with: palette.ink, amount: 0.05).color,
+                                     palette.paperColor],
+                            startPoint: .top, endPoint: .bottom
+                        )
+                        .frame(height: 180)
+
+                        // The cast shadow, sitting *above* the sheet's edge on the sky side.
+                        // This is a shadow, not a glass panel — the brief bans the latter, and
+                        // the difference is that this darkens the ground rather than sampling
+                        // and blurring it.
+                        LinearGradient(
+                            colors: [.clear, palette.ink.color.opacity(0.16)],
+                            startPoint: .top, endPoint: .bottom
+                        )
+                        .frame(height: 14)
+                        .offset(y: -14)
+
+                        Rectangle().fill(palette.inkColor.opacity(0.28)).frame(height: 0.5)
+                    }
+                    .ignoresSafeArea(edges: .bottom)
                 }
             }
         }
