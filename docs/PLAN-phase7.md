@@ -178,11 +178,16 @@ skipped twice.
 
 ---
 
-## 6a. No graphs
+## 6a. No line charts
 
-A hard constraint, added after the direction was locked: **no plots, traces, curves, sparklines,
-axes or scatter anywhere in the product.** They are hard to read at a glance, and every one built
-in phases 3-6 made its screen worse rather than better.
+A hard constraint, added after the direction was locked: **no lines, traces, curves, sparklines
+or scatter anywhere in the product.** A line asks the reader to decode an axis, a scale and a
+slope before it says anything, and every one built in phases 3-6 made its screen worse.
+
+**Bars are allowed**, read by length, which needs no decoding. They earn their place on
+comparisons between discrete things — and the most important one in the product turns out to be
+exactly that shape: this calendar date across thirty years, with today's bar tallest. That single
+figure *shows* "warmest September 9th in 30 years" without anybody reading a word.
 
 This is not a loss, because the direction already answers it. **The instrument is the reading.**
 An aneroid dial does not need a pressure graph beside it — it *is* the pressure, and it shows the
