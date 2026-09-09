@@ -538,3 +538,30 @@ Defects found and fixed on the way:
 - A day with no observation left a blank hole where the reading was, which read as the app having
   failed. It now prints an em dash — the notation climate records and METAR have always used for
   a missing observation.
+
+## Phase 7 — rebase
+
+The reference is Not Boring Weather. Direction A cannot reach it and is retired; the full plan is
+in `docs/PLAN-phase7.md`. Summary of what changed at the level of a decision:
+
+- **Direction A is dead.** "The chart, never the machine" — my own GATE 2 sentence — produced a
+  static document, which is what a chart is. The brief asked for meteorological *instruments* and
+  I shipped their output instead.
+- **Position: their craft standard, our claim.** Not Boring renders the weather beautifully and
+  does not compete on meaning at all. Matching its rendering is table stakes; the sentence is the
+  differentiation. Decided with `product/discover-competitive-analysis`.
+- **Steal the annotation overlay, not the clouds.** Callouts with leader lines into the scene is
+  the right answer to progressive disclosure. Clay clouds on white is their signature and
+  shipping it is a knock-off.
+- **Recommended direction: the instruments as objects** — vane, aneroid, column, cups, gauge —
+  not the sky. Needs sign-off before any view code.
+- **Rendering: Metal SDF raymarching**, not RealityKit and not sprites. `ios-3d` (installed under
+  Rule 1) surfaced that SceneKit is soft-deprecated as of iOS 26, which most training data still
+  gets wrong. RealityKit was rejected for a reason worth recording: it needs authored USDZ assets
+  that nobody on this project can produce, so it would make the look depend on a capability we do
+  not have.
+- **Skills installed under Rule 1:** `ios-3d` (MIT reference docs only — the upstream project also
+  ships MCP servers and a CLI, which is infrastructure and needs agreement, not a side effect) and
+  five `product/` skills (Apache 2.0, product-on-purpose).
+- **~2,800 of 6,700 lines are discarded, and none of them are backend or VaneKit.** The parts
+  built against the brief survived; the parts built against my reading of it did not.

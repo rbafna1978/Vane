@@ -51,6 +51,11 @@ Repo-scoped skills live in `.claude/skills/` (copied in, project-local, not glob
 | README, runbook, API docs | `engineering:documentation` |
 | Before first deploy | `engineering:deploy-checklist` |
 | Every third phase | `engineering:tech-debt` |
+| Rendered 3D scenes, materials, GPU | `ios-3d` (installed under Rule 1 — MIT refs, ios-agent-skill) |
+| Competitive position, problem framing | `product/discover-competitive-analysis`, `product/define-problem-statement` |
+| What the customer is hiring us for | `product/define-jtbd-canvas` |
+| Comparing solution approaches | `product/develop-solution-brief` |
+| Testing an unvalidated assumption | `product/define-hypothesis` |
 | Repo-wide code map | `graphify` |
 
 **These all exist and are invocable.** In phase 6a I checked `installed_plugins.json`, saw only
