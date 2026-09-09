@@ -83,18 +83,30 @@ Regenerate the code map at every phase boundary. One repo-wide graph covers Swif
 (tree-sitter-swift and tree_sitter_python both present). Consult the map before opening files.
 Reading >3 files to answer a structural question means the map is stale or unused.
 
-## Direction: A, The Barograph (locked)
-The chart, never the machine. Pale eau-de-nil stock, printed hairline grid, one aniline-violet pen trace.
-Signature: the trace never breaks — today is the right end of one roll that began at install; dragging
-left is the archive on the same paper. The 11-year normal runs behind it dashed.
+## Direction: B, The Instruments (locked, phase 7)
 
-Palette (day / night): paper #DFE7DC / #12171A - grid #AFBFA9 / #263029 - ink #1B2021 / #DCE6DE
-trace #3A2E6B / #8B7BD4 - alert #B8442E / #E06A4F - wash computed from sun position.
-`trace` and `alert` are the entire saturated budget.
+**Direction A is retired.** It was "the chart, never the machine" — and a chart is a static
+document, so it produced one. Six rounds of feedback went into polishing something that could
+never reach the bar. The full reasoning is in `docs/PLAN-phase7.md`.
 
-Type: FF DIN Condensed (display, fallback Archivo Narrow) / SF Pro Text (body) / Berkeley Mono
-(data, fallback JetBrains Mono). Scale: Reading 148/132, Display L 40/44, Context 28/34, Body 17/24,
-Caption 13/18, Data 12/16. Body + Caption scale with Dynamic Type; Reading + Context on a clamped curve.
+The scene renders **the apparatus that measures the weather**, not the sky: a wind vane, an
+aneroid dial, a mercury column, anemometer cups, a rain gauge. Heavy objects, real materials, real
+shadows. They respond to real data — the vane swings to the true bearing, the column rises to the
+real temperature, the cups turn at the real speed. The app is called Vane.
+
+Composition, from the reference: one object scene, one enormous figure, one line of meaning, and a
+technical annotation overlay on demand — callouts with leader lines pointing *into* the scene. Our
+overlay annotates with **history**, which is the thing no competitor does.
+
+Rendering is **Metal SDF raymarching**, not RealityKit and not sprites. See `ios-3d` and
+ADR-0008: the forms are sphere unions, the scene must be a continuous function of live weather,
+and RealityKit would make the look depend on authored USDZ assets nobody here can produce.
+
+Type: **Big Shoulders** (display) — variable `wght` 100–900 and `opsz` 10–72. Chosen by setting
+54° at 180pt against five alternatives and looking, not from a specimen sheet; Archivo Narrow, the
+incumbent, has no mass at all beside it and would disappear against a rendered scene. The
+optical-size axis is the rare property here: one family cut correctly for both 180pt and 12pt.
+SF Pro Text (body, for Dynamic Type and VoiceOver) / JetBrains Mono (data).
 
 ## Design hard constraints
 - No purple→blue gradients. No #F4F1EA cream + #D97757 terracotta. No glassmorphism-on-everything.

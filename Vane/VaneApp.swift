@@ -8,6 +8,9 @@ struct VaneApp: App {
         // an app's Info.plist. Registering at launch is what makes Archivo Narrow and
         // JetBrains Mono resolvable by name anywhere in the app and its extensions.
         VaneFont.register()
+        #if DEBUG
+        Specimen.register()
+        #endif
     }
 
     var body: some Scene {

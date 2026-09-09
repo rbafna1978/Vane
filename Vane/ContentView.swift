@@ -14,7 +14,9 @@ struct ContentView: View {
         //
         // Debug only. It exists so rendering paths that need weather we cannot summon — rain, a
         // gale, an overcast midnight — can be looked at rather than assumed.
-        if UserDefaults.standard.bool(forKey: "VaneCatalog") {
+        if UserDefaults.standard.bool(forKey: "VaneSpecimen") {
+            Specimen()
+        } else if UserDefaults.standard.bool(forKey: "VaneCatalog") {
             Catalog()
         } else {
             VaneScreen(model: model)

@@ -110,8 +110,24 @@ build, closest to the reference, and the highest risk of reading as derivative.
 a shelf receding behind it. The most original and the most likely to confuse someone who just
 wants to know if they need a coat.
 
-I recommend **A**, and I want your explicit call before a line of view code is written, because it
-determines the shader, the asset pipeline and the motion vocabulary.
+**Signed off: A, the instruments.**
+
+### The display face — settled by looking
+
+Also signed off: shortlist properly rather than licence or default. Six candidates were set at
+54°/180pt on device (`-VaneSpecimen YES`) rather than judged from specimen sheets.
+
+**Chosen: Big Shoulders**, variable `wght` 100–900 and `opsz` 10–72, at 900/72 for the figure.
+
+- The optical-size axis is the rare property and the deciding one: one family cut correctly for a
+  180pt figure *and* a 12pt label, which no other candidate offers.
+- Archivo Narrow, the incumbent, has no mass beside it — set together, it is thin and would
+  disappear against a rendered scene. It was a fallback for FF DIN Condensed and was never
+  reconsidered after the direction changed under it.
+- Rejected: Anton (right mass, one weight, nothing to set small text in), Oswald (rank 9 on
+  Google Fonts — competent and everywhere), Special Gothic Condensed (character, but light).
+
+The specimen screen and the losing faces come out of the bundle in 7.0.
 
 ---
 
