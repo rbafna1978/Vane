@@ -565,3 +565,46 @@ in `docs/PLAN-phase7.md`. Summary of what changed at the level of a decision:
   five `product/` skills (Apache 2.0, product-on-purpose).
 - **~2,800 of 6,700 lines are discarded, and none of them are backend or VaneKit.** The parts
   built against the brief survived; the parts built against my reading of it did not.
+
+## Phase 7.0 — the strip
+
+**No graphs, anywhere.** Added to the hard constraints, not as a layout preference but as a
+product rule: no plots, traces, curves, sparklines, axes or scatter. Every one built in phases
+3–6 made its screen worse. This kills `BarographTrace`, `RollCanvas`, `RollPanel`, `HourlyCurve`,
+`PressureTrace` and `AnomalyBar`.
+
+It costs nothing, because the direction already answers it: **the instrument is the reading.** An
+aneroid dial does not need a pressure graph beside it — it *is* the pressure. The column is the
+temperature, the vane is the bearing, the cups are the strength. What an instrument cannot carry
+becomes a number with a plain label or a sentence. The reference contains no graph either.
+
+- **VaneUI: 4,013 → 1,000 lines.** Deleted the three graph files, Direction A's surfaces
+  (`VaneScreen`, `DrumSheet`, `PaperScroll`, `ContextLine`, `Catalog`, `EmptyStateView`), and the
+  superseded `RollingNumber`, `Palette` and `SkyView`.
+- **Two things were carried out of the wreck rather than deleted with it.** `Sky.metal`'s noise
+  field became `Noise.metal` — value noise and a four-octave fBm, tuned by looking rather than by
+  copying constants, and exactly what the instrument scene needs for clay grain. And the sky's
+  hemisphere-safe bearing projection became `VaneKit/SceneFrame`, with its tests: it is not about
+  skies, it is the answer to "the sun is at azimuth 280°, where does that go on screen", which
+  the instrument scene asks for its lighting and its vane. It cost two bugs to get right.
+- **Backend and VaneKit are untouched.** 68 and 37 tests pass unchanged.
+- **Type moved to Big Shoulders.** Archivo Narrow, JetBrains' partner since phase 3, is gone.
+  `VaneType.display(_:weight:)` sets `wght` and `opsz` on the font descriptor, because SwiftUI's
+  `.fontWeight()` does not reliably drive a custom variable face's weight axis and cannot address
+  optical size at all — and `opsz` is the reason this face was chosen. **Big Shoulders' default
+  instance is Thin**, so asking for the face by name without setting the axes silently gives the
+  lightest cut in the family.
+- A test asserts the axes bind. Counting entries in `CTFontCopyVariation` does *not* work:
+  CoreText omits an axis whose value equals its default, and at a 180pt setting `opsz` clamps to
+  72, which is this face's default — so it vanishes from the dictionary, which looks exactly like
+  the axis being ignored and is the opposite.
+- **graphify rebuilt: 742 nodes, 1,520 edges, 38 communities.** The god nodes are now
+  `WeatherModel`, `OpenMeteoSource`, `Cell`, `choose()`, `LocationProvider` — all data layer. No
+  view-layer node is a hub any more, which is the correct shape after a strip. The shrink guard
+  refused the incremental update (958 → 460 nodes); a full rebuild was run rather than forcing
+  past it, and the final write used `force=True` only because the reduction is this session's own
+  deliberate deletion and is in git.
+
+7.0's exit criterion is met: the app builds and shows real live data — place, condition, wind,
+pressure, normals over 30 years, 10 forecast days, 240 hourly points, archive, streak — and the
+context engine's sentence, today: *"Warmest September 9th in 30 years."*

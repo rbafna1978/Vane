@@ -109,6 +109,16 @@ optical-size axis is the rare property here: one family cut correctly for both 1
 SF Pro Text (body, for Dynamic Type and VoiceOver) / JetBrains Mono (data).
 
 ## Design hard constraints
+- **No graphs. Anywhere.** Not on the main screen, not in a panel, not "just a small one". No
+  plots, traces, curves, sparklines, axes or scatter. They are hard to read at a glance and every
+  one built so far has made a screen worse. This kills the barograph roll, the hourly curve, the
+  pressure trace and the anomaly bar.
+
+  What replaces them is the direction itself: **the instrument is the reading.** The aneroid dial
+  *is* the pressure — you do not also need a pressure line. The column height *is* the
+  temperature. The vane *is* the wind bearing. The cups' speed *is* the wind strength. Where an
+  instrument cannot carry it, use a number with a plain label, or a sentence. The reference we are
+  competing with contains no graph either: it uses objects, numbers and one range scale.
 - No purple→blue gradients. No #F4F1EA cream + #D97757 terracotta. No glassmorphism-on-everything.
   No SaaS card kit (identical radii, same soft grey shadow).
 - No SF Pro as the display face. Body may be SF. Display type is a deliberate licensed choice.

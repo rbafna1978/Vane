@@ -25,17 +25,22 @@ nonisolated struct DisplayMetrics {
     /// Memoised. The keys are the handful of sizes the clamped Dynamic Type curve can produce,
     /// so the table stays at a few entries for the life of the process.
     @MainActor
-    static func forSize(_ size: CGFloat) -> DisplayMetrics {
-        if let cached = cache[size] { return cached }
-        let made = DisplayMetrics(size: size)
-        cache[size] = made
+    static func forSize(_ size: CGFloat, weight: CGFloat = 900) -> DisplayMetrics {
+        let key = Key(size: size, weight: weight)
+        if let cached = cache[key] { return cached }
+        let made = DisplayMetrics(size: size, weight: weight)
+        cache[key] = made
         return made
     }
 
-    @MainActor private static var cache: [CGFloat: DisplayMetrics] = [:]
+    private struct Key: Hashable { let size: CGFloat; let weight: CGFloat }
+    @MainActor private static var cache: [Key: DisplayMetrics] = [:]
 
-    private init(size: CGFloat) {
-        let font = CTFontCreateWithName(VaneFont.display as CFString, size, nil)
+    private init(size: CGFloat, weight: CGFloat) {
+        // Through `VaneType.displayFont` so the wheels are measured from the *same* variable
+        // instance they are drawn in. Measuring the default instance and drawing at weight 900
+        // would put the window in the wrong place by the difference between Thin and Black.
+        let font = VaneType.displayFont(size, weight: weight)
         let ascent = CTFontGetAscent(font)
         let descent = CTFontGetDescent(font)
         let cap = CTFontGetCapHeight(font)
@@ -82,13 +87,15 @@ public struct Odometer: View {
 
     private let value: Double
     private let unit: String?
+    private let reading: CGFloat
 
-    public init(_ value: Double, unit: String? = nil) {
+    public init(_ value: Double, unit: String? = nil, size: CGFloat = 180) {
         self.value = value
         self.unit = unit
+        self.reading = size
     }
 
-    private var size: CGFloat { VaneType.reading(for: typeSize) }
+    private var size: CGFloat { reading }
     private var metrics: DisplayMetrics { .forSize(size) }
     /// The window is exactly one cap height, and the wheel's pitch is the same, so a numeral
     /// leaving is replaced precisely by the one arriving and no sliver of either is ever
@@ -104,7 +111,7 @@ public struct Odometer: View {
         HStack(alignment: .top, spacing: 0) {
             if value < 0 {
                 Text("−")
-                    .font(.custom(VaneFont.display, fixedSize: size))
+                    .font(VaneType.display(size))
                     .offset(y: metrics.bandOffset)
                     .frame(height: lineHeight)
             }
@@ -117,7 +124,7 @@ public struct Odometer: View {
                 let unitSize = size * 0.19
                 let unitMetrics = DisplayMetrics.forSize(unitSize)
                 Text(unit)
-                    .font(.custom(VaneFont.display, fixedSize: unitSize))
+                    .font(VaneType.display(unitSize))
                     // Sits on the cap line: its own band offset puts its cap band at the top of
                     // the frame, then it drops by the difference between the two cap heights so
                     // the ring's top lines up with the numerals' tops. Both terms are measured,
@@ -157,7 +164,7 @@ struct Wheel: View {
             // wasted text layouts per wheel, per frame, at 148pt.
             ForEach(-1...1, id: \.self) { step in
                 Text(numeral(index + Double(step)))
-                    .font(.custom(VaneFont.display, fixedSize: size))
+                    .font(VaneType.display(size))
                     // Counting up brings the next numeral from below, so the strip travels
                     // upward as the value rises. This is the direction every counter turns.
                     .offset(y: bandOffset + (CGFloat(step) - fraction) * lineHeight)

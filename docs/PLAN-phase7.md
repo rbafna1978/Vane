@@ -172,11 +172,26 @@ skipped twice.
 | 7.2 | The scene as a function of real weather: cover, wind bearing, sun position, precipitation, pressure. | Every condition renders and none is a special case. |
 | 7.3 | The figure and the sentence. Dimensional type, the odometer roll rebuilt against the new type. | A novice reads the main screen unaided. |
 | 7.4 | The annotation overlay — callouts, leader lines, and Vane's own version pointing at *history*, not just instrument readings. | Details reachable in one gesture, composition unchanged. |
-| 7.5 | Forecast strip, archive, streak. | The return loop is real. |
+| 7.5 | Forecast days, archive, streak — as objects and figures, never as a plot. | The return loop is real. |
 | 7.6 | Widget, Live Activity, morning push. | Phase 6 of the original brief, finally. |
 | 7.7 | Deploy, device auth, rate limiting. | Shipping. |
 
 ---
+
+## 6a. No graphs
+
+A hard constraint, added after the direction was locked: **no plots, traces, curves, sparklines,
+axes or scatter anywhere in the product.** They are hard to read at a glance, and every one built
+in phases 3-6 made its screen worse rather than better.
+
+This is not a loss, because the direction already answers it. **The instrument is the reading.**
+An aneroid dial does not need a pressure graph beside it — it *is* the pressure, and it shows the
+trend by where the needle sits against the standard. A mercury column is the temperature. The vane
+is the bearing. Anything an instrument cannot carry becomes a number with a plain label, or a
+sentence. The reference contains no graph either: objects, figures, and a single range scale.
+
+Deleted by this rule: `BarographTrace`, `RollCanvas`, `RollPanel`, `HourlyCurve`, `PressureTrace`,
+`AnomalyBar`.
 
 ## 7. Where this could still go wrong
 

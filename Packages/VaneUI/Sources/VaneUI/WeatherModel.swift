@@ -163,40 +163,16 @@ public final class WeatherModel {
         return (try? archive.points(scale: ArchiveStore.scale(forDays: count))) ?? []
     }
 
-    /// The sky for this snapshot's own location, moment, and conditions.
+    /// The sun's real position for this snapshot's place and moment.
     ///
-    /// The brief is explicit that colour state comes from sun position *and current
-    /// conditions*. `cloudCover` was a parameter from phase 3 that nothing ever passed, so
-    /// until now every day rendered as though it were clear.
-    public var sky: SkyState {
-        guard let snapshot else {
-            return SkyState.now(latitude: 0, longitude: 0)
-        }
-        let parts = snapshot.cellId.split(separator: ",").compactMap { Double($0) }
-        return SkyState.now(
-            latitude: parts.first ?? 0,
-            longitude: parts.last ?? 0,
-            date: .now,
-            cloudCover: Double(snapshot.current.cloudCover ?? 0) / 100
-        )
-    }
-
-    /// Everything the sky shader needs, derived from the same snapshot the palette is derived
-    /// from — so a rendered sky and a computed palette can never disagree about the weather.
-    ///
-    /// Nil until there is a snapshot: an invented sky is worse than no sky, because it would be
-    /// the one part of the interface not answerable to an observation.
-    public var scene: SkyScene? {
+    /// Direction A turned this into a palette; the instrument scene will turn it into lighting.
+    /// The calculation itself is neither — it is the NOAA solar position algorithm in `VaneKit`,
+    /// it survived the strip untouched, and it is the input either way.
+    public var sun: SunPosition.Result? {
         guard let snapshot else { return nil }
-        // Precipitation now, taken from the most recent hour of the arc rather than from the
-        // day's total — a day that rained this morning should not still be raining on screen.
-        let precipNow = snapshot.arc.last(where: { $0.t <= .now })?.precipMm ?? 0
-        return SkyScene.from(
-            sky: sky,
-            cover: Double(snapshot.current.cloudCover ?? 0) / 100,
-            precipMm: precipNow,
-            windKt: snapshot.current.windKt,
-            windDeg: snapshot.current.windDeg
+        let parts = snapshot.cellId.split(separator: ",").compactMap { Double($0) }
+        return SunPosition.at(
+            latitude: parts.first ?? 0, longitude: parts.last ?? 0, date: .now
         )
     }
 }
