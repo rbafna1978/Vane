@@ -105,10 +105,23 @@ Composition, from the reference: one object scene, one enormous figure, one line
 technical annotation overlay on demand — callouts with leader lines pointing *into* the scene. Our
 overlay annotates with **history**, which is the thing no competitor does.
 
-Rendering is **`SplineRuntime`** — scenes authored in Spline, bundled locally, driven from live
-weather via `setNumberVariable` / `emitEvent` / `findObject`. See ADR-0008, which supersedes the
-Metal SDF plan. **The scenes are authored by the user in Spline's editor; I cannot operate a GUI.**
-A scene contract — exact variable names, ranges, object names — is written before any art exists.
+Rendering is **Blender → USDZ → RealityKit**, SwiftUI composited on top — the reference app's own
+architecture (they use Blender + SceneKit) on the current renderer, since SceneKit is
+soft-deprecated. See ADR-0009. **The art is authored by the user in Blender; I cannot author 3D.**
+A scene contract — entity names, variable ranges, units — is written before any art exists.
+
+## Interaction model: one scene, one sheet
+
+There are no pages. The scene is always present; everything else is a sheet pulled up over it to
+whatever height the user wants, and dropped when they are done. Hour by hour, the week, thirty
+years and the record are *sections of one continuous sheet*, never destinations. Detail annotates
+the scene in place — the composition never moves. The scene recedes and dims rather than leaving,
+so there is nothing to navigate back to.
+
+1:1 tracking with nothing eased on the drag path. Momentum projected to choose the detent.
+Interruptible mid-flight from the presentation value. Rubber-band at both ends. Springs, never
+durations. **The sheet is an accessibility-adjustable control whose increments are the detents**,
+so VoiceOver moves it the way a drag does; Reduce Motion crossfades rather than travels.
 
 Type: **Big Shoulders** (display) — variable `wght` 100–900 and `opsz` 10–72. Chosen by setting
 54° at 180pt against five alternatives and looking, not from a specimen sheet; Archivo Narrow, the

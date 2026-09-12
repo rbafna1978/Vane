@@ -1,7 +1,7 @@
 # ADR-0008: The scene is authored in Spline and rendered by SplineRuntime
 
 Date: 2026-09-11
-Status: Accepted, with three open questions that must close before shipping
+Status: **Withdrawn** on 2026-09-11, before any code. Superseded by ADR-0009.
 Supersedes: the Metal SDF raymarching decision recorded in ADR-0007
 
 ## Context
@@ -14,9 +14,11 @@ palette makes a weather station charming. Direction C renders the weather itself
 cloud, sun, rain, moon — and the user's instruction is to build those objects the way the
 reference app does.
 
-**Honesty note:** no source found confirms what Not Boring Weather actually uses. Their App Store
-copy says "gaming industry tech"; nobody names a tool. Spline is chosen because the user asked
-for it and because it verifies well below, not because it is documented as theirs.
+**Withdrawal note.** This ADR recorded that no source confirmed what Not Boring uses — and then
+adopted Spline anyway. A caveat does not turn a hunch into a decision. Researched properly the
+next day: **Not Boring is Blender + SceneKit**, in the developers' own words. See ADR-0009. The
+verified findings below about `SplineRuntime` remain accurate and are kept so the option can be
+reconsidered on its merits rather than re-researched.
 
 ## Decision
 

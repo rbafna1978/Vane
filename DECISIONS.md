@@ -641,3 +641,28 @@ after it.
 - **Rendering moves to Spline — see ADR-0008**, which supersedes ADR-0007's Metal SDF plan. The
   bottleneck was never the renderer; it was that I cannot author art. Moving the art into a tool
   built for it, operated by someone with taste, is the actual fix.
+
+## Phase 7 — the stack, researched properly, and one surface instead of thirteen
+
+**ADR-0008 is withdrawn before any code.** It recorded "no source confirms what Not Boring uses"
+and adopted Spline anyway. A caveat does not turn a hunch into a decision.
+
+- **Not Boring is Blender + SceneKit** — Andy Allen and Mark Dawson at Andy Works, in their own
+  words. **Vane is Blender → USDZ → RealityKit**: their architecture, current renderer, because
+  SceneKit is soft-deprecated and they chose it years before that. See ADR-0009.
+- Rejecting Spline is not only about the licence. Taking a closed 8.6 MB binary with no LICENSE
+  file, in order to imitate a stack that turns out not to use it, is the worst of both worlds.
+- **Thirteen mockups described thirteen pages.** That was the real UX failure and it contradicted
+  the brief's own premise. Vane has **one scene and one sheet.** Hour by hour, the week, thirty
+  years and the record are *sections of one continuous sheet*, pulled to whatever height the user
+  wants. Detail annotates the scene in place and the composition never moves.
+- The scene **recedes and dims rather than leaving**, so there is nothing to navigate back to.
+- Mechanics, from `apple-design`: 1:1 tracking with nothing eased on the drag path, momentum
+  projected to pick the detent, interruptible mid-flight from the presentation value, rubber-band
+  at both ends, springs rather than durations because a duration cannot absorb an interruption.
+- **Accessibility is the mechanism, not a fallback.** A drag-only interface is unusable with
+  VoiceOver. The sheet is an adjustable control whose increments are exactly the detents, so
+  VoiceOver swipes move it the way a drag does; Reduce Motion crossfades between detents instead
+  of travelling.
+- Delivered as a **draggable prototype rather than more stills**, because "organic and easy going"
+  cannot be judged from a picture.
