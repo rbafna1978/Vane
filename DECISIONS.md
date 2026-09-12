@@ -608,3 +608,36 @@ becomes a number with a plain label or a sentence. The reference contains no gra
 7.0's exit criterion is met: the app builds and shows real live data — place, condition, wind,
 pressure, normals over 30 years, 10 forecast days, 240 hourly points, archive, streak — and the
 context engine's sentence, today: *"Warmest September 9th in 30 years."*
+
+## Phase 7 — Direction C, and Spline
+
+Direction B lasted one mockup. The verdict — cold objects, flat, too serious — and the diagnosis
+worth keeping: **I chose austere twice.** Direction A was a quiet instrument chart; B was a grey
+technical apparatus. The brief asked for fun and not-boring every single time. That is taste
+overriding brief, twice, and it cost six rounds plus a rebuild.
+
+A second, structural error: **Direction B was signed off from a paragraph.** "The instruments,
+rendered as heavy clay objects" reads well and renders as an engineering diagram. Text
+descriptions of visual directions are close to worthless; mockups now come before sign-off, not
+after it.
+
+- **Direction C (locked): the weather itself, as soft clay objects.** Cloud, sun, rain, moon —
+  charm can live in a cloud and cannot live in an anemometer.
+- **The distance rule is retired.** "Don't look adjacent to the reference" was the constraint that
+  produced the grey diagram. Adjacent is now the target; differentiation is the meaning layer.
+- **What is ours: the ground is the real sky**, computed from the sun's true position. They are
+  always white. Vane is never the same colour twice — and the one line of the original brief that
+  outlived every direction change, *"light and dark is not a toggle"*, finally does something.
+- **All thirteen surfaces are mocked before implementation**, at the user's instruction: main ×3,
+  detail overlay, hour by hour, the week, thirty years, your record, first run, warming, offline,
+  denied, settings, widgets, Live Activity, morning card.
+- Two screens worth naming. **Hour by hour** is a band where each column is that hour's actual sky
+  colour, with temperature as the dark fill — the day's light, not a plot. **Your record** is a
+  quilt of sky swatches, one per day the app was opened: the return loop made visible, and
+  unfakeable, because it only grows if you come back.
+- **The old sun is deleted, not carried forward.** It was a radial-gradient blob and the user is
+  right that it was bad. A sun in this direction is a dimensional object with grain and a cast
+  shadow, not a glow.
+- **Rendering moves to Spline — see ADR-0008**, which supersedes ADR-0007's Metal SDF plan. The
+  bottleneck was never the renderer; it was that I cannot author art. Moving the art into a tool
+  built for it, operated by someone with taste, is the actual fix.

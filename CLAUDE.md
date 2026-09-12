@@ -83,24 +83,32 @@ Regenerate the code map at every phase boundary. One repo-wide graph covers Swif
 (tree-sitter-swift and tree_sitter_python both present). Consult the map before opening files.
 Reading >3 files to answer a structural question means the map is stale or unused.
 
-## Direction: B, The Instruments (locked, phase 7)
+## Direction: C, The Sky (locked, phase 7)
 
 **Direction A is retired.** It was "the chart, never the machine" — and a chart is a static
 document, so it produced one. Six rounds of feedback went into polishing something that could
 never reach the bar. The full reasoning is in `docs/PLAN-phase7.md`.
 
-The scene renders **the apparatus that measures the weather**, not the sky: a wind vane, an
-aneroid dial, a mercury column, anemometer cups, a rain gauge. Heavy objects, real materials, real
-shadows. They respond to real data — the vane swings to the true bearing, the column rises to the
-real temperature, the cups turn at the real speed. The app is called Vane.
+**Direction B is also retired**, after one mockup. A mast, cups and a dial are industrial
+equipment; no palette makes a weather station charming. The pattern behind both failures: I chose
+austere twice while the brief asked for fun every time. Mockups now precede sign-off — a paragraph
+describing a visual direction is worthless.
+
+The scene renders **the weather itself, as soft clay objects**: cloud, sun, rain, moon. Heavy,
+lumpy, characterful, with real material and cast shadow. Being adjacent to the reference is the
+target, not the failure — the differentiation is the meaning layer, not the art style.
+
+**What is ours: the ground is the real sky**, computed from the sun's true position. Competitors
+are always white. Vane is never the same colour twice.
 
 Composition, from the reference: one object scene, one enormous figure, one line of meaning, and a
 technical annotation overlay on demand — callouts with leader lines pointing *into* the scene. Our
 overlay annotates with **history**, which is the thing no competitor does.
 
-Rendering is **Metal SDF raymarching**, not RealityKit and not sprites. See `ios-3d` and
-ADR-0008: the forms are sphere unions, the scene must be a continuous function of live weather,
-and RealityKit would make the look depend on authored USDZ assets nobody here can produce.
+Rendering is **`SplineRuntime`** — scenes authored in Spline, bundled locally, driven from live
+weather via `setNumberVariable` / `emitEvent` / `findObject`. See ADR-0008, which supersedes the
+Metal SDF plan. **The scenes are authored by the user in Spline's editor; I cannot operate a GUI.**
+A scene contract — exact variable names, ranges, object names — is written before any art exists.
 
 Type: **Big Shoulders** (display) — variable `wght` 100–900 and `opsz` 10–72. Chosen by setting
 54° at 180pt against five alternatives and looking, not from a specimen sheet; Archivo Narrow, the
